@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "864532731709",
+    "project_id": "inma-4cb11",
+    "storage_bucket": "inma-4cb11.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:864532731709:android:06a73b95fd5344e5b61754",
+        "android_client_info": {
+          "package_name": "com.example.enmaa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAazN5GGDfQccwK_MX4sxMh7AsHdFmhAPw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

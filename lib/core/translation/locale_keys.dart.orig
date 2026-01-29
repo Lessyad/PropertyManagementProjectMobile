@@ -1,0 +1,447 @@
+//flutter pub run easy_localization:generate -S "assets/translations" -O "lib/core/translation"
+abstract class LocaleKeys {
+  // Error Messages
+  static const somethingWentWrong = 'somethingWentWrong';
+  static const badGateway = 'badGateway';
+  static const internalServerError = 'internalServerError';
+  static const notFound = 'notFound';
+  static const forbidden = 'forbidden';
+  static const unauthorized = 'unauthorized';
+  static const badRequest = 'badRequest';
+  static const sendTimeout = 'sendTimeout';
+  static const receiveTimeout = 'receiveTimeout';
+  static const connectionTimeout = 'connectionTimeout';
+  static const requestCancelled = 'requestCancelled';
+  static const noInternet = 'noInternet';
+
+
+  static const realEstate = 'realEstate';
+  static const cars = 'cars';
+  static const halls = 'halls';
+  static const hotels = 'hotels';
+  static const addYourRealState = 'addYourRealState';
+
+
+
+  static const authenticateToAccessTheApp = 'authenticateToAccessTheApp' ;
+
+  static const home = 'home' ;
+  static const myBookings = 'myBookings' ;
+  static const favorites = 'favorites' ;
+  static const myProfile = 'myProfile' ;
+
+
+  static const chooseYourIdealPropertyEasily = 'chooseYourIdealPropertyEasily' ;
+
+  static const forSale = 'forSale' ;
+  static const forRent = 'forRent' ;
+
+
+  static const String apartment = "apartment";
+  static const String villa = "villa";
+  static const String building = "building";
+  static const String land = "land";
+
+  /// apartment sub type
+  static const String studio = "studio";
+  static const String duplex = "duplex";
+  static const String penthouse = "penthouse";
+
+
+  static const String residential = "residential";
+  static const String commercial = "commercial";
+  static const String mixedUse = "mixedUse";
+
+  static const String freehold = "freehold";
+  static const String agricultural = "agricultural";
+  static const String industrial = "industrial";
+
+  static const String standalone = 'standalone';
+  static const String twinHouse = 'twinHouse';
+  static const String townHouse = 'townHouse';
+
+
+  static const String completed = "completed";
+  static const String active = "active";
+  static const String cancelled = "cancelled";
+
+
+  static const String reserved = "reserved";
+  static const String available = "available";
+
+  static const String coming = "coming";
+
+
+  static const String iAmBuyer = "iAmBuyer";
+  static const String anotherBuyer = "anotherBuyer";
+
+
+  static const String areaUnit = "areaUnit";
+  static const String contract = "contract";
+  static const String arabic = "arabic";
+  static const String english = "english";
+  static const String french = "french";
+
+  static const contactUs = 'contactUs';
+  static const errorOpeningLink = 'errorOpeningLink';
+
+  static const onBoardingTitle1 = 'onBoardingTitle1';
+  static const onBoardingDesc1 = 'onBoardingDesc1';
+  static const onBoardingDesc2 = 'onBoardingDesc2';
+  static const onBoardingTitle2 = 'onBoardingTitle2';
+  static const onBoardingDesc3 = 'onBoardingDesc3';
+  static const onBoardingDesc4 = 'onBoardingDesc4';
+  static const onBoardingTitle3 = 'onBoardingTitle3';
+  static const onBoardingDesc5 = 'onBoardingDesc5';
+  static const onBoardingDesc6 = 'onBoardingDesc6';
+  static const login = 'login';
+  static const next = 'next';
+  static const skip = 'skip';
+
+  static const String floorLabel = 'floor_label';
+  static const String floorsLabel = 'floors_label';
+  static const String apartmentPerFloorLabel = 'apartment_per_floor_label';
+  static const String startingFrom = 'starting_from';
+  static const String furnished = 'furnished';
+  static const String notFurnished = 'not_furnished';
+  static const String licensed = 'licensed';
+  static const String notLicensed = 'not_licensed';
+
+  static const String servicesSeeAll = 'servicesSeeAll';
+
+  // New keys for HomeScreen
+  static const String homeAppBarMessage = 'homeAppBarMessage';
+  static const String homeSearchHint = 'homeSearchHint';
+  static const String homeServiceNotAvailable = 'homeServiceNotAvailable';
+  static const String homeApartments = 'homeApartments';
+  static const String homeLands = 'homeLands';
+  static const String homeBuildings = 'homeBuildings';
+  static const String homeVillas = 'homeVillas';
+  static const String homeNoAvailable = 'homeNoAvailable';
+  static const String homeNearby = 'homeNearby';
+  static const String homeErrorOccurred = 'homeErrorOccurred';
+
+  static const String notificationsScreenTitle = 'notificationsScreenTitle';
+  static const String notificationsScreenNoNotifications = 'notificationsScreenNoNotifications';
+  static const String notificationsScreenExploreOffers = 'notificationsScreenExploreOffers';
+
+  static const String emptyScreenNoBookings = 'emptyScreenNoBookings';
+  static const String emptyScreenBrowseOffers = 'emptyScreenBrowseOffers';
+  static const String emptyScreenExploreOffers = 'emptyScreenExploreOffers';
+
+
+  static const String emptyScreenNoFavorites = 'emptyScreenNoFavorites';
+  static const String emptyScreenAddFavorites = 'emptyScreenAddFavorites';
+
+  static const String errorScreenTitle = 'errorScreenTitle';
+  static const String errorScreenMessage = 'errorScreenMessage';
+  static const String errorScreenBackToHome = 'errorScreenBackToHome';
+
+  static const String chargeWalletScreenTitle = 'chargeWalletScreenTitle';
+  static const String chargeScreenCurrentBalance = 'chargeScreenCurrentBalance';
+  static const String chargeScreenCurrency = 'chargeScreenCurrency';
+  static const String chargeScreenWithdraw = 'chargeScreenWithdraw';
+  static const String transactionHistoryTitle = 'transactionHistoryTitle';
+  static const String transactionHistoryNoTransactions = 'transactionHistoryNoTransactions';
+  static const String transactionHistoryEmptyMessage = 'transactionHistoryEmptyMessage';
+  static const String transactions = 'transactions';
+
+
+  static const String appControlsLanguage = 'appControlsLanguage';
+  static const String appControlsTerms = 'appControlsTerms';
+  static const String appControlsDarkMode = 'appControlsDarkMode';
+  static const String appControlsNotifications = 'appControlsNotifications';
+  static const String appControlsLinkError = 'appControlsLinkError';
+
+  static const String languageSheetTitle = 'languageSheetTitle';
+  static const String languageSheetCancel = 'languageSheetCancel';
+  static const String languageSheetConfirm = 'languageSheetConfirm';
+
+
+  static const String logOutAndContactUsLogOut = 'logOutAndContactUsLogOut';
+  static const String logOutAndContactUsContactUs = 'logOutAndContactUsContactUs';
+
+  static const String managePropertiesTitle = 'managePropertiesTitle';
+  static const String managePropertiesDescription = 'managePropertiesDescription';
+
+  static const String nameAndPhoneGuestName = 'nameAndPhoneGuestName';
+  static const String nameAndPhoneCreateAccount = 'nameAndPhoneCreateAccount';
+
+  static const String removeAccountTitle = 'removeAccountTitle';
+  static const String removeAccountConfirmation = 'removeAccountConfirmation';
+  static const String removeAccountWarning = 'removeAccountWarning';
+  static const String removeAccountCancel = 'removeAccountCancel';
+  static const String removeAccountSuccessMessage = 'removeAccountSuccessMessage';
+
+  static const String userScreensAppointments = 'userScreensAppointments';
+  static const String userScreensElectronicContracts = 'userScreensElectronicContracts';
+
+  static const String changePassword = 'changePassword';
+
+  static const String changePasswordTitle = 'changePasswordTitle';
+  static const String currentPasswordLabel = 'currentPasswordLabel';
+  static const String currentPasswordHint = 'currentPasswordHint';
+  static const String newPasswordLabel = 'newPasswordLabel';
+  static const String newPasswordHint = 'newPasswordHint';
+  static const String confirmNewPasswordLabel = 'confirmNewPasswordLabel';
+  static const String confirmNewPasswordHint = 'confirmNewPasswordHint';
+  static const String passwordsDoNotMatch = 'passwordsDoNotMatch';
+  static const String changePasswordWarning = 'changePasswordWarning';
+  static const String cancelButton = 'cancelButton';
+  static const String saveButton = 'saveButton';
+  static const String changePasswordSuccess = 'changePasswordSuccess';
+
+
+  // New keys for FormValidator
+  static const String thisFieldIsRequired = 'thisFieldIsRequired';
+  static const String enterField = 'enterField';
+  static const String enterValidNumber = 'enterValidNumber';
+  static const String enterValidNumberInField = 'enterValidNumberInField';
+  static const String numberMustBeGreaterThanZero = 'numberMustBeGreaterThanZero';
+  static const String fieldMustBeGreaterThanZero = 'fieldMustBeGreaterThanZero';
+  static const String numberMustBeGreaterThan = 'numberMustBeGreaterThan';
+  static const String fieldMustBeGreaterThan = 'fieldMustBeGreaterThan';
+  static const String numberMustBeLessThan = 'numberMustBeLessThan';
+  static const String fieldMustBeLessThan = 'fieldMustBeLessThan';
+  static const String password = 'password';
+  static const String passwordMustBeAtLeast8Chars = 'passwordMustBeAtLeast8Chars';
+  static const String fieldMustBeAtLeast8Chars = 'fieldMustBeAtLeast8Chars';
+  static const String passwordMustContainNumber = 'passwordMustContainNumber';
+  static const String fieldMustContainNumber = 'fieldMustContainNumber';
+
+  static const String passwordMustContainLetter = 'passwordMustContainLetter';
+  static const String fieldMustContainLetter = 'fieldMustContainLetter';
+
+  static const String withdrawTitle = 'withdrawTitle';
+  static const String withdrawNameLabel = 'withdrawNameLabel';
+  static const String withdrawAmountLabel = 'withdrawAmountLabel';
+  static const String withdrawNameHint = 'withdrawNameHint';
+  static const String withdrawAmountHint = 'withdrawAmountHint';
+  static const String withdrawIbanLabel = 'withdrawIbanLabel';
+  static const String withdrawIbanHint = 'withdrawIbanHint';
+  static const String withdrawBankLabel = 'withdrawBankLabel';
+  static const String withdrawBankHint = 'withdrawBankHint';
+  static const String withdrawButton = 'withdrawButton';
+  static const String withdrawSuccess = 'withdrawSuccess';
+  static const String selectCountryHint = 'selectCountryHint';
+  static const String country = 'country';
+  static const String countryRequired = 'countryRequired';
+
+  static const String descriptionLabel = 'descriptionLabel';
+
+  static const String propertyDetailsLabel = 'propertyDetailsLabel';
+  static const String property = 'propertyDetailsLabel';
+  static const String unfurnished = 'unfurnished';
+  static const String months = 'months';
+  static const String floors = 'floors';
+  static const String floor = 'floor';
+  static const String readyForBuilding = 'readyForBuilding';
+  static const String notReadyForBuilding = 'notReadyForBuilding';
+
+  static const String locationAndNearbyAreas = 'locationAndNearbyAreas';
+  static const String amenitiesLabel = 'amenitiesLabel';
+
+  static const String cannotOpenDialer = 'cannotOpenDialer';
+  static const String preview = 'preview';
+  static const String bookNow = 'bookNow';
+  static const String bookNowError = 'bookNowError';
+  static const String previewError = 'previewError';
+  static const String previewConfirmed = 'previewConfirmed';
+
+
+  static const String readMore = 'readMore';
+  static const String readLess = 'readLess';
+
+  static const String profilePage = 'profilePage';
+  static const String fullName = 'fullName';
+  static const String enterFullName = 'enterFullName';
+  static const String fullNameRequired = 'fullNameRequired';
+  static const String phoneNumber = 'phoneNumber';
+  static const String enterPhoneNumber = 'enterPhoneNumber';
+  static const String phoneNumberRequired = 'phoneNumberRequired';
+  static const String idNumber = 'idNumber';
+  static const String enterIdNumber = 'enterIdNumber';
+  static const String idNumberRequired = 'idNumberRequired';
+  static const String dateOfBirth = 'dateOfBirth';
+  static const String idExpirationDate = 'idExpirationDate';
+  static const String updatingData = 'updatingData';
+  static const String dataFetchError = 'dataFetchError';
+  static const String cancel = 'cancel';
+  static const String saveChanges = 'saveChanges';
+  static const String authenticationFailed = 'authenticationFailed';
+  static const String retryAuthentication = 'retryAuthentication';
+  static const String authenticationSuccessful = 'authenticationSuccessful';
+
+  static const String resetPassword = 'resetPassword';
+  static const String createPassword = 'createPassword';
+  static const String createNewPasswordHint = 'createNewPasswordHint';
+  static const String createStrongPasswordHint = 'createStrongPasswordHint';
+  static const String newPassword = 'newPassword';
+  static const String signUp = 'signUp';
+  static const String confirm = 'confirm';
+  static const String accountCreatedSuccessfully = 'accountCreatedSuccessfully';
+  static const String passwordChangedSuccessfully = 'passwordChangedSuccessfully';
+
+  static const String phoneRequired = 'phoneRequired';
+  static const String passwordRequired = 'passwordRequired';
+
+  static const String enterSecurityCode = 'enterSecurityCode';
+  static const String codeSentTo = 'codeSentTo';
+  static const String didNotReceiveCode = 'didNotReceiveCode';
+  static const String resend = 'resend';
+
+  static const String recoverPassword = 'recoverPassword';
+  static const String recoverPasswordHint = 'recoverPasswordHint';
+  static const String mobileNumber = 'mobileNumber';
+  static const String nameRequired = 'nameRequired';
+
+  static const String createAccount = 'createAccount';
+
+  static const String confirmPassword = 'confirmPassword';
+  static const String confirmPasswordRequired = 'confirmPasswordRequired';
+  static const String minEightChars = 'minEightChars';
+  static const String minOneNumber = 'minOneNumber';
+  static const String minOneLetter = 'minOneLetter';
+
+  static const String enterAsGuest = 'enterAsGuest';
+
+  static const String noAccount = 'noAccount';
+  static const String createOneNow = 'createOneNow';
+  static const String forgotPassword = 'forgotPassword';
+
+  static const String alreadyHaveAccount = 'alreadyHaveAccount';
+
+
+  static const String enterYourName = 'enterYourName';
+
+  static const String hello = 'hello';
+  static const String welcome = 'welcome';
+  static const String createAccountForFeatures = 'createAccountForFeatures';
+  static const String location = 'location';
+  static const String selectLocation = 'selectLocation';
+
+  static const String filter = 'filter';
+  static const String choosePerfectProperty = 'choosePerfectProperty';
+  static const String searchForProperty = 'searchForProperty';
+  static const String addYourProperty = 'addYourProperty';
+  static const String didntFindSuitableProperty = 'didntFindSuitableProperty';
+  static const String contactUsForBestOptions = 'contactUsForBestOptions';
+
+  static const String changeAppointmentDate = 'changeAppointmentDate';
+  static const String propertyPreview = 'propertyPreview';
+  static const String setAppointmentDate = 'setAppointmentDate';
+  static const String completePayment = 'completePayment';
+  static const String selectPreviewDateTime = 'selectPreviewDateTime';
+  static const String date = 'date';
+  static const String chooseDate = 'chooseDate';
+  static const String advisorWarningMessage = 'advisorWarningMessage';
+  static const String transparencyWarningMessage = 'transparencyWarningMessage';
+
+
+  static const String paymentDetails = 'paymentDetails';
+  static const String amountToBePaid = 'amountToBePaid';
+  static const String currency = 'currency';
+  static const String creditCard = 'creditCard';
+  static const String wallet = 'wallet';
+  static const String bankily = 'bankily';
+  static const String passCode = 'passCode';
+  static const String paymentWarning = 'paymentWarning';
+  static const String securityWarning = 'securityWarning';
+  static const String paymentConfirmationInProgress = 'paymentConfirmationInProgress';
+  static const String loadingDataInProgress = 'loadingDataInProgress';
+
+
+  static const String previous = 'previous';
+  static const String confirmAppointment = 'confirmAppointment';
+  static const String appointmentConfirmedMessage = 'appointmentConfirmedMessage';
+
+  static const String time = 'time';
+  static const String chooseTime = 'chooseTime';
+  static const String noAvailableTimes = 'noAvailableTimes';
+
+
+  static const String payment = 'payment';
+  static const String refund = 'refund';
+  static const String withdrawal = 'withdrawal';
+  static const String walletRecharge = 'walletRecharge';
+
+  static const String propertyDeal = 'propertyDeal';
+  static const String viewingRequest = 'viewingRequest';
+  static const String money = 'money';
+  static const String inKey = 'inKey';
+  static const String toKey = 'toKey';
+
+
+  static const String youMustLogin = 'youMustLogin';
+  static const String loginFirstHint = 'loginFirstHint';
+
+  static const String completePaymentWithWallet = 'completePaymentWithWallet';
+  static const String insufficientWalletBalance = 'insufficientWalletBalance';
+  static const String willBeDeducted = 'willBeDeducted';
+  static const String currencyEGP = 'currencyEGP';
+  static const String fromYourWallet = 'fromYourWallet';
+  static const String chooseAnotherPaymentMethod = 'chooseAnotherPaymentMethod';
+  static const String payWithCreditCard = 'payWithCreditCard';
+
+  static const String submit = 'submit';
+  static const String propertyBookedSuccessfully = 'propertyBookedSuccessfully';
+
+
+  static const String bookProperty = 'bookProperty';
+  static const String saleDetails = 'saleDetails';
+  static const String buyerData = 'buyerData';
+
+
+  static const String idPhoto = 'idPhoto';
+  static const String uploadClearIdPhotos = 'uploadClearIdPhotos';
+  static const String birthDate = 'birthDate';
+  static const String phoneNumberPlaceholder = 'phoneNumberPlaceholder';
+  static const String buyerNamePlaceholder = 'buyerNamePlaceholder';
+  static const String idNumberPlaceholder = 'idNumberPlaceholder';
+
+  static const String logOutWarning = 'logOutWarning';
+  static const String logOutConfirmation = 'logOutConfirmation';
+
+  static const completingPayment = 'completingPayment';
+   static const reviewData = 'reviewData';
+  static const paymentMethods = 'paymentMethods';
+   static const egp = 'egp';
+   static const expirationDate = 'expirationDate';
+  static const notSpecified = 'notSpecified';
+    static const paymentVerificationWarning = 'paymentVerificationWarning';
+  static const securePaymentMessage = 'securePaymentMessage';
+
+  static const saleDetailsHeader = 'saleDetailsHeader';
+  static const saleConditions = 'saleConditions';
+
+  // Labels
+  static const bookingDepositLabel = 'bookingDepositLabel';
+  static const finalPriceLabel = 'finalPriceLabel';
+
+  // Warning Messages
+  static const bookingProcedureWarning = 'bookingProcedureWarning';
+  static const bookingConfirmationWarning = 'bookingConfirmationWarning';
+  static const booked = 'booked';
+  static const vehicles = 'vehicles';
+
+  //  just pour tester les images
+
+  static const testDriveConfirmed = 'testDriveConfirmed';
+  static const testDriveError = 'testDriveError';
+
+  static const rentalConfirmed ='rentalConfirmed';
+  static const rentalError = 'rentalError';
+
+  static const testDrive = 'testDrive';
+  static const rentNow = 'rentNow';
+
+<<<<<<< HEAD
+  static const searchForVehicle = 'searchForVehicle';
+
+=======
+>>>>>>> 3c67328 (ADD THE WISHLIST FRONT END)
+  static const vehiclefavorites = 'vehiclefavorites' ;
+  static const emptyScreenNoVehicleFavorites ='emptyscreennovehiclefavorites';
+  static const emptyScreenAddVehicleFavorites ='emptyscreenaddfehiclefavorites';
+  static const emptyScreenExploreVehicles = 'emptyscreenexplorevehicles';
+}

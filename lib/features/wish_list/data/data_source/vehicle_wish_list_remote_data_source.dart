@@ -1,0 +1,71 @@
+import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:enmaa/core/services/dio_service.dart';
+import 'package:enmaa/core/constants/api_constants.dart';
+import '../models/vehicle_wish_list_model.dart';
+
+abstract class BaseVehicleWishListDataSource {
+  Future<List<VehicleWishListModel>> getVehiclesWishList();
+  // Future<void> removeVehicleFromWishList(int wishlistItemId);
+  Future<bool> addVehicleToWishList(int vehicleId);
+  Future<bool> removeVehicleFromWishList(int vehicleId);
+  Future<bool> checkVehicleInWishList(int vehicleId);
+}
+
+class VehicleWishListRemoteDataSource extends BaseVehicleWishListDataSource {
+  final DioService dioService;
+
+  VehicleWishListRemoteDataSource({required this.dioService});
+
+  @override
+  Future<List<VehicleWishListModel>> getVehiclesWishList() async {
+    final Response response = await dioService.get(
+      url: ApiConstants.vehicleWishList,
+    );
+
+    final List<dynamic> vehicleWishList = response.data;
+    List<VehicleWishListModel> data = [];
+
+    for (var item in vehicleWishList) {
+      data.add(VehicleWishListModel.fromJson(item));
+    }
+
+    return data;
+  }
+
+  // @override
+  // Future<void> removeVehicleFromWishList(int wishlistItemId) async {
+  //   await dioService.delete(
+  //     url: '${ApiConstants.vehicleWishList}remove/$wishlistItemId',
+  //   );
+  // }
+  @override
+  Future<bool> removeVehicleFromWishList(int vehicleId) async {
+    // Note: Vous devrez peut-être adapter cette logique selon votre API
+    // Si votre API utilise l'ID de l'item wishlist plutôt que vehicleId
+    final Response response = await dioService.delete(
+      url: '${ApiConstants.vehicleWishList}remove/$vehicleId',
+    );
+
+    return response.data['success'] == true;
+  }
+  @override
+  Future<bool> addVehicleToWishList(int vehicleId) async {
+    final Response response = await dioService.post(
+      url: '${ApiConstants.vehicleWishList}add/$vehicleId',
+      data: json.encode({}), // Corps vide comme dans votre exemple
+    );
+
+    // Vérifier si l'ajout a réussi
+    return response.data['success'] == true;
+  }
+
+  @override
+  Future<bool> checkVehicleInWishList(int vehicleId) async {
+    final Response response = await dioService.get(
+      url: '${ApiConstants.vehicleWishList}check/$vehicleId',
+    );
+
+    return response.data['isInWishlist'] ?? false;
+  }
+}

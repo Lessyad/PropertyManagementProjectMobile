@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- PayPal Icon Simple -->
+  <path d="M7.5 2h6.5c2.5 0 4.5 2 4.5 4.5 0 2.5-2 4.5-4.5 4.5h-2l-1 6h-3l1-6h-2c-1.5 0-2.5-1-2.5-2.5l1-6c.2-1.2 1.2-2 2.5-2z"/>
+  <path d="M9.5 11h4c1.5 0 2.5-1 2.5-2.5S15 6 13.5 6h-4L8.5 11z"/>
+  <ellipse cx="7" cy="19" rx="2" ry="1.5" fill="currentColor"/>
+  <ellipse cx="14" cy="19" rx="2" ry="1.5" fill="currentColor"/>
+</svg>
+
