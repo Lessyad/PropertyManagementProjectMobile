@@ -63,69 +63,44 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await EasyLocalization.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   await CoreDependencies.init();
   await VehicleDependencies.init();
-  
-  // Initialiser SharedPreferences en premier
   await SharedPreferencesService().init();
-  
-  await Future.wait([
-    Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    ),
-    EasyLocalization.ensureInitialized(),
-    setupServiceLocator(),
-    SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
-    ),
-  ]);
+  await setupServiceLocator();
 
-
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  await FireBaseMessaging().requestPermission();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  await FireBaseMessaging().initInfo();
-
-
-
+  SystemChrome.setPreferredOrientations(
+    [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
+  );
 
   Bloc.observer = MyBlocObserver();
 
   HydratedBloc.storage = await HydratedStorage.build(
-      storageDirectory:
-          HydratedStorageDirectory((await getTemporaryDirectory()).path));
+    storageDirectory:
+        HydratedStorageDirectory((await getTemporaryDirectory()).path),
+  );
 
-  // Initialiser le système de devise après SharedPreferences
   await AppInitializationService().initializeApp();
 
   final prefs = await SharedPreferences.getInstance();
-  var token = prefs.get('access_token');
-  if (token != null) {
-    isAuth = true;
-  }
+  final token = prefs.get('access_token');
+  isAuth = token != null;
 
   bool isFirstLaunch = await SharedPreferencesService().isFirstLaunch();
 
-
   if (isFirstLaunch) {
-    String? deviceLanguageCode = WidgetsBinding.instance.platformDispatcher.locale.languageCode;
-    if (['en', 'ar', 'fr'].contains(deviceLanguageCode)) {
-      await SharedPreferencesService().setLanguage(deviceLanguageCode);
-    }
-    else {
-      await SharedPreferencesService().setLanguage('en');
-    }
-
-
-
-  } else {
-    String storedLanguage = SharedPreferencesService().language;
-
-    if( storedLanguage.isEmpty){
-      storedLanguage ='en';
-      SharedPreferencesService().setLanguage('en');
-    }
+    String deviceLanguage =
+        WidgetsBinding.instance.platformDispatcher.locale.languageCode;
+    await SharedPreferencesService()
+        .setLanguage(['en', 'ar', 'fr'].contains(deviceLanguage)
+            ? deviceLanguage
+            : 'en');
   }
 
   String initialRoute;
@@ -139,15 +114,14 @@ void main() async {
 
   runApp(
     EasyLocalization(
-      supportedLocales: [Locale('en'), Locale('ar') ,Locale('fr')],
+      supportedLocales: const [Locale('en'), Locale('ar'), Locale('fr')],
       path: 'assets/translations',
-      assetLoader: const CodegenLoader(), // load translation assets files
-      child: MyApp(
-        initialRoute: initialRoute,
-      ),
+      assetLoader: const CodegenLoader(),
+      child: MyApp(initialRoute: initialRoute),
     ),
   );
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key, required this.initialRoute});
