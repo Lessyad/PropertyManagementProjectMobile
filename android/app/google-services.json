@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "864532731709",
-    "project_id": "inma-4cb11",
-    "storage_bucket": "inma-4cb11.firebasestorage.app"
+    "project_number": "363734642503",
+    "project_id": "enma-5090d",
+    "storage_bucket": "enma-5090d.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:864532731709:android:06a73b95fd5344e5b61754",
+        "mobilesdk_app_id": "1:363734642503:android:8eb4371b9de9587e65a662",
         "android_client_info": {
-          "package_name": "com.example.enmaa"
+          "package_name": "com.smpnt.enmaa"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAazN5GGDfQccwK_MX4sxMh7AsHdFmhAPw"
+          "current_key": "AIzaSyAjz7yu80CTFdWRM08SzhfBTeRUB2ivDkk"
         }
       ],
       "services": {
