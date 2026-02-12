@@ -13,7 +13,7 @@ class RemoteAuthenticationState extends Equatable {
     this.verifyOtpRequestState = RequestState.initial,
     this.isOtpVerified = false,
     this.verifyOtpErrorMessage = '',
-    this.currentCountryCode =  '+20',
+    this.currentCountryCode =  '+222',
     this.createNewPasswordPasswordVisibility1 =  true,
     this.createNewPasswordPasswordVisibility2 =  true,
     this.userName =  '',

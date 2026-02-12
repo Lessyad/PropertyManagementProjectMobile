@@ -141,7 +141,7 @@ class LogoutComponent extends StatelessWidget {
           height: context.scale(20),
         ),
         Text(
-          'هل أنت متأكد من تسجيل الخروج؟',
+          LocaleKeys.logOutConfirmation.tr(),
           style: getBoldStyle(
             color: ColorManager.blackColor,
             fontSize: FontSize.s18,
@@ -151,7 +151,7 @@ class LogoutComponent extends StatelessWidget {
           height: context.scale(4),
         ),
         Text(
-          'سيتم إنهاء جلستك الحالية، وستحتاج إلى تسجيل الدخول مرة أخرى للوصول إلى حسابك.',
+          LocaleKeys.logOutWarning.tr(),
           overflow: TextOverflow.ellipsis,
           maxLines: 2,
           textAlign: TextAlign.center,
@@ -196,7 +196,7 @@ class LogoutComponent extends StatelessWidget {
                 ),
                 buttonContent: Center(
                   child: Text(
-                    ' تأكيد تسجيل الخروج',
+                    LocaleKeys.confirm.tr(),
                     style: getBoldStyle(
                       color: ColorManager.whiteColor,
                       fontSize: FontSize.s14,

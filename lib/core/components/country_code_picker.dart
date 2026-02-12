@@ -17,7 +17,7 @@ class CustomCountryCodePicker extends StatelessWidget {
     super.key,
     this.disableSelection = false ,
     required this.onChanged,
-    this.initialSelection = 'EG',
+    this.initialSelection = 'MR',
     this.favoriteCountries = const [
       '+20', 'EG', // Egypt
       '+966', 'SA', // Saudi Arabia
@@ -30,22 +30,22 @@ class CustomCountryCodePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String savedCountryCode = SharedPreferencesService()
-        .getValue(LocalKeys.countryCodeISO) ?? 'EG';
+        .getValue(LocalKeys.countryCodeISO) ?? 'MR';
     return CountryCodePicker(
       // onChanged: onChanged,
       onChanged: (countryCode) {
         // Sauvegarder à la fois le code ISO et le numéro
         SharedPreferencesService().storeValue(
             LocalKeys.countryCodeISO,
-            countryCode.code ?? 'EG'
+            countryCode.code ?? 'MR'
         );
         SharedPreferencesService().storeValue(
             LocalKeys.countryCodeNumber,
-            countryCode.dialCode ?? '+20'
+            countryCode.dialCode ?? '+222'
         );
         onChanged(countryCode);
       },
-      // initialSelection: SharedPreferencesService().getValue(LocalKeys.countryCodeNumber) ?? '+20',
+      // initialSelection: SharedPreferencesService().getValue(LocalKeys.countryCodeNumber) ?? '+222',
       initialSelection: savedCountryCode,
       favorite: favoriteCountries,
       showCountryOnly: false,

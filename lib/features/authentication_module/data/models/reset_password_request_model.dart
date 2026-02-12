@@ -12,10 +12,10 @@ class ResetPasswordRequestModel extends ResetPasswordRequestEntity{
 
   Map<String, dynamic> toJson() {
     return {
-      'phone_number': phone,
+      'PhoneNumber': phone,
       'code': code,
-      'password': password1,
-      'password_confirm': password2,
+      'NewPassword': password1,
+      'ConfirmPassword': password2,
     };
   }
 }

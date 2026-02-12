@@ -115,6 +115,10 @@ class _AppControlsWidgetState extends State<AppControlsWidget> {
                   text: LocaleKeys.appControlsNotifications.tr(),
                   value: areNotificationsEnabled,
                   onChanged: (value) {
+                    if (!isAuth) {
+                      LoginBottomSheet.show();
+                      return;
+                    }
                     setState(() {
                       areNotificationsEnabled = value;
                     });
@@ -207,10 +211,10 @@ class _AppControlsWidgetState extends State<AppControlsWidget> {
           () async {
         final response = await dio.patch(
           url: ApiConstants.user,
-          data: FormData.fromMap({
+          data: {
             "notifications_enabled": notificationAvailability,
-          }),
-          options: Options(contentType: 'multipart/form-data'),
+          },
+          options: Options(contentType: 'application/json'),
         );
       },
     );

@@ -25,7 +25,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController(text: '+20');
+  final _phoneController = TextEditingController(text: '+222');
   final _passwordController = TextEditingController();
   bool navigateToNextScreen = true;
 
