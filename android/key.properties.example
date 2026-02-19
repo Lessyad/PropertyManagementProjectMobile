@@ -1,0 +1,7 @@
+# Copiez ce fichier en "key.properties" et remplissez avec vos vrais mots de passe.
+# Ne commitez JAMAIS key.properties (il est dans .gitignore).
+
+storePassword=VOTRE_MOT_DE_PASSE_KEYSTORE
+keyPassword=VOTRE_MOT_DE_PASSE_KEY
+keyAlias=upload
+storeFile=app-release.keystore

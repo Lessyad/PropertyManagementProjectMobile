@@ -211,8 +211,7 @@ class MyApp extends StatelessWidget {
           supportedLocales: context.supportedLocales,
           locale: Locale(SharedPreferencesService().language),
           theme: ThemeData(
-            fontFamily:
-                context.locale == const Locale('en') ? 'Cairo' : 'Cairo',
+            fontFamily: null, // Cairo supprimé (fichiers absents). Remettre 'Cairo' quand les polices sont de nouveau dans assets/fonts/cairo/
             visualDensity: Platform.isIOS
                 ? VisualDensity.standard
                 : VisualDensity.adaptivePlatformDensity, // Adjust for iOS

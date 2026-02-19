@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.4+9
+version: 1.0.4+10
 
 environment:
   sdk: ^3.6.1
@@ -62,7 +62,7 @@ dependencies:
   pinput: ^5.0.1
   smart_auth: ^3.2.0
   # azblob: ^4.1.0
-  syncfusion_flutter_calendar: ^28.2.5
+  syncfusion_flutter_calendar: 28.2.12
   animate_do: ^4.0.1
   country_code_picker: ^3.2.0
   shared_preferences: ^2.5.2
@@ -83,6 +83,8 @@ dependencies:
   google_maps_flutter: ^2.12.1
   location: ^8.0.0
   get: ^4.6.5
+  syncfusion_flutter_datepicker: 28.2.12
+  syncfusion_flutter_core: 28.2.12
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -114,16 +116,16 @@ flutter:
     - assets/images/
     - assets/flags/
 
-  fonts:
-    - family: Cairo
-      fonts:
-        - asset: assets/fonts/cairo/Cairo-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/cairo/Cairo-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/cairo/Cairo-Light.ttf
-          weight: 300
-
+  # Polices Cairo supprimées (fichiers absents). Pour les réactiver, remettre les .ttf dans assets/fonts/cairo/ et décommenter ci-dessous.
+  # fonts:
+  #   - family: Cairo
+  #     fonts:
+  #       - asset: assets/fonts/cairo/Cairo-Bold.ttf
+  #         weight: 700
+  #       - asset: assets/fonts/cairo/Cairo-Regular.ttf
+  #         weight: 400
+  #       - asset: assets/fonts/cairo/Cairo-Light.ttf
+  #         weight: 300
 
   # To add assets to your application, add an assets section, like this:
   # assets:

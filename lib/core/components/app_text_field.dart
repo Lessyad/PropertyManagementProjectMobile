@@ -103,7 +103,6 @@ class _AppTextFieldState extends State<AppTextField> {
                     const TextStyle(
                       color: Color(0xFF707070),
                       fontSize: 12,
-                      fontFamily: 'Cairo',
                       fontWeight: FontWeight.w400,
                       height: 1,
                     ),
