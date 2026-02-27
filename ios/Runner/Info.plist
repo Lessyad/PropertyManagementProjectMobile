@@ -28,6 +28,9 @@
     <key>NSLocationAlwaysUsageDescription</key>
     <string>Enma Mobile may use your location in the background to update nearby property and vehicle listings and improve your search experience.</string>
 
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Enma Mobile uses your location to show nearby properties and vehicles on the map, improve search results, and optionally update listings when the app is in the background.</string>
+
     <key>LSApplicationQueriesSchemes</key>
     <array>
         <string>sms</string>
