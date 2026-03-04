@@ -270,9 +270,9 @@ class FilterPropertyCubit extends Cubit<FilterPropertyState> {
       data[JsonKeys.city] = locationCubit.state.selectedCity!.id;
     }
 
-    // Add property type if selected
+    // Add property type if selected (API expects English name, e.g. "Land" not "Terrain")
     if (propertyType != null) {
-      data[JsonKeys.propertyTypeName] = propertyType.toEnglish;
+      data[JsonKeys.propertyTypeName] = propertyType.toApiPropertyTypeName;
     }
 
     // Add property-specific filters

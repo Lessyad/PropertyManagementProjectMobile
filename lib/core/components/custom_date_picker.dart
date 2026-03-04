@@ -11,12 +11,14 @@ class CustomDatePicker extends StatelessWidget {
     this.selectedDate,
     this.onSelectionChanged,
     this.maxDate,
+    this.minDate,
   });
 
   final DateTime? selectedDate;
   final void Function(CalendarSelectionDetails)? onSelectionChanged;
   final bool showPreviousDates;
   final DateTime? maxDate;
+  final DateTime? minDate;
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +44,14 @@ class CustomDatePicker extends StatelessWidget {
       cellBorderColor: Colors.transparent,
       onSelectionChanged: onSelectionChanged,
       initialDisplayDate: selectedDate ?? DateTime.now(),
-      minDate: showPreviousDates ? DateTime(1900, 1, 1) : DateTime.now(),
+      minDate: minDate ?? (showPreviousDates ? DateTime(1900, 1, 1) : DateTime.now()),
       maxDate: maxDate,
       selectionDecoration: BoxDecoration(
         color: Colors.transparent,
       ),
       monthCellBuilder: (BuildContext context, MonthCellDetails details) {
-        final today = DateTime.now();
+        final now = DateTime.now();
+        final todayStart = DateTime(now.year, now.month, now.day);
         final effectiveMaxDate = maxDate ?? DateTime(2100, 12, 31); // Default far future date if maxDate is null
 
         bool isSelected = selectedDate != null &&
@@ -56,11 +59,11 @@ class CustomDatePicker extends StatelessWidget {
             details.date.month == selectedDate!.month &&
             details.date.day == selectedDate!.day;
 
-        bool isToday = details.date.year == today.year &&
-            details.date.month == today.month &&
-            details.date.day == today.day;
+        bool isToday = details.date.year == now.year &&
+            details.date.month == now.month &&
+            details.date.day == now.day;
 
-        bool isPastDay = details.date.isBefore(today) && !showPreviousDates;
+        bool isPastDay = details.date.isBefore(todayStart) && !showPreviousDates;
 
         bool isFutureDay = details.date.isAfter(effectiveMaxDate);
 

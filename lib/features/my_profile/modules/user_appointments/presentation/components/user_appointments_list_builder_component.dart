@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:enmaa/core/extensions/appointment_status_extension.dart';
+import 'package:enmaa/core/translation/locale_keys.dart';
 import 'package:enmaa/features/my_profile/modules/user_appointments/presentation/components/user_appointment_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,7 +8,7 @@ import 'package:enmaa/core/components/card_listing_shimmer.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
 import 'package:enmaa/core/extensions/request_states_extension.dart';
 import 'package:enmaa/core/screens/error_app_screen.dart';
- import 'package:enmaa/core/utils/enums.dart';
+import 'package:enmaa/core/utils/enums.dart';
 
 import '../../../../../../core/screens/property_empty_screen.dart';
 import '../controller/user_appointments_cubit.dart';
@@ -50,8 +52,8 @@ class UserAppointmentsListBuilderComponent extends StatelessWidget {
 
           if (requestState.isLoaded && appointments.isEmpty && !state.isLoadingMore) {
             return EmptyScreen(
-              alertText1: 'لا توجد مواعيد ${status.toName}',
-              alertText2: 'يمكنك حجز مواعيد خاصه بالعقارات للبدء في عرضها',
+              alertText1: '${LocaleKeys.emptyScreenNoAppointments.tr()} ${status.toName}',
+              alertText2: LocaleKeys.emptyScreenBookAppointmentsToStart.tr(),
             );
           }
 

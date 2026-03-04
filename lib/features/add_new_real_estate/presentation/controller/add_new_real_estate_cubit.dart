@@ -539,56 +539,36 @@ class AddNewRealEstateCubit extends Cubit<AddNewRealEstateState> {
   }) async {
     emit(state.copyWith(updateApartmentState: RequestState.loading));
 
-    final original = state.propertyDetailsEntity as ApartmentDetailsModel;
     final current = await _getApartmentRequestModel(locationServiceCubit);
 
-    final updatedFields = <String, dynamic>{};
+    // Envoyer un body complet (ApartmentUpdateRequestDTO) pour éviter ArgumentNullException côté backend
+    final updatedFields = <String, dynamic>{
+      'operation': current.currentPropertyOperationType,
+      'property_sub_type': int.tryParse(current.propertySubType) ?? 1,
+      'title': current.title,
+      'description': current.description,
+      'area': double.tryParse(current.area.replaceAll(',', '.')) ?? 0.0,
+      'price': current.price,
+      'city': int.tryParse(current.city) ?? 0,
+      'latitude': double.tryParse(current.latitude) ?? 0.0,
+      'longitude': double.tryParse(current.longitude) ?? 0.0,
+      'amenities': current.amenities.map((id) => int.tryParse(id) ?? 0).where((id) => id > 0).toList(),
+      'is_furnitured': current.isFurnitured,
+      'floor': int.tryParse(current.floor) ?? 1,
+      'rooms': int.tryParse(current.rooms) ?? 1,
+      'bathrooms': int.tryParse(current.bathrooms) ?? 1,
+      'is_renewable': current.isRenewable ?? true,
+      'replace_images': state.selectedImages.isNotEmpty,
+    };
 
-    // Compare and update fields
-    if (original.title != current.title) updatedFields['title'] = current.title;
-    if (original.description != current.description) updatedFields['description'] = current.description;
-    if (current.price.toInt() != double.parse(original.price).toInt()) updatedFields['price'] = current.price;
-    if (original.area.toString() != current.area) updatedFields['area'] = current.area;
-    if (locationServiceCubit.state.selectedCity!.name != original.city) updatedFields['city'] = current.city;
-    if (original.latitude.toString() != current.latitude) updatedFields['latitude'] = current.latitude;
-    if (original.longitude.toString() != current.longitude) updatedFields['longitude'] = current.longitude;
-    if (original.floor.toString() != current.floor) updatedFields['floor'] = current.floor;
-    if (original.rooms.toString() != current.rooms) updatedFields['rooms'] = current.rooms;
-    if (original.bathrooms.toString() != current.bathrooms) updatedFields['bathrooms'] = current.bathrooms;
-    if (current.propertySubType != getApartmentType(original.propertySubType).toId.toString()) updatedFields['property_sub_type'] = current.propertySubType;
-    if (original.operation != current.currentPropertyOperationType) updatedFields['operation'] = current.currentPropertyOperationType;
-    if (original.isFurnished != current.isFurnitured) updatedFields['is_furnitured'] = current.isFurnitured;
-
-    // Handle amenities
-    final originalAmenities = original.amenities.map((a) => a.id.toString()).toList()..sort();
-    final currentAmenities = current.amenities.toList()..sort();
-
-    bool isAmenitiesChanged = originalAmenities.length != currentAmenities.length;
-    if (!isAmenitiesChanged) {
-      for (var i = 0; i < originalAmenities.length; i++) {
-        if (originalAmenities[i] != currentAmenities[i]) {
-          isAmenitiesChanged = true;
-          break;
-        }
-      }
+    if (state.currentPropertyOperationType.isForRent && current.monthlyRentPeriod != null) {
+      updatedFields['monthly_rent_period'] = current.monthlyRentPeriod;
     }
-
-    if (isAmenitiesChanged) {
-      updatedFields['amenities'] = current.amenities;
+    if (mainImageId != null) {
+      updatedFields['main_image_id'] = int.tryParse(mainImageId);
     }
-
-    if (state.currentPropertyOperationType.isForRent) {
-      if (original.monthlyRentPeriod != current.monthlyRentPeriod.toString()) {
-        updatedFields['monthly_rent_period'] = current.monthlyRentPeriod;
-      }
-      if (original.rentIsRenewable != current.isRenewable) {
-        updatedFields['is_renewable'] = current.isRenewable;
-      }
-    }
-
     if (state.selectedImages.isNotEmpty) {
       updatedFields['images'] = await _processImages();
-      updatedFields['replace_images'] = 'true';
     }
 
     final result = await _updateApartmentUseCase(apartmentId: apartmentId, updatedFields: updatedFields);
@@ -612,61 +592,37 @@ class AddNewRealEstateCubit extends Cubit<AddNewRealEstateState> {
   }) async {
     emit(state.copyWith(updateVillaState: RequestState.loading));
 
-    final original = state.propertyDetailsEntity as VillaDetailsModel;
     final current = await _getVillaRequestModel(locationServiceCubit);
 
-    final updatedFields = <String, dynamic>{};
+    final updatedFields = <String, dynamic>{
+      'operation': current.currentPropertyOperationType,
+      'property_sub_type': int.tryParse(current.propertySubType) ?? 1,
+      'title': current.title,
+      'description': current.description,
+      'area': double.tryParse(current.area.replaceAll(',', '.')) ?? 0.0,
+      'price': current.price,
+      'city': int.tryParse(current.city) ?? 0,
+      'latitude': double.tryParse(current.latitude) ?? 0.0,
+      'longitude': double.tryParse(current.longitude) ?? 0.0,
+      'amenities': current.amenities.map((id) => int.tryParse(id) ?? 0).where((id) => id > 0).toList(),
+      'is_furnitured': current.isFurnitured,
+      'number_of_floors': current.numberOfFloors,
+      'rooms': current.rooms,
+      'bathrooms': current.bathrooms,
+      'is_renewable': current.isRenewable ?? true,
+      'replace_images': state.selectedImages.isNotEmpty,
+    };
 
-    // Compare and update fields
-    if (original.title != current.title) updatedFields['title'] = current.title;
-    if (original.description != current.description) updatedFields['description'] = current.description;
-    if (current.price.toInt() != double.parse(original.price).toInt()) updatedFields['price'] = current.price;
-    if (original.area.toString() != current.area) updatedFields['area'] = current.area;
-    if (locationServiceCubit.state.selectedCity!.name != original.city) updatedFields['city'] = current.city;
-    if (original.latitude.toString() != current.latitude) updatedFields['latitude'] = current.latitude;
-    if (original.longitude.toString() != current.longitude) updatedFields['longitude'] = current.longitude;
-    if (original.numberOfFloors.toString() != current.numberOfFloors.toString()) updatedFields['number_of_floors'] = current.numberOfFloors;
-    if (original.rooms.toString() != current.rooms.toString()) updatedFields['rooms'] = current.rooms;
-    if (original.bathrooms.toString() != current.bathrooms.toString()) updatedFields['bathrooms'] = current.bathrooms;
-    if (current.propertySubType != getVillaType(original.propertySubType).toId.toString()) updatedFields['property_sub_type'] = current.propertySubType;
-    if (original.operation != current.currentPropertyOperationType) updatedFields['operation'] = current.currentPropertyOperationType;
-    if (original.isFurnished != current.isFurnitured) updatedFields['is_furnitured'] = current.isFurnitured;
-
-    // Handle amenities
-    final originalAmenities = original.amenities.map((a) => a.id.toString()).toList()..sort();
-    final currentAmenities = current.amenities.toList()..sort();
-
-    bool isAmenitiesChanged = originalAmenities.length != currentAmenities.length;
-    if (!isAmenitiesChanged) {
-      for (var i = 0; i < originalAmenities.length; i++) {
-        if (originalAmenities[i] != currentAmenities[i]) {
-          isAmenitiesChanged = true;
-          break;
-        }
-      }
+    if (state.currentPropertyOperationType.isForRent && current.monthlyRentPeriod != null) {
+      updatedFields['monthly_rent_period'] = current.monthlyRentPeriod;
     }
-
-    if (isAmenitiesChanged) {
-      updatedFields['amenities'] = current.amenities;
+    if (mainImageId != null) {
+      updatedFields['main_image_id'] = int.tryParse(mainImageId);
     }
-
-    // Handle rent-specific fields
-    if (state.currentPropertyOperationType.isForRent) {
-      if (original.monthlyRentPeriod != current.monthlyRentPeriod.toString()) {
-        updatedFields['monthly_rent_period'] = current.monthlyRentPeriod;
-      }
-      if (original.rentIsRenewable != current.isRenewable) {
-        updatedFields['is_renewable'] = current.isRenewable;
-      }
-    }
-
-    // Handle images
     if (state.selectedImages.isNotEmpty) {
       updatedFields['images'] = await _processImages();
-      updatedFields['replace_images'] = 'true';
     }
 
-    // Call the use case
     final result = await _updateVillaUseCase(villaId: villaId, updatedFields: updatedFields);
 
     result.fold(
@@ -688,59 +644,35 @@ class AddNewRealEstateCubit extends Cubit<AddNewRealEstateState> {
   }) async {
     emit(state.copyWith(updateBuildingState: RequestState.loading));
 
-    final original = state.propertyDetailsEntity as BuildingDetailsModel;
     final current = await _getBuildingRequestModel(locationServiceCubit);
 
-    final updatedFields = <String, dynamic>{};
+    final updatedFields = <String, dynamic>{
+      'operation': current.currentPropertyOperationType,
+      'property_sub_type': int.tryParse(current.propertySubType) ?? 1,
+      'title': current.title,
+      'description': current.description,
+      'area': double.tryParse(current.area.replaceAll(',', '.')) ?? 0.0,
+      'price': current.price,
+      'city': int.tryParse(current.city) ?? 0,
+      'latitude': double.tryParse(current.latitude) ?? 0.0,
+      'longitude': double.tryParse(current.longitude) ?? 0.0,
+      'amenities': current.amenities.map((id) => int.tryParse(id) ?? 0).where((id) => id > 0).toList(),
+      'number_of_floors': current.numberOfFloors,
+      'number_of_apartments': current.numberOfApartments,
+      'is_renewable': current.isRenewable ?? true,
+      'replace_images': state.selectedImages.isNotEmpty,
+    };
 
-    // Compare and update fields
-    if (original.title != current.title) updatedFields['title'] = current.title;
-    if (original.description != current.description) updatedFields['description'] = current.description;
-    if (current.price.toInt() != double.parse(original.price).toInt()) updatedFields['price'] = current.price;
-    if (original.area.toString() != current.area) updatedFields['area'] = current.area;
-    if (locationServiceCubit.state.selectedCity!.name != original.city) updatedFields['city'] = current.city;
-    if (original.latitude.toString() != current.latitude) updatedFields['latitude'] = current.latitude;
-    if (original.longitude.toString() != current.longitude) updatedFields['longitude'] = current.longitude;
-    if (original.numberOfFloors.toString() != current.numberOfFloors.toString()) updatedFields['number_of_floors'] = current.numberOfFloors;
-    if (original.numberOfApartmentsPerFloor.toString() != current.numberOfApartments.toString()) updatedFields['number_of_apartments'] = current.numberOfApartments;
-    if (current.propertySubType != getBuildingType(original.propertySubType).toId.toString()) updatedFields['property_sub_type'] = current.propertySubType;
-    if (original.operation != current.currentPropertyOperationType) updatedFields['operation'] = current.currentPropertyOperationType;
-
-    // Handle amenities
-    final originalAmenities = original.amenities.map((a) => a.id.toString()).toList()..sort();
-    final currentAmenities = current.amenities.toList()..sort();
-
-    bool isAmenitiesChanged = originalAmenities.length != currentAmenities.length;
-    if (!isAmenitiesChanged) {
-      for (var i = 0; i < originalAmenities.length; i++) {
-        if (originalAmenities[i] != currentAmenities[i]) {
-          isAmenitiesChanged = true;
-          break;
-        }
-      }
+    if (state.currentPropertyOperationType.isForRent && current.monthlyRentPeriod != null) {
+      updatedFields['monthly_rent_period'] = current.monthlyRentPeriod;
     }
-
-    if (isAmenitiesChanged) {
-      updatedFields['amenities'] = current.amenities;
+    if (mainImageId != null) {
+      updatedFields['main_image_id'] = int.tryParse(mainImageId);
     }
-
-    // Handle rent-specific fields
-    if (state.currentPropertyOperationType.isForRent) {
-      if (original.monthlyRentPeriod != current.monthlyRentPeriod.toString()) {
-        updatedFields['monthly_rent_period'] = current.monthlyRentPeriod;
-      }
-      if (original.rentIsRenewable != current.isRenewable) {
-        updatedFields['is_renewable'] = current.isRenewable;
-      }
-    }
-
-    // Handle images
     if (state.selectedImages.isNotEmpty) {
       updatedFields['images'] = await _processImages();
-      updatedFields['replace_images'] = 'true';
     }
 
-    // Call the use case
     final result = await _updateBuildingUseCase(buildingId: buildingId, updatedFields: updatedFields);
 
     result.fold(
@@ -756,64 +688,38 @@ class AddNewRealEstateCubit extends Cubit<AddNewRealEstateState> {
 
   Future<void> updateLand({
     required String landId,
+    String? mainImageId,
     required SelectLocationServiceCubit locationServiceCubit,
   }) async {
     emit(state.copyWith(updateLandState: RequestState.loading));
 
-    final original = state.propertyDetailsEntity as LandDetailsModel;
-
     final current = await _getLandRequestModel(locationServiceCubit);
 
-    final updatedFields = <String, dynamic>{};
+    final updatedFields = <String, dynamic>{
+      'operation': current.currentPropertyOperationType,
+      'property_sub_type': int.tryParse(current.propertySubType) ?? 1,
+      'title': current.title,
+      'description': current.description,
+      'area': double.tryParse(current.area.replaceAll(',', '.')) ?? 0.0,
+      'price': current.price,
+      'city': int.tryParse(current.city) ?? 0,
+      'latitude': double.tryParse(current.latitude) ?? 0.0,
+      'longitude': double.tryParse(current.longitude) ?? 0.0,
+      'amenities': current.amenities.map((id) => int.tryParse(id) ?? 0).where((id) => id > 0).toList(),
+      'is_licensed': current.isLicensed,
+      'is_renewable': current.isRenewable ?? true,
+      'replace_images': state.selectedImages.isNotEmpty,
+    };
 
-    if (original.title != current.title) updatedFields['title'] = current.title;
-    if (original.description != current.description) updatedFields['description'] = current.description;
-    if (current.price.toInt() != double.parse(original.price).toInt()) updatedFields['price'] = current.price;
-    if (original.area.toString() != current.area) updatedFields['area'] = current.area;
-    if (locationServiceCubit.state.selectedCity!.name != original.city) updatedFields['city'] = current.city;
-    if (original.latitude.toString() != current.latitude) updatedFields['latitude'] = current.latitude;
-    if (original.longitude.toString() != current.longitude) updatedFields['longitude'] = current.longitude;
-    if (original.isLicensed != current.isLicensed) updatedFields['is_licensed'] = current.isLicensed;
-    if (current.propertySubType != getLandType(original.propertySubType).toId.toString()) updatedFields['property_sub_type'] = current.propertySubType;
-    if (original.operation != current.currentPropertyOperationType) updatedFields['operation'] = current.currentPropertyOperationType;
-
-
-    final originalAmenities = original.amenities.map((a) => a.id.toString()).toList()..sort();
-    final currentAmenities = current.amenities.toList()..sort();
-
-    bool isAmenitiesChanged = false;
-
-    if (originalAmenities.length != currentAmenities.length) {
-      isAmenitiesChanged = true;
-    } else {
-      for (var i = 0; i < originalAmenities.length; i++) {
-        if (originalAmenities[i] != currentAmenities[i]) {
-          isAmenitiesChanged = true;
-          break;
-        }
-      }
+    if (state.currentPropertyOperationType.isForRent && current.monthlyRentPeriod != null) {
+      updatedFields['monthly_rent_period'] = current.monthlyRentPeriod;
     }
-
-    if (isAmenitiesChanged) {
-      updatedFields['amenities'] = current.amenities;
+    if (mainImageId != null) {
+      updatedFields['main_image_id'] = int.tryParse(mainImageId);
     }
-
-    if (state.currentPropertyOperationType.isForRent) {
-      if (original.monthlyRentPeriod != current.monthlyRentPeriod.toString()) {
-        updatedFields['monthly_rent_period'] = current.monthlyRentPeriod;
-      }
-      if (original.rentIsRenewable != current.isRenewable) {
-        updatedFields['is_renewable'] = current.isRenewable;
-      }
-    }
-
-
     if (state.selectedImages.isNotEmpty) {
       updatedFields['images'] = await _processImages();
-      updatedFields['replace_images'] = 'true';
     }
-
-
 
     final result = await _updateLandUseCase(landId: landId, updatedFields: updatedFields);
 

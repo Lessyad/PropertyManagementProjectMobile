@@ -4,8 +4,31 @@ import '../translation/locale_keys.dart';
 import '../utils/enums.dart';
 
 extension PropertyTypeExtension on PropertyType {
-  // Get Property Type in English
+  /// Property type label in current locale (use this for display).
   String get toEnglish {
+    return toName;
+  }
+
+  String get toName {
+    switch (this) {
+      case PropertyType.apartment:
+        return LocaleKeys.apartment.tr();
+      case PropertyType.villa:
+        return LocaleKeys.villa.tr();
+      case PropertyType.building:
+        return LocaleKeys.building.tr();
+      case PropertyType.land:
+        return LocaleKeys.land.tr();
+    }
+  }
+
+  /// Property type label in current locale (same as toName).
+  String get toArabic {
+    return toName;
+  }
+
+  /// API path segment (English, lowercase) for URLs, e.g. "apartment", "villa".
+  String get toApiPathSegment {
     switch (this) {
       case PropertyType.apartment:
         return 'apartment';
@@ -17,30 +40,18 @@ extension PropertyTypeExtension on PropertyType {
         return 'land';
     }
   }
-  String get toName {
-    switch (this) {
-      case PropertyType.apartment:
-        return LocaleKeys.apartment.tr();
-      case PropertyType.villa:
-        return LocaleKeys.villa.tr();
-      case PropertyType.building:
-        return LocaleKeys.building.tr();
-      case PropertyType.land:
-       return  LocaleKeys.land.tr();
-    }
-  }
 
-  // Get Property Type in Arabic
-  String get toArabic {
+  /// Value for API filter property_type_name (English, as expected by backend).
+  String get toApiPropertyTypeName {
     switch (this) {
       case PropertyType.apartment:
-        return 'شقة';
+        return 'Apartment';
       case PropertyType.villa:
-        return 'فيلا';
+        return 'Villa';
       case PropertyType.building:
-        return 'عمارة';
+        return 'Building';
       case PropertyType.land:
-        return 'أرض';
+        return 'Land';
     }
   }
 

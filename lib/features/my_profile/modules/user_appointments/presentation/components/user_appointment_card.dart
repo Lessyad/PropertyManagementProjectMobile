@@ -81,7 +81,7 @@ class UserAppointmentCard extends StatelessWidget {
                                 height: 20,
                                 iconPath: AppAssets.pencilIcon , color: ColorManager.blackColor,),
                             SizedBox(width: 8),
-                            Text('تغيير الموعد' , style: getBoldStyle(color: ColorManager.blackColor , fontSize: FontSize.s14),),
+                            Text(LocaleKeys.changeAppointmentDate.tr() , style: getBoldStyle(color: ColorManager.blackColor , fontSize: FontSize.s14),),
                           ],
                         ),
                       ),
@@ -94,7 +94,7 @@ class UserAppointmentCard extends StatelessWidget {
                               height: 20,
                               iconPath: AppAssets.closeIcon , color: ColorManager.redColor,),
                             SizedBox(width: 8),
-                            Text('إلغاء المعاينة' , style: getBoldStyle(color: ColorManager.redColor , fontSize: FontSize.s14),),
+                            Text(LocaleKeys.cancelPreview.tr() , style: getBoldStyle(color: ColorManager.redColor , fontSize: FontSize.s14),),
                           ],
                         ),
                       ),
@@ -211,7 +211,7 @@ class UserAppointmentCard extends StatelessWidget {
                     width: 8,
                   ),
                   Text(
-                    " تمت المعاينه بتاريخ ${appointment.date} ",
+                    "${LocaleKeys.previewCompletedOnDate.tr()} ${appointment.date}",
                     style: getBoldStyle(color: ColorManager.greenColor  , fontSize:FontSize.s14 ),
                   ),
 
@@ -231,7 +231,7 @@ class UserAppointmentCard extends StatelessWidget {
                     width: 8,
                   ),
                   Text(
-                    "تم إلغاء المعاينه" ,
+                    LocaleKeys.previewCancelled.tr(),
                     style: getBoldStyle(color: ColorManager.redColor  , fontSize:FontSize.s14 ),
                   ),
                   ])

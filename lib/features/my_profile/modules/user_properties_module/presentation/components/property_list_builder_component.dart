@@ -1,5 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:enmaa/core/extensions/booking_status_extension.dart';
+import 'package:enmaa/core/translation/locale_keys.dart';
 import 'package:enmaa/features/my_profile/modules/user_properties_module/presentation/controller/user_properties_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -59,9 +61,9 @@ class UserPropertiesListBuilderComponent extends StatelessWidget {
               properties.isEmpty &&
               !state.isLoadingMore) {
             return EmptyScreen(
-              alertText1: 'لا توجد عقارات ${status.name}',
-              alertText2: 'يمكنك إضافة عقاراتك للبدء في عرضها للحجز',
-              buttonText: 'إضافة عقار جديد',
+              alertText1: '${LocaleKeys.emptyScreenNoProperties.tr()} ${LocaleKeys.reserved.tr()}',
+              alertText2: LocaleKeys.emptyScreenAddPropertyToStart.tr(),
+              buttonText: LocaleKeys.addNewPropertyButton.tr(),
               showActionButtonIcon: false,
               onTap: () {
                 Navigator.pushNamed(context, RoutersNames.addNewRealEstateScreen);

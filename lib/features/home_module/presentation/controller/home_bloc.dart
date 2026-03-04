@@ -292,7 +292,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final Either<Failure, List<PropertyEntity>> result = await getRealEstatesUseCase(
         filters:
         {
-          JsonKeys.propertyTypeName: propertyType.toEnglish,
+          JsonKeys.propertyTypeName: propertyType.toApiPropertyTypeName,
           JsonKeys.limit : event.numberOfProperties,
           JsonKeys.offset  : 0,
           JsonKeys.country : event.location,
@@ -393,7 +393,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     final Either<Failure, List<PropertyEntity>> result = await getRealEstatesUseCase(
         filters: {
-          JsonKeys.propertyTypeName: event.propertyType.toEnglish,
+          JsonKeys.propertyTypeName: event.propertyType.toApiPropertyTypeName,
           JsonKeys.limit: event.limit,
           JsonKeys.offset: event.offset,
           JsonKeys.country: event.location,

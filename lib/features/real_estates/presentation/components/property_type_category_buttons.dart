@@ -35,18 +35,7 @@ class PropertyTypeCategoryButtons extends StatelessWidget {
                 return AppAssets.landIcon;
             }
           },
-          getLabel: (type) {
-            switch (type) {
-              case PropertyType.apartment:
-                return type.toArabic;
-              case PropertyType.villa:
-                return ' فيلا';
-              case PropertyType.building:
-                return ' عمارة';
-              case PropertyType.land:
-                return ' أرض';
-            }
-          },
+          getLabel: (type) => type.toName,
         );
       },
     );

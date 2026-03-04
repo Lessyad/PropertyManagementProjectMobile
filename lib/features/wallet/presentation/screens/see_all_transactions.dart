@@ -105,7 +105,7 @@ class _SeeAllTransactionsScreenState extends State<SeeAllTransactionsScreen> {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => widget.walletCubit.resetAndFetchTransactions(),
-              child: Text('إعادة المحاولة'),
+              child: Text(LocaleKeys.tryAgain.tr()),
             ),
           ],
         ),
@@ -119,7 +119,7 @@ class _SeeAllTransactionsScreenState extends State<SeeAllTransactionsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'لا توجد معاملات حتى الآن',
+              LocaleKeys.transactionHistoryNoTransactions.tr(),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -127,7 +127,7 @@ class _SeeAllTransactionsScreenState extends State<SeeAllTransactionsScreen> {
             ),
             SizedBox(height: 16),
             Text(
-              'سيتم عرض المعاملات الخاصة بك هنا',
+              LocaleKeys.transactionHistoryEmptyMessage.tr(),
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey,

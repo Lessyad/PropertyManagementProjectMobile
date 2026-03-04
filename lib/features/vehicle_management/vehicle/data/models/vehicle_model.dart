@@ -53,33 +53,75 @@ class VehicleModel {
     this.longitude,
   });
 
+  static String _stringFromJson(dynamic value) {
+    if (value == null) return '';
+    if (value is String) return value;
+    return value.toString();
+  }
+
+  static DateTime _dateTimeFromJson(dynamic value) {
+    if (value == null) return DateTime.now();
+    if (value is String) return DateTime.parse(value);
+    if (value is int) return DateTime.fromMillisecondsSinceEpoch(value);
+    return DateTime.now();
+  }
+
+  static List<String> _stringListFromJson(dynamic value) {
+    if (value == null || value is! List) return [];
+    return value.map((e) => e == null ? '' : e.toString()).toList();
+  }
+
+  static dynamic _key(Map<String, dynamic> json, String camel, String pascal) {
+    if (json.containsKey(camel)) return json[camel];
+    return json[pascal];
+  }
+
   factory VehicleModel.fromJson(Map<String, dynamic> json) {
     return VehicleModel(
-      id: json['id'],
-      licensePlate: json['licensePlate'],
-      color: json['color'],
-      year: json['year'],
-      dailyPrice: json['dailyPrice'].toDouble(),
-      weeklyPrice: json['weeklyPrice'].toDouble(),
-      mileage: json['mileage'],
-      vehicleAvailabilityStatus: json['vehicleAvailabilityStatus'],
-      fuelType: json['fuelType'],
-      transmission: json['transmission'],
-      hasAirConditioning: json['hasAirConditioning'],
-      seats: json['seats'],
-      vin: json['vin'],
-      modelName: json['modelName'],
-      modelId: json['modelId'],
-      makeName: json['makeName'],
-      categoryName: json['categoryName'],
-      categoryId: json['categoryId'],
-      imageUrls: List<String>.from(json['imageUrls']),
-      createdAt: DateTime.parse(json['createdAt']),
-      modifiedAt: DateTime.parse(json['modifiedAt']),
-      isinwishlist: json['is_in_wishlist'] ?? true,
-      latitude: json['latitude']?.toDouble(),
-      longitude: json['longitude']?.toDouble(),
+      id: _intFromJson(_key(json, 'id', 'Id')),
+      licensePlate: _stringFromJson(_key(json, 'licensePlate', 'LicensePlate')),
+      color: _stringFromJson(_key(json, 'color', 'Color')),
+      year: _intFromJson(_key(json, 'year', 'Year')),
+      dailyPrice: _doubleFromJson(_key(json, 'dailyPrice', 'DailyPrice')),
+      weeklyPrice: _doubleFromJson(_key(json, 'weeklyPrice', 'WeeklyPrice')),
+      mileage: _intFromJson(_key(json, 'mileage', 'Mileage')),
+      vehicleAvailabilityStatus: _stringFromJson(_key(json, 'vehicleAvailabilityStatus', 'VehicleAvailabilityStatus')),
+      fuelType: _stringFromJson(_key(json, 'fuelType', 'FuelType')),
+      transmission: _stringFromJson(_key(json, 'transmission', 'Transmission')),
+      hasAirConditioning: _key(json, 'hasAirConditioning', 'HasAirConditioning') == true,
+      seats: _intFromJson(_key(json, 'seats', 'Seats')),
+      vin: _stringFromJson(_key(json, 'vin', 'Vin')),
+      modelName: _stringFromJson(_key(json, 'modelName', 'ModelName')),
+      modelId: _intFromJson(_key(json, 'modelId', 'ModelId')),
+      makeName: _stringFromJson(_key(json, 'makeName', 'MakeName')),
+      categoryName: _stringFromJson(_key(json, 'categoryName', 'CategoryName')),
+      categoryId: _intFromJson(_key(json, 'categoryId', 'CategoryId')),
+      imageUrls: _stringListFromJson(_key(json, 'imageUrls', 'ImageUrls')),
+      createdAt: _dateTimeFromJson(_key(json, 'createdAt', 'CreatedAt')),
+      modifiedAt: _dateTimeFromJson(_key(json, 'modifiedAt', 'ModifiedAt')),
+      isinwishlist: _key(json, 'is_in_wishlist', 'IsInWishlist') == true,
+      latitude: _doubleOrNullFromJson(_key(json, 'latitude', 'Latitude')),
+      longitude: _doubleOrNullFromJson(_key(json, 'longitude', 'Longitude')),
     );
+  }
+
+  static int _intFromJson(dynamic value, [int fallback = 0]) {
+    if (value == null) return fallback;
+    if (value is int) return value;
+    return int.tryParse(value.toString()) ?? fallback;
+  }
+
+  static double _doubleFromJson(dynamic value, [double fallback = 0.0]) {
+    if (value == null) return fallback;
+    if (value is num) return value.toDouble();
+    return double.tryParse(value.toString()) ?? fallback;
+  }
+
+  static double? _doubleOrNullFromJson(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toDouble();
+    final d = double.tryParse(value.toString());
+    return d;
   }
   // Dans vehicle_model.dart
   VehicleEntity toEntity() {

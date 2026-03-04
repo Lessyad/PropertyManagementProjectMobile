@@ -45,13 +45,11 @@ class ServerFailure extends Failure {
   }
 
   factory ServerFailure.fromResponse(
-      int? statusCode,
-      dynamic error,
-      Map<String, dynamic>? messageError,
-      ) {
-
+    int? statusCode,
+    dynamic error,
+    dynamic messageError,
+  ) {
     String errorMessage = LocaleKeys.somethingWentWrong.tr();
-
 
     // Extraire le message d'erreur du serveur si possible
     if (messageError is Map<String, dynamic>) {
@@ -60,67 +58,60 @@ class ServerFailure extends Failure {
       if (errors is List && errors.isNotEmpty) {
         final firstError = errors.first;
         if (firstError is Map<String, dynamic>) {
-          errorMessage = firstError['detail']?.toString() ?? errorMessage ;
+          errorMessage = firstError['detail']?.toString() ?? errorMessage;
         } else if (firstError is String) {
           errorMessage = firstError;
         }
       }
     } else if (messageError is String) {
-      // Gérer les erreurs qui sont des chaînes simples
       final messageStr = messageError as String;
       errorMessage = messageStr;
-      
-      // Messages d'erreur spécifiques
-      if (messageStr.contains('Un utilisateur avec ce numéro existe déjà') || 
+
+      if (messageStr.contains('Un utilisateur avec ce numéro existe déjà') ||
           messageStr.contains('User with this phone number already exists')) {
         errorMessage = 'Un utilisateur avec ce numéro de téléphone existe déjà';
       }
     }
 
-    // Traiter selon le code de statut
+    String msg(dynamic fallback) {
+      if (messageError is Map<String, dynamic>) {
+        final m = messageError['message'];
+        if (m != null) return m.toString();
+      }
+      return fallback;
+    }
+
     switch (statusCode) {
       case 400:
-        return ServerFailure(
-          messageError?['message'] ?? LocaleKeys.badRequest.tr(),
-        );
+        return ServerFailure(msg(LocaleKeys.badRequest.tr()));
 
       case 401:
-        return ServerFailure(
-          messageError?['message'] ?? LocaleKeys.unauthorized.tr(),
-        );
+        return ServerFailure(msg(LocaleKeys.unauthorized.tr()));
 
       case 403:
-        return ServerFailure(
-          messageError?['message'] ?? LocaleKeys.forbidden.tr(),
-        );
+        return ServerFailure(msg(LocaleKeys.forbidden.tr()));
 
       case 404:
         return ServerFailure(
-          messageError?['message'] ?? error['message'] ?? LocaleKeys.notFound.tr(),
+          msg((error is Map && error['message'] != null)
+              ? error['message'].toString()
+              : LocaleKeys.notFound.tr()),
         );
 
       case 422:
-        return ServerFailure(
-          messageError?['message'] ??
-              messageError?.values
-                  .join(' , ')
-                  .replaceAll(RegExp(r'[^\w\s]+'), ''),
-        );
+        final joinMsg = messageError is Map
+            ? messageError.values.join(' , ').replaceAll(RegExp(r'[^\w\s]+'), '')
+            : '';
+        return ServerFailure(msg(joinMsg.isEmpty ? errorMessage : joinMsg));
 
       case 500:
-        return ServerFailure(
-          messageError?['message'] ?? LocaleKeys.internalServerError.tr(),
-        );
+        return ServerFailure(msg(LocaleKeys.internalServerError.tr()));
 
       case 502:
-        return ServerFailure(
-          messageError?['message'] ?? LocaleKeys.badGateway.tr(),
-        );
+        return ServerFailure(msg(LocaleKeys.badGateway.tr()));
 
       default:
-        return ServerFailure(
-          messageError?['message'] ?? LocaleKeys.somethingWentWrong.tr(),
-        );
+        return ServerFailure(msg(LocaleKeys.somethingWentWrong.tr()));
     }
   }
 }

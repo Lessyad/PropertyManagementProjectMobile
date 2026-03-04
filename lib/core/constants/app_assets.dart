@@ -95,7 +95,7 @@ class AppAssets {
   /// images
   static const String baseImagesFolder = 'assets/images/';
 
-  static const String errorImage = '${baseImagesFolder}error_image.svg';
+  static const String errorImage = '${baseImagesFolder}remove_image.svg';
   static const String propertyEmptyImage = '${baseImagesFolder}property_empty_image.svg';
   static const String removeImage = '${baseImagesFolder}remove_image.svg';
 

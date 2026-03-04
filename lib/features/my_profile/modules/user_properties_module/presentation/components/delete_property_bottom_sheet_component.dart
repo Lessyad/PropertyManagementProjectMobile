@@ -1,7 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:enmaa/core/components/custom_snack_bar.dart';
 import 'package:enmaa/core/components/svg_image_component.dart';
 import 'package:enmaa/core/constants/app_assets.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
+import 'package:enmaa/core/translation/locale_keys.dart';
 import 'package:enmaa/core/services/convert_string_to_enum.dart';
 import 'package:enmaa/features/real_estates/domain/entities/base_property_entity.dart';
 import 'package:enmaa/features/real_estates/presentation/controller/real_estate_cubit.dart';
@@ -35,7 +37,7 @@ class DeletePropertyBottomSheetComponent extends StatelessWidget {
         ),
         SizedBox(height: context.scale(20)),
         Text(
-          'هل أنت متأكد من مسح العقار؟',
+          LocaleKeys.deletePropertyConfirm.tr(),
           style: getBoldStyle(
             color: ColorManager.blackColor,
             fontSize: FontSize.s18,
@@ -87,7 +89,7 @@ class DeletePropertyBottomSheetComponent extends StatelessWidget {
                         color: ColorManager.primaryColor,
                       )
                           : Text(
-                        'مسح العقار',
+                        LocaleKeys.deletePropertyButton.tr(),
                         style: getMediumStyle(
                           color: ColorManager.blackColor,
                           fontSize: FontSize.s14,
@@ -114,7 +116,7 @@ class DeletePropertyBottomSheetComponent extends StatelessWidget {
                 ),
                 buttonContent: Center(
                   child: Text(
-                    'الاحتفاظ',
+                    LocaleKeys.keepProperty.tr(),
                     style: getBoldStyle(
                       color: ColorManager.whiteColor,
                       fontSize: FontSize.s14,

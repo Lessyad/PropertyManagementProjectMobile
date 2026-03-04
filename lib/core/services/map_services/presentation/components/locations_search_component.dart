@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:enmaa/core/extensions/request_states_extension.dart';
 import 'package:enmaa/core/services/map_services/presentation/components/location_item_component.dart';
+import 'package:enmaa/core/translation/locale_keys.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -51,7 +53,7 @@ class _LocationsSearchComponentState extends State<LocationsSearchComponent> {
               return AppTextField(
                 height: 40,
                 controller: _searchController,
-                hintText: 'أدخل الموقع الذي تبحث عنه',
+                hintText: LocaleKeys.searchAddressHint.tr(),
                 backgroundColor: Colors.white,
                 borderRadius: 20,
                 padding: EdgeInsets.zero,

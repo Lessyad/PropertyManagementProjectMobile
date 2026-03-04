@@ -1,5 +1,7 @@
+  import 'package:easy_localization/easy_localization.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
 import 'package:enmaa/core/extensions/property_sub_types/apartment_type_extension.dart';
+import 'package:enmaa/core/translation/locale_keys.dart';
 import 'package:enmaa/features/add_new_real_estate/presentation/controller/add_new_real_estate_cubit.dart';
 import 'package:enmaa/features/real_estates/presentation/controller/filter_properties_controller/filter_property_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,13 +58,11 @@ class ApartmentFiltrationSubTypesComponent extends StatelessWidget {
   String _getApartmentLabel(ApartmentType type) {
     switch (type) {
       case ApartmentType.duplex:
-        return ' دوبلكس';
+        return LocaleKeys.duplex.tr();
       case ApartmentType.penthouse:
-        return ' بنتهاوس';
+        return LocaleKeys.penthouse.tr();
       case ApartmentType.studio:
-        return ' ستوديو';
+        return LocaleKeys.studio.tr();
     }
   }
-
-
 }

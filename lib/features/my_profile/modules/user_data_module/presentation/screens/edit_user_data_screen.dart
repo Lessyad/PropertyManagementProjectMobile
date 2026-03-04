@@ -245,6 +245,8 @@ class _EditUserDataScreenState extends State<EditUserDataScreen> {
                                         labelText: LocaleKeys.idExpirationDate.tr(),
                                         iconPath: AppAssets.cardIdentityIcon,
                                         selectedDate: _selectedIdExpirationDate,
+                                        minDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
+                                        maxDate: DateTime(2100, 12, 31),
                                         onDateSelected: (date) {
                                           setState(() {
                                             _selectedIdExpirationDate = date;

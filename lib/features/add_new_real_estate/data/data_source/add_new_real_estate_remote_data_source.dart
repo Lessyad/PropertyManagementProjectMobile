@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:enmaa/core/models/amenity_model.dart';
 import 'package:enmaa/core/services/dio_service.dart';
@@ -133,43 +134,41 @@ class AddNewRealEstateRemoteDataSource extends BaseAddNewRealEstateDataSource {
 
   @override
   Future<void> updateApartment(String apartmentId, Map<String, dynamic> updatedFields) async {
-    final formData = await _prepareFormData(updatedFields);
-    final response = await dioService.patch(
+    final jsonBody = _prepareJsonForUpdate(updatedFields);
+    await dioService.patch(
       url: '${ApiConstants.apartment}$apartmentId/',
-      data: formData,
-      // options: Options(contentType: 'multipart/form-data'),SSS
+      data: jsonEncode(jsonBody),
       options: Options(contentType: Headers.jsonContentType),
     );
   }
 
   @override
   Future<void> updateVilla(String villaId, Map<String, dynamic> updatedFields) async {
-    final formData = await _prepareFormData(updatedFields);
-    final response = await dioService.patch(
+    final jsonBody = _prepareJsonForUpdate(updatedFields);
+    await dioService.patch(
       url: '${ApiConstants.villa}$villaId/',
-      data: formData,
-      // options: Options(contentType: 'multipart/form-data'),
+      data: jsonEncode(jsonBody),
       options: Options(contentType: Headers.jsonContentType),
     );
   }
 
   @override
   Future<void> updateBuilding(String buildingId, Map<String, dynamic> updatedFields) async {
-    final formData = await _prepareFormData(updatedFields);
-    final response = await dioService.patch(
+    final jsonBody = _prepareJsonForUpdate(updatedFields);
+    await dioService.patch(
       url: '${ApiConstants.building}$buildingId/',
-      data: formData,
-      options: Options(contentType: 'multipart/form-data'),
+      data: jsonEncode(jsonBody),
+      options: Options(contentType: Headers.jsonContentType),
     );
   }
 
   @override
   Future<void> updateLand(String landId, Map<String, dynamic> updatedFields) async {
-    final formData = await _prepareFormData(updatedFields);
-    final response = await dioService.patch(
+    final jsonBody = _prepareJsonForUpdate(updatedFields);
+    await dioService.patch(
       url: '${ApiConstants.land}$landId/',
-      data: formData,
-      options: Options(contentType: 'multipart/form-data'),
+      data: jsonEncode(jsonBody),
+      options: Options(contentType: Headers.jsonContentType),
     );
   }
 
@@ -183,6 +182,62 @@ class AddNewRealEstateRemoteDataSource extends BaseAddNewRealEstateDataSource {
     );
     final List<dynamic> data = response.data['results'];
     return data.map((json) => AmenityModel.fromJson(json)).toList();
+  }
+
+  /// Builds the payload for PATCH [FromBody] ApartmentUpdateRequestDTO.
+  /// Backend expects a flat JSON body (no "request" wrapper), e.g.:
+  /// { "floor": 5, "rooms": 4, "bathrooms": 4, "is_furnitured": true, "replace_images": true, ... }
+  Map<String, dynamic> _prepareJsonForUpdate(Map<String, dynamic> updatedFields) {
+    final body = <String, dynamic>{};
+    bool? replaceImages;
+
+    for (var entry in updatedFields.entries) {
+      final key = entry.key;
+      final v = entry.value;
+
+      if (key == 'images' && v is List) {
+        // Files are not accepted in [FromBody] DTO; handled separately if needed.
+        continue;
+      }
+
+      if (key == 'replace_images') {
+        if (v is bool) {
+          replaceImages = v;
+        } else if (v is String) {
+          replaceImages = v.toLowerCase() == 'true';
+        }
+        continue;
+      }
+
+      if (v == null) continue;
+
+      if (key == 'floor' || key == 'rooms' || key == 'bathrooms' ||
+          key == 'number_of_floors' || key == 'number_of_apartments') {
+        final n = v is int ? v : (v is num ? v.toInt() : int.tryParse(v.toString()));
+        body[key] = n != null && n >= 1 ? n : 1;
+        continue;
+      }
+
+      if (v is num || v is bool || v is String) {
+        body[key] = v;
+      } else if (v is List) {
+        if (v.isEmpty) {
+          body[key] = v;
+        } else if (v.first is num || v.first is String) {
+          body[key] = v;
+        } else {
+          body[key] = v.map((e) => e is num ? e : e.toString()).toList();
+        }
+      } else {
+        body[key] = v.toString();
+      }
+    }
+
+    if (replaceImages != null) {
+      body['replace_images'] = replaceImages;
+    }
+
+    return body;
   }
 
   Future<FormData> _prepareFormData(Map<String, dynamic> updatedFields) async {

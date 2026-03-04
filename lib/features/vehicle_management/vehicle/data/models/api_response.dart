@@ -17,15 +17,29 @@ class ApiResponse<T> {
     required this.hasNextPage,
   });
 
+  static int _intFromJson(dynamic value, [int fallback = 0]) {
+    if (value == null) return fallback;
+    if (value is int) return value;
+    return int.tryParse(value.toString()) ?? fallback;
+  }
+
+  static bool _boolFromJson(dynamic value) {
+    if (value == null) return false;
+    if (value is bool) return value;
+    return value.toString().toLowerCase() == 'true';
+  }
+
   factory ApiResponse.fromJson(Map<String, dynamic> json, T Function(dynamic) fromJsonT) {
+    final rawItems = json['items'] ?? json['Items'];
+    final list = rawItems is List ? rawItems : <dynamic>[];
     return ApiResponse<T>(
-      items: (json['items'] as List).map((item) => fromJsonT(item)).toList(),
-      totalCount: json['totalCount'],
-      pageIndex: json['pageIndex'],
-      pageSize: json['pageSize'],
-      totalPages: json['totalPages'],
-      hasPreviousPage: json['hasPreviousPage'],
-      hasNextPage: json['hasNextPage'],
+      items: list.map((item) => fromJsonT(item)).toList(),
+      totalCount: _intFromJson(json['totalCount'] ?? json['TotalCount']),
+      pageIndex: _intFromJson(json['pageIndex'] ?? json['PageIndex'], 1),
+      pageSize: _intFromJson(json['pageSize'] ?? json['PageSize'], 10),
+      totalPages: _intFromJson(json['totalPages'] ?? json['TotalPages'], 1),
+      hasPreviousPage: _boolFromJson(json['hasPreviousPage'] ?? json['HasPreviousPage']),
+      hasNextPage: _boolFromJson(json['hasNextPage'] ?? json['HasNextPage']),
     );
   }
 }

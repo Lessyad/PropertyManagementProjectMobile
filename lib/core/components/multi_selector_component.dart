@@ -66,6 +66,7 @@ class MultiSelectTypeSelectorComponent<T> extends StatelessWidget {
         ),
       ),
       buttonContent: Row(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -77,9 +78,14 @@ class MultiSelectTypeSelectorComponent<T> extends StatelessWidget {
               color: isSelected ? ColorManager.primaryColor : null,
             ),
           if (getIcon != null) SizedBox(width: context.scale(6)),
-          Text(
-            getLabel(type),
-            style: currentTextStyle(isSelected),
+          Flexible(
+            child: Text(
+              getLabel(type),
+              style: currentTextStyle(isSelected),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+            ),
           ),
         ],
       ),

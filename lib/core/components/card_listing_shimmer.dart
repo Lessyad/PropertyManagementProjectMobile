@@ -24,53 +24,101 @@ class CardListingShimmer extends StatelessWidget {
         color: ColorManager.whiteColor,
         borderRadius: BorderRadius.circular(context.scale(12)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image shimmer
-          ClipRRect(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(context.scale(12)),
-              topRight: Radius.circular(context.scale(12)),
-            ),
-            child: Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Container(
-                width: width,
-                height: context.scale(isScreenWidth ? 172 : 128),
-                color: Colors.white,
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(context.scale(8)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Title shimmer
-                Shimmer.fromColors(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final totalHeight = constraints.maxHeight;
+          final imageHeight = totalHeight * 0.4;
+          final contentHeight = totalHeight - imageHeight;
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(context.scale(12)),
+                  topRight: Radius.circular(context.scale(12)),
+                ),
+                child: Shimmer.fromColors(
                   baseColor: Colors.grey[300]!,
                   highlightColor: Colors.grey[100]!,
-                  child: Container(
-                    width: width * 0.7,
-                    height: context.scale(14),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
+                  child: SizedBox(
+                    width: width,
+                    height: imageHeight,
+                    child: Container(color: Colors.white),
                   ),
                 ),
-                SizedBox(height: context.scale(8)),
-                _buildLocationRow(context),
-                SizedBox(height: context.scale(8)),
-                _buildDetailsRow(context),
-                SizedBox(height: context.scale(8)),
-                _buildPriceRow(context),
-              ],
-            ),
-          ),
-        ],
+              ),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, contentConstraints) {
+                    final availableHeight = contentConstraints.maxHeight;
+                    final padding = context.scale(8);
+                    final contentNeed = padding * 2 +
+                        context.scale(14) +
+                        context.scale(8) * 3 +
+                        context.scale(12) * 2 +
+                        context.scale(14);
+                    final fits = contentNeed <= availableHeight;
+
+                    return Padding(
+                      padding: EdgeInsets.all(padding),
+                      child: fits
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _buildTitleShimmer(context),
+                                SizedBox(height: context.scale(8)),
+                                _buildLocationRow(context),
+                                SizedBox(height: context.scale(8)),
+                                _buildDetailsRow(context),
+                                SizedBox(height: context.scale(8)),
+                                _buildPriceRow(context),
+                              ],
+                            )
+                          : FittedBox(
+                              alignment: Alignment.topLeft,
+                              fit: BoxFit.fitHeight,
+                              child: SizedBox(
+                                width: width - padding * 2,
+                                height: contentNeed - padding * 2,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _buildTitleShimmer(context),
+                                    SizedBox(height: context.scale(8)),
+                                    _buildLocationRow(context),
+                                    SizedBox(height: context.scale(8)),
+                                    _buildDetailsRow(context),
+                                    SizedBox(height: context.scale(8)),
+                                    _buildPriceRow(context),
+                                  ],
+                                ),
+                              ),
+                            ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildTitleShimmer(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        width: width * 0.7,
+        height: context.scale(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+        ),
       ),
     );
   }

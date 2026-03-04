@@ -72,8 +72,9 @@ class _DateSelectionFieldState extends State<DateSelectionField> {
                 SizedBox(height: context.scale(8)),
                 Expanded(
                   child: CustomDatePicker(
-                    showPreviousDates: true,
+                    showPreviousDates: widget.minDate == null,
                     selectedDate: widget.selectedDate,
+                    minDate: widget.minDate,
                     maxDate: widget.maxDate,
                     onSelectionChanged: (calendarSelectionDetails) {
                       if (calendarSelectionDetails.date != null) {

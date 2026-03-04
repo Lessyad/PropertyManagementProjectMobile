@@ -4,30 +4,7 @@ import '../../translation/locale_keys.dart';
 import '../../utils/enums.dart';
 
 extension ApartmentTypeExtension on ApartmentType {
-  /// Get the Arabic translation of the apartment type.
-  String get toArabic {
-    switch (this) {
-      case ApartmentType.studio:
-        return 'ستوديو';
-      case ApartmentType.duplex:
-        return 'دوبلكس';
-      case ApartmentType.penthouse:
-        return 'بنتهاوس';
-    }
-  }
-
-  /// Get the English translation of the apartment type.
-  String get toEnglish {
-    switch (this) {
-      case ApartmentType.studio:
-        return 'Studio';
-      case ApartmentType.duplex:
-        return 'Duplex';
-      case ApartmentType.penthouse:
-        return 'Penthouse';
-    }
-  }
-  /// Get the localized name of the apartment type.
+  /// Localized name of the apartment type (use this for UI labels).
   String get toName {
     switch (this) {
       case ApartmentType.studio:
@@ -38,6 +15,10 @@ extension ApartmentTypeExtension on ApartmentType {
         return LocaleKeys.penthouse.tr();
     }
   }
+
+  /// Backwards-compatible getters: delegate to localized name.
+  String get toArabic => toName;
+  String get toEnglish => toName;
 
   /// Check if the apartment type is a studio.
   bool get isStudio => this == ApartmentType.studio;

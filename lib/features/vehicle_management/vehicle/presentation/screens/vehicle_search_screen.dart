@@ -1103,7 +1103,6 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
           child: GestureDetector(
             onTap: onDateTap,
             child: Container(
-              height: 47,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
                 color: ColorManager.greyShade,
@@ -1123,7 +1122,9 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           dateLabel,
@@ -1131,6 +1132,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
                             fontSize: 10,
                             color: hasDateValue ? ColorManager.primaryColor : ColorManager.grey,
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                         Text(
                           selectedDate != null
@@ -1145,6 +1147,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
                                 ? FontWeight.w500
                                 : FontWeight.normal,
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -1178,7 +1181,9 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           timeLabel,
@@ -1186,6 +1191,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
                             fontSize: 10,
                             color: hasTimeValue ? ColorManager.primaryColor : ColorManager.grey,
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                         Text(
                           selectedTime != null
@@ -1200,6 +1206,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
                                 ? FontWeight.w500
                                 : FontWeight.normal,
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),

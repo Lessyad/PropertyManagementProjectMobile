@@ -826,6 +826,10 @@ abstract class LocaleKeys {
   static const String loadingPropertyData = 'loadingPropertyData';
   static const String editProperty = 'editProperty';
   static const String addProperty = 'addProperty';
+  static const String deletePropertyConfirm = 'deletePropertyConfirm';
+  static const String deletePropertyButton = 'deletePropertyButton';
+  static const String keepProperty = 'keepProperty';
+  static const String propertyErrorCannotDeleteAvailable = 'propertyErrorCannotDeleteAvailable';
   static const String basicInformation = 'basicInformation';
   static const String priceAndDescription = 'priceAndDescription';
   static const String locationAndFeatures = 'locationAndFeatures';
@@ -1041,5 +1045,16 @@ abstract class LocaleKeys {
   static const String successPropertyAdded = 'success_property_added';
   static const String successPropertyUpdated = 'success_property_updated';
   static const String successOperationCompleted = 'success_operation_completed';
+
+  // Empty states & appointment card
+  static const String emptyScreenNoProperties = 'emptyScreenNoProperties';
+  static const String emptyScreenAddPropertyToStart = 'emptyScreenAddPropertyToStart';
+  static const String addNewPropertyButton = 'addNewPropertyButton';
+  static const String emptyScreenNoAppointments = 'emptyScreenNoAppointments';
+  static const String emptyScreenBookAppointmentsToStart = 'emptyScreenBookAppointmentsToStart';
+  static const String cancelPreview = 'cancelPreview';
+  static const String previewCompletedOnDate = 'previewCompletedOnDate';
+  static const String previewCancelled = 'previewCancelled';
+  static const String filterPriceSection = 'filter_price_section';
 
 }

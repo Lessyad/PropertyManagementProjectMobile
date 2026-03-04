@@ -65,12 +65,10 @@ class UserPropertiesRemoteDataSource extends BaseUserPropertiesRemoteData {
 
 
   @override
-  Future<void> deleteProperty(String propertyID, PropertyType propertyType) async{
-     await dioService.delete(
-      url: '${ApiConstants.baseUrl}${propertyType.toEnglish}s/$propertyID/',
-      options: Options(contentType: 'multipart/form-data'),
+  Future<void> deleteProperty(String propertyID, PropertyType propertyType) async {
+    await dioService.delete(
+      url: '${ApiConstants.baseUrl}${propertyType.toApiPathSegment}s/$propertyID/',
     );
-
   }
 
 

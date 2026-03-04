@@ -872,15 +872,15 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildSectionTitle('نوع الوقود', context),
+                  _buildSectionTitle(tr(LocaleKeys.filterFuelType), context),
                   SizedBox(height: context.scale(12)),
                   _buildFuelTypeSelector(context),
                   SizedBox(height: context.scale(20)),
-                  _buildSectionTitle('ناقل الحركة', context),
+                  _buildSectionTitle(tr(LocaleKeys.filterTransmission), context),
                   SizedBox(height: context.scale(12)),
                   _buildTransmissionSelector(context),
                   SizedBox(height: context.scale(20)),
-                  _buildSectionTitle('السعر (MRU)', context),
+                  _buildSectionTitle(tr(LocaleKeys.filterPriceSection), context),
                   SizedBox(height: context.scale(12)),
                   _buildPriceRangeSlider(context),
                   SizedBox(height: context.scale(8)),
@@ -1012,7 +1012,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      'الغاء الكل',
+                      tr(LocaleKeys.filterClearAll),
                       style: TextStyle(
                         color: ColorManager.blackColor,
                         fontSize: context.scale(14),
@@ -1046,7 +1046,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      'عرض النتائج',
+                      tr(LocaleKeys.filterShowResults),
                       style: TextStyle(
                         fontSize: context.scale(14),
                       ),

@@ -3,10 +3,11 @@ import 'package:enmaa/core/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
 import 'package:get/get.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../../configuration/managers/color_manager.dart';
 import '../../../../../configuration/managers/font_manager.dart';
 import '../../../../../configuration/managers/style_manager.dart';
+import '../../../../../core/translation/locale_keys.dart';
 import '../components/vehicle_details_screen/vehicle_details_header.dart';
 import '../components/vehicle_images_slider.dart';
 import '../controller/vehicle_details_controller.dart';
@@ -86,7 +87,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
 
                           // Spécifications techniques
                           Text(
-                            'Spécifications Techniques',
+                            tr(LocaleKeys.technicalSpecifications),
                             style: getBoldStyle(
                               color: ColorManager.blackColor,
                               fontSize: FontSize.s12,
