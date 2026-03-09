@@ -51,7 +51,8 @@ class CardListingShimmer extends StatelessWidget {
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, contentConstraints) {
-                    final availableHeight = contentConstraints.maxHeight;
+                    // Subtract a tiny epsilon to avoid fractional pixel overflow in tight layouts.
+                    final availableHeight = contentConstraints.maxHeight - 0.5;
                     final padding = context.scale(8);
                     final contentNeed = padding * 2 +
                         context.scale(14) +

@@ -15,6 +15,7 @@ class CodegenLoader extends AssetLoader{
   }
 
   static const Map<String,dynamic> _ar = {
+    "confirm_button" : "أضف",
   "myAppointments" :"مواعيدي",
   "vehiclesSearchscreen": "المركبات" ,
   "somethingWentWrong": "حدث خطأ ما",
@@ -73,6 +74,10 @@ class CodegenLoader extends AssetLoader{
   "french": "الفرنسية",
   "contactUs": "تواصل معانا",
   "errorOpeningLink": "حدث خطأ أثناء فتح الرابط",
+  "no_results_found": "لا توجد نتائج",
+  "no_vehicles_match": "لم يتم العثور على مركبات مطابقة للمعايير المحددة.",
+  "no_vehicles_available": "لا توجد مركبات متاحة حالياً.",
+  "no_vehicles_match_search": "حاول تعديل كلمات البحث أو الفلاتر للحصول على نتائج أفضل.",
   "onBoardingTitle1": "مرحبًا بك في تطبيقنا",
   "onBoardingDesc1": "استمتع بأفضل تجربة تسوق للنباتات الداخلية والخارجية.",
   "onBoardingDesc2": "لدينا مجموعة واسعة من النباتات المناسبة لكل منزل وحديقة.",
@@ -692,6 +697,7 @@ class CodegenLoader extends AssetLoader{
   // "success_payment_completed": "تم إتمام الدفع بنجاح"
 };
 static const Map<String,dynamic> _en = {
+  "confirm_button" : "add",
   "myAppointments" :"my Appointments",
   "vehiclesSearchscreen": "Vehicles" ,
   "somethingWentWrong": "Something went wrong",
@@ -750,6 +756,10 @@ static const Map<String,dynamic> _en = {
   "french": "French",
   "contactUs": "Contact Us",
   "errorOpeningLink": "An error occurred while opening the link",
+  "no_results_found": "No results found",
+  "no_vehicles_match": "No vehicles match the selected filters.",
+  "no_vehicles_available": "No vehicles are currently available.",
+  "no_vehicles_match_search": "Try adjusting your search terms or filters to see more vehicles.",
   "onBoardingTitle1": "Welcome to our app",
   "onBoardingDesc1": "Enjoy the best shopping experience for indoor and outdoor plants.",
   "onBoardingDesc2": "We have a wide range of plants suitable for every home and garden.",
@@ -1373,6 +1383,7 @@ static const Map<String,dynamic> _en = {
   // "success_payment_completed": "Payment completed successfully"
 };
 static const Map<String,dynamic> _fr = {
+  "confirm_button" : "Ajouter",
   "myAppointments" :"Mes rendez-vous",
   "vehiclesSearchscreen": "Véhicules" ,
   "somethingWentWrong": "Quelque chose s'est mal passé",
@@ -1431,6 +1442,10 @@ static const Map<String,dynamic> _fr = {
   "french": "Français",
   "contactUs": "Contactez-nous",
   "errorOpeningLink": "Une erreur s'est produite lors de l'ouverture du lien",
+  "no_results_found": "Aucun résultat trouvé",
+  "no_vehicles_match": "Aucun véhicule ne correspond aux filtres sélectionnés.",
+  "no_vehicles_available": "Aucun véhicule n'est disponible pour le moment.",
+  "no_vehicles_match_search": "Essayez d'ajuster vos termes de recherche ou vos filtres pour voir plus de véhicules.",
   "onBoardingTitle1": "Bienvenue dans notre application",
   "onBoardingDesc1": "Profitez de la meilleure expérience d'achat pour les plantes d'intérieur et d'extérieur.",
   "onBoardingDesc2": "Nous avons une large gamme de plantes adaptées à chaque maison et jardin.",

@@ -23,6 +23,13 @@ class UserDataModel extends UserDataEntity {
     required String dateJoined,
   }) ;
 
+  static String? _parseDateOfBirth(dynamic value) {
+    if (value == null) return null;
+    final s = value.toString().trim();
+    if (s.isEmpty || s == '0') return null;
+    return s;
+  }
+
   factory UserDataModel.fromJson(Map<String, dynamic> json) {
     return UserDataModel(
       phoneNumber: json['phone_number'],
@@ -38,7 +45,7 @@ class UserDataModel extends UserDataEntity {
       availableBalance: json['available_balance']?.toString() ?? '0', // Convert to string
     frozenBalance: json['frozen_balance']?.toString() ?? '0',
       idNumber: json['id_number'],
-      dateOfBirth: json['date_of_birth']?.toString() ?? '0',
+      dateOfBirth: _parseDateOfBirth(json['date_of_birth']),
       idExpirationDate: json['id_expiry_date']?.toString() ?? '0',
       idImage: json['id_image'],
       dateJoined: json['date_joined'],

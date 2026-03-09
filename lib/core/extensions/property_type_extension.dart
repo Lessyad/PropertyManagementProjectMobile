@@ -64,13 +64,13 @@ extension PropertyTypeExtension on PropertyType {
   int get toJsonId {
     switch (this) {
       case PropertyType.apartment:
-        return 1;
+        return 8;
       case PropertyType.villa:
-        return 3;
+        return 1;
       case PropertyType.building:
-        return 2;
-      case PropertyType.land:
         return 4;
+      case PropertyType.land:
+        return 3;
     }
   }
 }

@@ -30,14 +30,15 @@ extension ApartmentTypeExtension on ApartmentType {
   bool get isPenthouse => this == ApartmentType.penthouse;
 
   /// Convert the apartment type to an ID to be used in the backend.
+  /// Must match PropertySubTypes table: 14=studio, 1=duplex, 18=penthouse (benth house).
   int get toId {
     switch (this) {
       case ApartmentType.studio:
-        return 3;
+        return 14;
       case ApartmentType.duplex:
         return 1;
       case ApartmentType.penthouse:
-        return 2;
+        return 18;
     }
   }
 

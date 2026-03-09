@@ -411,7 +411,8 @@ class RentalSummaryScreen extends StatelessWidget {
           _buildCostRow(
             tr(LocaleKeys.baseRental),
             _formatBaseRentalDetails(rentalDurationInfo),
-            '${basePrice.toStringAsFixed(0)} MRU',
+            // '${basePrice.toStringAsFixed(0)} MRU',
+            '${basePrice} MRU',
           ),
 
           // Détail des options supplémentaires sélectionnées
@@ -420,7 +421,7 @@ class RentalSummaryScreen extends StatelessWidget {
           _buildCostRow(
             tr(LocaleKeys.total),
             '',
-            '${totalPrice.toStringAsFixed(0)} MRU',
+            '${totalPrice} MRU',
             isTotal: true,
           ),
         ],

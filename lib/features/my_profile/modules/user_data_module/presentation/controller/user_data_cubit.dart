@@ -25,10 +25,15 @@ class UserDataCubit extends Cubit<UserDataState> {
     final result = await _getUserDataUseCase();
     result.fold(
           (error) {
-        emit(state.copyWith(
-          getUserDataState: RequestState.error,
-          getUserDataErrorMessage: error.toString(),
-        ));
+        // If API fails (e.g. offline), fall back to local data so user still sees saved profile.
+        if (SharedPreferencesService().hasKey(LocalKeys.userPhone)) {
+          getLocalUserData();
+        } else {
+          emit(state.copyWith(
+            getUserDataState: RequestState.error,
+            getUserDataErrorMessage: error.toString(),
+          ));
+        }
       },
           (userDataEntity) {
         _saveUserData(userDataEntity);
@@ -52,6 +57,11 @@ class UserDataCubit extends Cubit<UserDataState> {
       sharedPrefs.storeValue(LocalKeys.userState, userDataEntity.state!.name);
       sharedPrefs.storeValue(
           LocalKeys.userStateID, userDataEntity.state!.id.toString());
+    }
+    if (userDataEntity.country != null) {
+      sharedPrefs.storeValue(LocalKeys.userCountry, userDataEntity.country!.name);
+      sharedPrefs.storeValue(
+          LocalKeys.userCountryID, userDataEntity.country!.id.toString());
     }
     sharedPrefs.storeValue(LocalKeys.userName, userDataEntity.userName);
     sharedPrefs.storeValue(LocalKeys.userPhone, userDataEntity.phoneNumber);

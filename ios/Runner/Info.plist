@@ -21,15 +21,15 @@
     <key>NSCameraUsageDescription</key>
     <string>This app requires access to your camera so you can take photos of properties or vehicles directly within the app.</string>
 
-    <!-- Location Permissions -->
+    <!-- Location Permissions (Guideline 5.1.1: clear description + specific example) -->
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Enma Mobile uses your location to display nearby properties and available vehicles on the map, and to help you find rental options close to your current area.</string>
+    <string>Enma Mobile uses your location to show properties and vehicles near you on the map and to sort search results by distance. For example, when you search for rentals, we display listings ordered by how close they are to your current position.</string>
 
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>Enma Mobile may use your location in the background to update nearby property and vehicle listings and improve your search experience.</string>
+    <string>Enma Mobile may use your location in the background to keep nearby property and vehicle listings up to date. For example, when you reopen the app after moving to a new area, we can show you relevant listings without you having to search again.</string>
 
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Enma Mobile uses your location to show nearby properties and vehicles on the map, improve search results, and optionally update listings when the app is in the background.</string>
+    <string>Enma Mobile uses your location to show properties and vehicles near you on the map and to sort search results by distance. For example, when you search for rentals, we display listings ordered by how close they are to your current position. With "Always" permission, we can also update nearby listings when the app is in the background.</string>
 
     <key>LSApplicationQueriesSchemes</key>
     <array>

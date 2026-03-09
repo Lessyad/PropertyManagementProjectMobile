@@ -43,13 +43,9 @@ class _EditUserDataScreenState extends State<EditUserDataScreen> {
     _phoneNumberController = TextEditingController();
     _idNumberController = TextEditingController();
 
+    // Always fetch from API first so we get latest from DB (e.g. date of birth, city).
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final sharedPrefs = SharedPreferencesService();
-      if (!sharedPrefs.hasKey(LocalKeys.userPhone)) {
-        context.read<UserDataCubit>().getRemoteUserData();
-      } else {
-        context.read<UserDataCubit>().getLocalUserData();
-      }
+      context.read<UserDataCubit>().getRemoteUserData();
     });
   }
 
@@ -297,9 +293,11 @@ class _EditUserDataScreenState extends State<EditUserDataScreen> {
   }
 
   DateTime? _parseDate(String? dateString) {
-    if (dateString == null || dateString.isEmpty) return null;
+    if (dateString == null || dateString.isEmpty || dateString == '0') return null;
     try {
-      final parts = dateString.split('-');
+      // Handle ISO format (e.g. "1990-01-15" or "1990-01-15T00:00:00.000Z")
+      final dateOnly = dateString.contains('T') ? dateString.split('T').first : dateString;
+      final parts = dateOnly.split('-');
       if (parts.length != 3) return null;
       final year = int.parse(parts[0]);
       final month = int.parse(parts[1]);

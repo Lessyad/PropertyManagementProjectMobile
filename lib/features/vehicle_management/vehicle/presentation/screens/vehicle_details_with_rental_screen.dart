@@ -425,7 +425,8 @@ class _VehicleDetailsWithRentalScreenState extends State<VehicleDetailsWithRenta
                     ),
                   ),
                   Text(
-                    '${_calculateEstimatedPrice(vehicle)}MRU',
+                    // '${_calculateEstimatedPrice(vehicle)}MRU',
+                    '${vehicle.dailyPrice}MRU',
                     style: getBoldStyle(
                       color: ColorManager.primaryColor,
                       fontSize: FontSize.s16,

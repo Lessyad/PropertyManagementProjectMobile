@@ -42,11 +42,16 @@ class MyPropertiesCardActions extends StatelessWidget {
                   color: ColorManager.blackColor,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  LocaleKeys.editProperty.tr(),
-                  style: getBoldStyle(
+                Flexible(
+                  child: Text(
+                    LocaleKeys.editProperty.tr(),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: getBoldStyle(
                       color: ColorManager.blackColor,
-                      fontSize: FontSize.s14),
+                      fontSize: FontSize.s14,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -62,11 +67,16 @@ class MyPropertiesCardActions extends StatelessWidget {
                   color: ColorManager.redColor,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  LocaleKeys.deletePropertyButton.tr(),
-                  style: getBoldStyle(
+                Flexible(
+                  child: Text(
+                    LocaleKeys.deletePropertyButton.tr(),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: getBoldStyle(
                       color: ColorManager.redColor,
-                      fontSize: FontSize.s14),
+                      fontSize: FontSize.s14,
+                    ),
+                  ),
                 ),
               ],
             ),

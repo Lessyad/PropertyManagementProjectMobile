@@ -134,6 +134,17 @@ class AddNewRealEstateRemoteDataSource extends BaseAddNewRealEstateDataSource {
 
   @override
   Future<void> updateApartment(String apartmentId, Map<String, dynamic> updatedFields) async {
+    if (updatedFields.containsKey('images') && updatedFields['images'] is List) {
+      final images = updatedFields['images'] as List<PropertyImage>;
+      if (images.isNotEmpty) {
+        final replaceFormData = await _buildReplaceImagesFormData(images);
+        await dioService.post(
+          url: '${ApiConstants.properties}$apartmentId/images/replace',
+          data: replaceFormData,
+          options: Options(contentType: 'multipart/form-data'),
+        );
+      }
+    }
     final jsonBody = _prepareJsonForUpdate(updatedFields);
     await dioService.patch(
       url: '${ApiConstants.apartment}$apartmentId/',
@@ -144,6 +155,17 @@ class AddNewRealEstateRemoteDataSource extends BaseAddNewRealEstateDataSource {
 
   @override
   Future<void> updateVilla(String villaId, Map<String, dynamic> updatedFields) async {
+    if (updatedFields.containsKey('images') && updatedFields['images'] is List) {
+      final images = updatedFields['images'] as List<PropertyImage>;
+      if (images.isNotEmpty) {
+        final replaceFormData = await _buildReplaceImagesFormData(images);
+        await dioService.post(
+          url: '${ApiConstants.properties}$villaId/images/replace',
+          data: replaceFormData,
+          options: Options(contentType: 'multipart/form-data'),
+        );
+      }
+    }
     final jsonBody = _prepareJsonForUpdate(updatedFields);
     await dioService.patch(
       url: '${ApiConstants.villa}$villaId/',
@@ -154,6 +176,17 @@ class AddNewRealEstateRemoteDataSource extends BaseAddNewRealEstateDataSource {
 
   @override
   Future<void> updateBuilding(String buildingId, Map<String, dynamic> updatedFields) async {
+    if (updatedFields.containsKey('images') && updatedFields['images'] is List) {
+      final images = updatedFields['images'] as List<PropertyImage>;
+      if (images.isNotEmpty) {
+        final replaceFormData = await _buildReplaceImagesFormData(images);
+        await dioService.post(
+          url: '${ApiConstants.properties}$buildingId/images/replace',
+          data: replaceFormData,
+          options: Options(contentType: 'multipart/form-data'),
+        );
+      }
+    }
     final jsonBody = _prepareJsonForUpdate(updatedFields);
     await dioService.patch(
       url: '${ApiConstants.building}$buildingId/',
@@ -164,6 +197,17 @@ class AddNewRealEstateRemoteDataSource extends BaseAddNewRealEstateDataSource {
 
   @override
   Future<void> updateLand(String landId, Map<String, dynamic> updatedFields) async {
+    if (updatedFields.containsKey('images') && updatedFields['images'] is List) {
+      final images = updatedFields['images'] as List<PropertyImage>;
+      if (images.isNotEmpty) {
+        final replaceFormData = await _buildReplaceImagesFormData(images);
+        await dioService.post(
+          url: '${ApiConstants.properties}$landId/images/replace',
+          data: replaceFormData,
+          options: Options(contentType: 'multipart/form-data'),
+        );
+      }
+    }
     final jsonBody = _prepareJsonForUpdate(updatedFields);
     await dioService.patch(
       url: '${ApiConstants.land}$landId/',
@@ -177,13 +221,37 @@ class AddNewRealEstateRemoteDataSource extends BaseAddNewRealEstateDataSource {
     final response = await dioService.get(
       url: ApiConstants.amenities,
       queryParameters: {
-        'property_type_ids': propertyType,
+        // 'property_type_ids': propertyType,
+        'propertyTypeId': propertyType,
+        'pageSize': 100,
+
       },
+
     );
-    final List<dynamic> data = response.data['results'];
-    return data.map((json) => AmenityModel.fromJson(json)).toList();
+    // final List<dynamic> data = response.data['results'];
+    // return data.map((json) => AmenityModel.fromJson(json)).toList();
+
+    final dynamic body = response.data;
+    final List<dynamic> list = body is List
+        ? body
+        : (body is Map && body['results'] != null)
+        ? body['results'] as List<dynamic>
+        : <dynamic>[];
+    return list.map((json) => AmenityModel.fromJson(json as Map<String, dynamic>)).toList();
   }
 
+  Future<FormData> _buildReplaceImagesFormData(List<PropertyImage> images) async {
+    final formData = FormData();
+    for (final image in images) {
+      final filePath = image.filePath;
+      final multipartFile = await MultipartFile.fromFile(
+        filePath,
+        filename: filePath.split('/').last,
+      );
+      formData.files.add(MapEntry('Images', multipartFile));
+    }
+    return formData;
+  }
   /// Builds the payload for PATCH [FromBody] ApartmentUpdateRequestDTO.
   /// Backend expects a flat JSON body (no "request" wrapper), e.g.:
   /// { "floor": 5, "rooms": 4, "bathrooms": 4, "is_furnitured": true, "replace_images": true, ... }

@@ -246,6 +246,55 @@ class SelectLocationServiceCubit extends Cubit<SelectLocationServiceState> {
     ));
   }
 
+  /// Restores country, state and city from saved IDs (e.g. from SharedPreferences).
+  /// Call after getCountries() so that countries are loaded. Loads states/cities as needed.
+  Future<void> restoreUserLocation({
+    required String countryId,
+    required String stateId,
+    required String cityId,
+  }) async {
+    await getCountries();
+    if (state.countries.isEmpty) return;
+    CountryEntity country;
+    try {
+      country = state.countries.firstWhere((c) => c.id == countryId);
+    } catch (_) {
+      return;
+    }
+    emit(state.copyWith(
+      selectedCountry: country,
+      selectedState: null,
+      selectedCity: null,
+      states: [],
+      cities: [],
+      clearSelectedState: true,
+      clearSelectedCity: true,
+    ));
+    await getStates(countryId);
+    if (state.states.isEmpty) return;
+    StateEntity stateEntity;
+    try {
+      stateEntity = state.states.firstWhere((s) => s.id == stateId);
+    } catch (_) {
+      return;
+    }
+    emit(state.copyWith(
+      selectedState: stateEntity,
+      selectedCity: null,
+      cities: [],
+      clearSelectedCity: true,
+    ));
+    await getCities(stateId);
+    if (state.cities.isEmpty) return;
+    CityEntity city;
+    try {
+      city = state.cities.firstWhere((c) => c.id == cityId);
+    } catch (_) {
+      return;
+    }
+    emit(state.copyWith(selectedCity: city));
+  }
+
   @override
   Future<void> close() {
     _lastState = state;
