@@ -16,6 +16,7 @@ class PreviewPropertyState extends Equatable {
     this.inspectionAmount = '',
 
     this.currentPaymentMethod = 'PayPal',
+    this.clientBankilyPhoneNumber = '',
     this.bankilyPassCode = '',
     this.addNewPreviewTimeErrorMessage = '',
   });
@@ -38,6 +39,7 @@ class PreviewPropertyState extends Equatable {
 
   final String currentPaymentMethod ;
   final String bankilyPassCode ;
+  final String clientBankilyPhoneNumber ;
 
   final RequestState addNewPreviewTimeState ;
   final String addNewPreviewTimeErrorMessage ;
@@ -58,7 +60,7 @@ class PreviewPropertyState extends Equatable {
 
     String? currentPaymentMethod,
     String? bankilyPassCode,
-
+    String? clientBankilyPhoneNumber,
     RequestState? addNewPreviewTimeState,
     String? addNewPreviewTimeErrorMessage,
   }) {
@@ -78,7 +80,7 @@ class PreviewPropertyState extends Equatable {
       currentPaymentMethod: currentPaymentMethod ?? this.currentPaymentMethod,
       bankilyPassCode: bankilyPassCode ?? this.bankilyPassCode,
       addNewPreviewTimeErrorMessage: addNewPreviewTimeErrorMessage ?? this.addNewPreviewTimeErrorMessage,
-
+      clientBankilyPhoneNumber: clientBankilyPhoneNumber ?? this.clientBankilyPhoneNumber,
       addNewPreviewTimeState: addNewPreviewTimeState ?? this.addNewPreviewTimeState,
     );
   }
@@ -94,6 +96,7 @@ class PreviewPropertyState extends Equatable {
     currentAvailableHours,
     currentPaymentMethod,
     bankilyPassCode,
+    clientBankilyPhoneNumber,
     getInspectionAmountState,
     getInspectionAmountErrorMessage,
     inspectionAmount,

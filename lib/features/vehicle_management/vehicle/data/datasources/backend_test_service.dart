@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class BackendTestService {
-  static const String baseUrl = 'http://192.168.100.13:5000/api';
+  static const String baseUrl = 'http://192.168.100.173:5000/api';
   
   /// Tester la connectivité du backend
   static Future<bool> testConnection() async {

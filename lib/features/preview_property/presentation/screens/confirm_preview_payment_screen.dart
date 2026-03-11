@@ -140,12 +140,11 @@ class _ConfirmPreviewPaymentScreenState extends material.State<ConfirmPreviewPay
                         getLabel: (type) => type,
                       ),
 
-                      /// Champ Bankily si sélectionné
+                      /// Champs Bankily si sélectionné (numéro + code secret)
                       if (state.currentPaymentMethod == LocaleKeys.bankily.tr()) ...[
                         material.SizedBox(height: verticalSpacing),
                         material.Container(
                           width: double.infinity,
-                          height: containerHeight,
                           decoration: material.BoxDecoration(
                             color: ColorManager.whiteColor,
                             borderRadius: material.BorderRadius.circular(12),
@@ -154,30 +153,94 @@ class _ConfirmPreviewPaymentScreenState extends material.State<ConfirmPreviewPay
                             horizontal: horizontalPadding,
                             vertical: screenHeight * 0.01,
                           ),
-                          child: material.Row(
+                          child: material.Column(
+                            crossAxisAlignment: material.CrossAxisAlignment.start,
                             children: [
-                              SvgImageComponent(iconPath: AppAssets.lockIcon),
-                              material.SizedBox(width: screenWidth * 0.02),
-                              material.Expanded(
-                                child: material.TextField(
-                                  onChanged: (value) {
-                                    context.read<PreviewPropertyCubit>().setBankilyPassCode(value);
-                                  },
-                                  decoration: material.InputDecoration(
-                                    hintText: LocaleKeys.passCode.tr(),
-                                    border: material.InputBorder.none,
-                                    hintStyle: getRegularStyle(
-                                      color: ColorManager.grey,
-                                      fontSize: (screenWidth * 0.04).clamp(12, 18),
+                              material.Text(
+                                'Numéro de téléphone Bankily',
+                                style: getRegularStyle(
+                                  color: ColorManager.grey,
+                                  fontSize: (screenWidth * 0.035).clamp(11, 16),
+                                ),
+                              ),
+                              material.SizedBox(height: screenHeight * 0.006),
+                              material.Row(
+                                children: [
+                                  SvgImageComponent(iconPath: AppAssets.phoneIcon),
+                                  material.SizedBox(width: screenWidth * 0.02),
+                                  material.Expanded(
+                                    child: material.TextField(
+                                      onChanged: (value) {
+                                        context.read<PreviewPropertyCubit>().setClientBankilyPhoneNumber(value.trim());
+                                      },
+                                      decoration: material.InputDecoration(
+                                        hintText: 'Entrez votre numéro Bankily (8-10 chiffres)',
+                                        border: material.InputBorder.none,
+                                        hintStyle: getRegularStyle(
+                                          color: ColorManager.grey,
+                                          fontSize: (screenWidth * 0.04).clamp(12, 18),
+                                        ),
+                                      ),
+                                      style: getRegularStyle(
+                                        color: ColorManager.blackColor,
+                                        fontSize: (screenWidth * 0.04).clamp(12, 18),
+                                      ),
+                                      keyboardType: material.TextInputType.phone,
                                     ),
                                   ),
-                                  style: getRegularStyle(
-                                    color: ColorManager.blackColor,
-                                    fontSize: (screenWidth * 0.04).clamp(12, 18),
-                                  ),
-                                  obscureText: true,
-                                  keyboardType: material.TextInputType.number,
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        material.SizedBox(height: verticalSpacing),
+                        material.Container(
+                          width: double.infinity,
+                          decoration: material.BoxDecoration(
+                            color: ColorManager.whiteColor,
+                            borderRadius: material.BorderRadius.circular(12),
+                          ),
+                          padding: material.EdgeInsets.symmetric(
+                            horizontal: horizontalPadding,
+                            vertical: screenHeight * 0.01,
+                          ),
+                          child: material.Column(
+                            crossAxisAlignment: material.CrossAxisAlignment.start,
+                            children: [
+                              material.Text(
+                                LocaleKeys.passCode.tr(),
+                                style: getRegularStyle(
+                                  color: ColorManager.grey,
+                                  fontSize: (screenWidth * 0.035).clamp(11, 16),
                                 ),
+                              ),
+                              material.SizedBox(height: screenHeight * 0.006),
+                              material.Row(
+                                children: [
+                                  SvgImageComponent(iconPath: AppAssets.lockIcon),
+                                  material.SizedBox(width: screenWidth * 0.02),
+                                  material.Expanded(
+                                    child: material.TextField(
+                                      onChanged: (value) {
+                                        context.read<PreviewPropertyCubit>().setBankilyPassCode(value);
+                                      },
+                                      decoration: material.InputDecoration(
+                                        hintText: LocaleKeys.passCode.tr(),
+                                        border: material.InputBorder.none,
+                                        hintStyle: getRegularStyle(
+                                          color: ColorManager.grey,
+                                          fontSize: (screenWidth * 0.04).clamp(12, 18),
+                                        ),
+                                      ),
+                                      style: getRegularStyle(
+                                        color: ColorManager.blackColor,
+                                        fontSize: (screenWidth * 0.04).clamp(12, 18),
+                                      ),
+                                      obscureText: true,
+                                      keyboardType: material.TextInputType.number,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

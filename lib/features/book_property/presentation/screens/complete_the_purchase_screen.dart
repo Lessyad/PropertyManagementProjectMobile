@@ -108,6 +108,23 @@ class CompleteThePurchaseScreen extends StatelessWidget {
                 if (state.currentPaymentMethod == LocaleKeys.bankily.tr()) ...[
                   SizedBox(height: context.scale(12)),
                   GenericFormField(
+                    label: 'Numéro de téléphone Bankily',
+                    hintText: 'Entrez votre numéro Bankily (8-10 chiffres)',
+                    keyboardType: TextInputType.phone,
+                    iconPath: AppAssets.phoneIcon,
+                    controller: context.read<BookPropertyCubit>().clientBankilyPhoneNumberController,
+                    onChanged: (value) {
+                      context.read<BookPropertyCubit>().setClientBankilyPhoneNumber(value.trim());
+                    },
+                    validator: (value){
+                      if ((value ?? '').trim().isEmpty) {
+                        return LocaleKeys.thisFieldIsRequired.tr();
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: context.scale(12)),
+                  GenericFormField(
                     label: LocaleKeys.passCode.tr(),
                     hintText: LocaleKeys.passCode.tr(),
                     keyboardType: TextInputType.number,

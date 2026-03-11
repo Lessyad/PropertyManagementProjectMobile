@@ -86,15 +86,16 @@ class BottomButtons extends material.StatelessWidget {
                 final bool canConfirm =
                     state.selectedDate != null && state.selectedTime != null;
                 final bool canSendRequest = state.getInspectionAmountState.isLoaded;
-                
+
                 // Vérifier si une méthode de paiement est sélectionnée
                 final bool isPaymentMethodSelected = state.currentPaymentMethod.isNotEmpty;
-                
-                // Vérifier si Bankily est sélectionné et si le passcode est saisi
+
+                // Vérifier si Bankily est sélectionné : numéro ET code secret requis
                 final bool isBankilySelected = state.currentPaymentMethod == LocaleKeys.bankily.tr();
+                final bool hasBankilyPhone = state.clientBankilyPhoneNumber.trim().isNotEmpty;
                 final bool hasBankilyPasscode = state.bankilyPassCode.isNotEmpty;
-                final bool isBankilyValid = !isBankilySelected || hasBankilyPasscode;
-                
+                final bool isBankilyValid = !isBankilySelected || (hasBankilyPhone && hasBankilyPasscode);
+
                 // Le bouton est activé seulement si une méthode est sélectionnée ET que Bankily est valide
                 final bool isButtonEnabled = isPaymentMethodSelected && isBankilyValid;
 
@@ -128,7 +129,7 @@ class BottomButtons extends material.StatelessWidget {
                     if (!isButtonEnabled) {
                       return; // Ne rien faire si aucune méthode n'est sélectionnée ou si Bankily est invalide
                     }
-                    
+
                     if (updateAppointment && canConfirm) {
                       context.read<UserAppointmentsCubit>().updateAppointment(
                         newDate: DateFormat('yyyy-MM-dd', 'en')
@@ -158,9 +159,9 @@ class BottomButtons extends material.StatelessWidget {
                           context
                               .read<PreviewPropertyCubit>()
                               .processPayPalPayment(
-                                propertyId: propertyId,
-                                authToken: authToken,
-                              );
+                            propertyId: propertyId,
+                            authToken: authToken,
+                          );
                         } else {
                           // Pour les autres méthodes de paiement (wallet, bankily)
                           String paymentMethod;
@@ -171,7 +172,7 @@ class BottomButtons extends material.StatelessWidget {
                           } else {
                             paymentMethod = 'wallet'; // default
                           }
-                          
+
                           AddNewPreviewRequestModel request =
                           AddNewPreviewRequestModel(
                             propertyId: propertyId,
@@ -179,6 +180,16 @@ class BottomButtons extends material.StatelessWidget {
                             previewDate: DateFormat('yyyy-MM-dd', 'en')
                                 .format(state.selectedDate!),
                             paymentMethod: paymentMethod,
+                            clientBankilyPhoneNumber: paymentMethod == 'bankily'
+                                ? state.clientBankilyPhoneNumber.trim().isNotEmpty
+                                ? state.clientBankilyPhoneNumber.trim()
+                                : null
+                                : null,
+                            bankilyPassCode: paymentMethod == 'bankily'
+                                ? state.bankilyPassCode.trim().isNotEmpty
+                                ? state.bankilyPassCode.trim()
+                                : null
+                                : null,
                           );
                           context
                               .read<PreviewPropertyCubit>()

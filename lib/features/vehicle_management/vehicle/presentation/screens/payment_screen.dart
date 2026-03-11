@@ -81,6 +81,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   final TextEditingController _cvvController = TextEditingController();
   final TextEditingController _cardHolderController = TextEditingController();
   final TextEditingController _passcodeController = TextEditingController();
+  final TextEditingController _bankilyPhoneController = TextEditingController();
   bool _isProcessing = false;
 
   // Contrôleur pour l'envoi des données
@@ -495,6 +496,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
           const SizedBox(height: 16),
 
           // Champ Passcode unique
+          // Champ Numéro de téléphone Bankily
+          _buildTextField(
+            controller: _bankilyPhoneController,
+            label: 'Numéro de téléphone Bankily',
+            hint: 'Entrez votre numéro Bankily (8-10 chiffres)',
+            icon: Icons.phone_android,
+            keyboardType: TextInputType.phone,
+            onChanged: (_) => _updatePaymentButtonState(),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Champ Passcode Bankily
           _buildTextField(
             controller: _passcodeController,
             label: 'Passcode',
@@ -522,7 +536,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Paiement sécurisé avec Bankily. Entrez votre passcode pour confirmer le paiement.',
+                  'Paiement sécurisé Code commerçant : 012544',
                   textAlign: TextAlign.center,
                   style: getRegularStyle(
                     color: ColorManager.blackColor,
@@ -787,7 +801,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
       if (_selectedPaymentMethod == 'bankily') {
         paymentMethod = 'bankily';
-        passcode = _passcodeController.text;
+        // passcode = _passcodeController.text;
+        passcode = _passcodeController.text.trim();
+        bankilyPhoneNumber = _bankilyPhoneController.text.trim();
+
+        // Validation des champs Bankily
+        if (bankilyPhoneNumber.isEmpty) {
+          throw Exception('Veuillez entrer votre numéro de téléphone Bankily');
+        }
 
         // Validation du champ Passcode
         if (passcode.isEmpty) {
@@ -911,8 +932,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
         currency: currentCurrency.code, // Devise automatique basée sur le pays
         orderId: orderId,
         description: 'Location de véhicule - ${widget.vehicle.makeName} ${widget.vehicle.modelName}',
-        returnUrl: 'http://192.168.100.76:5000/api/payments/paypal/success',
-        cancelUrl: 'http://192.168.100.76:5000/api/payments/paypal/cancel',
+        returnUrl: 'http://192.168.100.173:5000/api/payments/paypal/success',
+        cancelUrl: 'http://192.168.100.173:5000/api/payments/paypal/cancel',
         authToken: authToken,
       );
 
@@ -967,6 +988,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     _cvvController.dispose();
     _cardHolderController.dispose();
     _passcodeController.dispose();
+    _bankilyPhoneController.dispose();
     super.dispose();
   }
 }

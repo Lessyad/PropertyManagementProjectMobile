@@ -31,6 +31,8 @@ class BookPropertyState extends Equatable {
 
   final String currentPaymentMethod;
   final String bankilyPassCode;
+  final String clientBankilyPhoneNumber;
+
 
   BookPropertyState({
     this.selectedImages = const [],
@@ -44,7 +46,7 @@ class BookPropertyState extends Equatable {
     this.bookPropertyResponse,
     this.buyerType = BuyerType.iAmBuyer,
     this.phoneNumber = '',
-    this.countryCode = '+20',
+    this.countryCode = '+222',
     this.userName = '',
     this.userID = '',
     TextEditingController? phoneNumberController,
@@ -56,6 +58,7 @@ class BookPropertyState extends Equatable {
     this.idExpirationDate,
     this.currentPaymentMethod = '',
     this.bankilyPassCode = '',
+    this.clientBankilyPhoneNumber = '',
   });
 
   BookPropertyState copyWith({
@@ -82,6 +85,7 @@ class BookPropertyState extends Equatable {
     DateTime? idExpirationDate,
     String? currentPaymentMethod,
     String? bankilyPassCode,
+    String? clientBankilyPhoneNumber,
   }) {
     return BookPropertyState(
       selectedImages: selectedImages ?? this.selectedImages,
@@ -104,6 +108,7 @@ class BookPropertyState extends Equatable {
       idExpirationDate: idExpirationDate ?? this.idExpirationDate,
       currentPaymentMethod: currentPaymentMethod ?? this.currentPaymentMethod,
       bankilyPassCode: bankilyPassCode ?? this.bankilyPassCode,
+      clientBankilyPhoneNumber: clientBankilyPhoneNumber ?? this.clientBankilyPhoneNumber,
     );
   }
 
@@ -129,5 +134,6 @@ class BookPropertyState extends Equatable {
     idExpirationDate,
     currentPaymentMethod,
     bankilyPassCode,
+    clientBankilyPhoneNumber,
   ];
 }

@@ -37,6 +37,9 @@ class PreviewPropertyCubit extends Cubit<PreviewPropertyState> {
   void setBankilyPassCode(String code) {
     emit(state.copyWith(bankilyPassCode: code));
   }
+  void setClientBankilyPhoneNumber(String value) {
+    emit(state.copyWith(clientBankilyPhoneNumber: value));
+  }
 
   /// Traiter le paiement PayPal pour les viewing requests
   Future<void> processPayPalPayment({

@@ -13,6 +13,10 @@ class BookPropertyRequestModel {
   final File idImage;
   final DateTime? startDate; // Added for rental properties
   final DateTime? endDate; // Added for rental properties
+  /// Numéro de téléphone Bankily du client (requis si paymentMethod == "bankily")
+  final String? clientBankilyPhoneNumber;
+  /// Code secret Bankily (PassCode), distinct du numéro de téléphone
+  final String? bankilyPassCode;
 
   BookPropertyRequestModel({
     required this.propertyId,
@@ -26,6 +30,8 @@ class BookPropertyRequestModel {
     required this.idImage,
     this.startDate,
     this.endDate,
+    this.clientBankilyPhoneNumber,
+    this.bankilyPassCode,
   });
 
   Future<FormData> toFormData() async {
@@ -49,6 +55,10 @@ class BookPropertyRequestModel {
       ),
       'payment_method': paymentMethod,
       'phone_number': phoneNumber,
+      if (clientBankilyPhoneNumber != null && clientBankilyPhoneNumber!.isNotEmpty)
+        'client_bankily_phone_number': clientBankilyPhoneNumber,
+      if (bankilyPassCode != null && bankilyPassCode!.isNotEmpty)
+        'pass_code': bankilyPassCode,
     });
   }
 }

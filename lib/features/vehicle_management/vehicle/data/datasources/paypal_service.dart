@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
 class PayPalService {
-  static const String baseUrl = 'http://192.168.100.76:5000/api'; // Remplacez par votre URL backend
+  static const String baseUrl = 'http://192.168.100.173:5000/api'; // Remplacez par votre URL backend
   
   /// Créer un paiement PayPal
   static Future<PayPalPaymentResponse> createPayment({

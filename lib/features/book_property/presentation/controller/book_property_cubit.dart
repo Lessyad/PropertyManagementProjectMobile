@@ -27,7 +27,7 @@ class BookPropertyCubit extends Cubit<BookPropertyState> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController iDNumberController = TextEditingController();
   final TextEditingController bankilyPassCodeController = TextEditingController();
-
+  final TextEditingController clientBankilyPhoneNumberController = TextEditingController();
   // 🆕 Variables pour stocker les informations de la propriété
   final String? _propertyOperation;
   final String? _propertyMonthlyRentPeriod;
@@ -220,7 +220,9 @@ class BookPropertyCubit extends Cubit<BookPropertyState> {
   }
 
 
-
+  void setClientBankilyPhoneNumber(String value) {
+    emit(state.copyWith(clientBankilyPhoneNumber: value));
+  }
 
 
   final GetPropertySaleDetailsUseCase _getPropertySaleDetailsUseCase ;
@@ -293,6 +295,16 @@ class BookPropertyCubit extends Cubit<BookPropertyState> {
       // ✅ Utiliser les dates calculées dynamiquement
       startDate: calculatedStartDate,
       endDate: calculatedEndDate,
+      clientBankilyPhoneNumber: paymentMethodValue == 'bankily'
+          ? state.clientBankilyPhoneNumber.trim().isNotEmpty
+          ? state.clientBankilyPhoneNumber.trim()
+          : null
+          : null,
+      bankilyPassCode: paymentMethodValue == 'bankily'
+          ? state.bankilyPassCode.trim().isNotEmpty
+          ? state.bankilyPassCode.trim()
+          : null
+          : null,
     );
 
     final result = await _bookPropertyUseCase.call(bookPropertyRequest);
@@ -313,6 +325,7 @@ class BookPropertyCubit extends Cubit<BookPropertyState> {
     nameController.dispose();
     iDNumberController.dispose();
     bankilyPassCodeController.dispose();
+    clientBankilyPhoneNumberController.dispose();
     return super.close();
   }
 

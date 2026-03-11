@@ -176,10 +176,17 @@ class BookPropertyButtons extends StatelessWidget {
                               );
                             } else if (state.currentPaymentMethod == LocaleKeys.bankily.tr()) {
                               final passCode = context.read<BookPropertyCubit>().bankilyPassCodeController.text.trim();
+                              final bankilyPhone = context.read<BookPropertyCubit>().clientBankilyPhoneNumberController.text.trim();
+
+                              if (bankilyPhone.isEmpty) {
+                                CustomSnackBar.show(message: 'Le numéro de téléphone Bankily est requis', type: SnackBarType.error);
+                                return;
+                              }
                               if (passCode.isEmpty) {
                                 CustomSnackBar.show(message: LocaleKeys.thisFieldIsRequired.tr(), type: SnackBarType.error);
                                 return;
                               }
+                              context.read<BookPropertyCubit>().setClientBankilyPhoneNumber(bankilyPhone);
                               context.read<BookPropertyCubit>().setBankilyPassCode(passCode);
                               context
                                   .read<BookPropertyCubit>()
@@ -247,8 +254,11 @@ class BookPropertyButtons extends StatelessWidget {
     
     // Si Bankily est sélectionné, vérifier que le passcode est saisi
     if (state.currentPaymentMethod == LocaleKeys.bankily.tr()) {
-      return state.bankilyPassCode.isNotEmpty;
+      // return state.bankilyPassCode.isNotEmpty;
+      return state.bankilyPassCode.isNotEmpty &&
+          state.clientBankilyPhoneNumber.isNotEmpty;
     }
+
     
     // Pour les autres méthodes de paiement, le bouton est activé
     return true;
