@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:enmaa/core/services/auth_service.dart';
 import 'package:enmaa/core/services/shared_preferences_service.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,7 +32,7 @@ class DioService {
               "Authorization": 'Bearer $accessToken',
               "Accept-Language": SharedPreferencesService().language,
             });
-          
+
 
            /* var userBox = await Hive.openBox<User>('userBox');
             var authLocalDataSource = AuthenticationLocalDataSourceImp(userBox);
@@ -47,6 +48,13 @@ class DioService {
 
 
             return handler.next(options);
+          },
+          onError: (DioException error, ErrorInterceptorHandler handler) async {
+            if (error.response?.statusCode == 401 &&
+                SharedPreferencesService().accessToken.isNotEmpty) {
+              await AuthService().performLogout();
+            }
+            return handler.next(error);
           },
         ),
       );

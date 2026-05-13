@@ -29,8 +29,6 @@ class LogOutAndContactUsWidget extends StatelessWidget {
         return CustomBottomSheet(
           widget: LogoutComponent(
             onLogoutConfirmed: () {
-              isAuth = false;
-              // updateAuthState(false);
               SharedPreferencesService().clearCachedData();
               Navigator.pushReplacementNamed(context, RoutersNames.authenticationFlow);
             },

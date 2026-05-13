@@ -3,11 +3,10 @@ class ApiConstants {
 
   // static const String baseUrl = "https://rough-mira-seen-app-f74aa423.koyeb.app/api/";
   // static const String baseUrl = "https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/";
-     static const String baseUrl ="http://192.168.100.173:5000/api/" ;
+     static const String baseUrl ="http://192.168.100.13:5000/api/" ;
   static const String properties= "${baseUrl}properties/";
   static const String banners= "${baseUrl}banners/";
   static const String notifications= "${baseUrl}notifications/";
-
   static const String apartment= "${baseUrl}apartments/";
   static const String villa= "${baseUrl}villas/";
   static const String building= "${baseUrl}buildings/";

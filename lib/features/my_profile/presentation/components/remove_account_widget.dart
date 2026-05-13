@@ -33,7 +33,6 @@ class RemoveAccountWidget extends StatelessWidget {
         );
 
         if (response.statusCode == 200) {
-          isAuth = false;
           SharedPreferencesService().clearCachedData();
           Navigator.pushReplacementNamed(context, RoutersNames.authenticationFlow);
         } else {

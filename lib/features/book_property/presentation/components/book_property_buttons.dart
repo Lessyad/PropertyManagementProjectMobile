@@ -31,13 +31,19 @@ class BookPropertyButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<BookPropertyCubit, BookPropertyState>(
       listener: (context, state) {
+        if (state.bookPropertyState.isError) {
+          CustomSnackBar.show(
+            message: state.bookPropertyError,
+            type: SnackBarType.error,
+          );
+        }
         if (state.bookPropertyState.isLoaded) {
           context.read<RealEstateCubit>().fetchPropertyDetails(propertyID);
         }
         if (state.bookPropertyState.isLoaded &&
             state.bookPropertyResponse != null) {
           Navigator.pop(context);
-          if (state.bookPropertyResponse!.paymentMethod == LocaleKeys.wallet.tr()) {
+          if (state.bookPropertyResponse!.paymentMethod == 'wallet') {
             CustomSnackBar.show(
               message: LocaleKeys.propertyBookedSuccessfully.tr(),
               type: SnackBarType.success,
@@ -45,7 +51,6 @@ class BookPropertyButtons extends StatelessWidget {
           } else if (state.bookPropertyResponse!.gatewayUrl.isNotEmpty) {
             _launchPaymentUrl(state.bookPropertyResponse!.gatewayUrl);
           } else {
-            // Paiement traité mais pas de gateway URL (paiement direct)
             CustomSnackBar.show(
               message: LocaleKeys.propertyBookedSuccessfully.tr(),
               type: SnackBarType.success,

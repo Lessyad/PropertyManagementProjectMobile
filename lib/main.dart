@@ -46,7 +46,7 @@ import 'features/wish_list/presentation/controller/wish_list_cubit.dart';
 import 'features/wish_list/wish_list_DI.dart';
 import 'firebase_options.dart';
 
-bool isAuth = false;
+bool get isAuth => SharedPreferencesService().accessToken.isNotEmpty;
 Future<void> backgroundHandler(
     NotificationResponse notificationResponse) async {
   // ignore: unused_local_variable
@@ -90,7 +90,6 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.get('access_token');
-  isAuth = token != null;
 
   bool isFirstLaunch = await SharedPreferencesService().isFirstLaunch();
 

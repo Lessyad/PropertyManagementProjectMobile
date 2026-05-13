@@ -11,7 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../core/constants/api_constants.dart';
 import '../../../../../core/constants/json_keys.dart';
 import '../../../../../core/services/shared_preferences_service.dart';
-import '../../../../../main.dart';
 import '../../models/login_request_model.dart';
 import '../../models/sign_up_request_model.dart';
 import 'dart:developer' as dev;
@@ -83,8 +82,6 @@ class AuthenticationRemoteDataSource extends BaseAuthenticationRemoteDataSource 
         await SharedPreferencesService().storeValue('country_name', countryName);
       }
 
-      isAuth = true;
-      // updateAuthState(true);
       return token;
     } catch (e) {
       print('❌ [LOGIN] Erreur lors de la connexion: $e');
@@ -171,8 +168,6 @@ class AuthenticationRemoteDataSource extends BaseAuthenticationRemoteDataSource 
     }
 
     updateUserLanguage(SharedPreferencesService().language);
-
-    isAuth = true ;
 
     return accessToken;
   }
