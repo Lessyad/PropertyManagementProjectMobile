@@ -86,8 +86,6 @@ void main() async {
         HydratedStorageDirectory((await getTemporaryDirectory()).path),
   );
 
-  await AppInitializationService().initializeApp();
-
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.get('access_token');
 
@@ -119,6 +117,10 @@ void main() async {
       child: MyApp(initialRoute: initialRoute),
     ),
   );
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    AppInitializationService().initializeApp();
+  });
 }
 
 
@@ -128,7 +130,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentLanguage = SharedPreferencesService().language;
-    context.setLocale(Locale(currentLanguage));
+    final appLanguage = ['en', 'ar', 'fr'].contains(currentLanguage)
+        ? currentLanguage
+        : 'en';
+    context.setLocale(Locale(appLanguage));
 
     return ScreenUtilInit(
       designSize: const Size(390, 844),
@@ -208,7 +213,7 @@ class MyApp extends StatelessWidget {
           navigatorKey : LoginBottomSheet.navigatorKey,
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
-          locale: Locale(SharedPreferencesService().language),
+          locale: Locale(appLanguage),
           theme: ThemeData(
             fontFamily: null, // Cairo supprimé (fichiers absents). Remettre 'Cairo' quand les polices sont de nouveau dans assets/fonts/cairo/
             visualDensity: Platform.isIOS

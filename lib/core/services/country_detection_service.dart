@@ -137,7 +137,7 @@ class CountryDetectionService {
   }
 
   // Méthode principale pour détecter le pays
-  Future<String?> detectUserCountry() async {
+  Future<String?> detectUserCountry({bool useLocation = false}) async {
     // 1. Vérifier si le pays est déjà défini
     String? currentCountry = _currencyService.getCurrentUserCountry();
     if (currentCountry != null) {
@@ -145,9 +145,12 @@ class CountryDetectionService {
     }
 
     // 2. Essayer la géolocalisation
-    String? countryFromLocation = await detectCountryFromLocation();
-    if (countryFromLocation != null) {
-      return countryFromLocation;
+    if (useLocation) {
+      String? countryFromLocation = await detectCountryFromLocation()
+          .timeout(const Duration(seconds: 5), onTimeout: () => null);
+      if (countryFromLocation != null) {
+        return countryFromLocation;
+      }
     }
 
     // 3. Essayer la détection par IP
@@ -209,6 +212,6 @@ class CountryDetectionService {
   // Méthode pour forcer une nouvelle détection
   Future<String?> forceCountryDetection() async {
     await resetCountryDetection();
-    return await detectUserCountry();
+    return await detectUserCountry(useLocation: true);
   }
 }

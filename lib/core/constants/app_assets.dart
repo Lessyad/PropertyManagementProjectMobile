@@ -100,7 +100,7 @@ class AppAssets {
   static const String removeImage = '${baseImagesFolder}remove_image.svg';
 
   /// on boarding images
-  static const String onBoarding1 = '${baseImagesFolder}on_boarding1.svg';
+  static const String onBoarding1 = '${baseImagesFolder}on_boarding2.svg';
   static const String onBoarding2 = '${baseImagesFolder}on_boarding2.svg';
   static const String onBoarding3 = '${baseImagesFolder}on_boarding3.svg';
 

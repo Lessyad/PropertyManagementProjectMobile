@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:enmaa/core/constants/api_constants.dart';
 import 'package:enmaa/core/services/auth_service.dart';
 import 'package:enmaa/core/services/shared_preferences_service.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 
 class DioService {
   final Dio dio;
+  Future<String?>? _refreshTokenFuture;
 
   DioService({
     required this.dio,
@@ -24,36 +24,43 @@ class DioService {
       dio.interceptors.add(
         InterceptorsWrapper(
           onRequest: (options, handler) async {
-
-            final prefs = await SharedPreferences.getInstance();
-            Object? accessToken = prefs.get('access_token') ;
-            log('access token is $accessToken');
+            final accessToken = SharedPreferencesService().accessToken;
             options.headers.addAll({
-              "Authorization": 'Bearer $accessToken',
               "Accept-Language": SharedPreferencesService().language,
             });
 
-
-           /* var userBox = await Hive.openBox<User>('userBox');
-            var authLocalDataSource = AuthenticationLocalDataSourceImp(userBox);
-            User? user = authLocalDataSource.getUser();
-
-            options.headers.addAll({
-              if (user != null) "Authorization": 'Bearer ${user.token}',
-              "Accept-Language": 'en',
-              "X-API-KEY": ApiConstants.pointsToken,
-            });
-*/
-
-
+            if (_shouldAttachAuthorizationHeader(options) &&
+                accessToken.isNotEmpty) {
+              options.headers["Authorization"] = 'Bearer $accessToken';
+            }
 
             return handler.next(options);
           },
           onError: (DioException error, ErrorInterceptorHandler handler) async {
-            if (error.response?.statusCode == 401 &&
-                SharedPreferencesService().accessToken.isNotEmpty) {
-              await AuthService().performLogout();
+            if (!_shouldAttemptTokenRefresh(error)) {
+              return handler.next(error);
             }
+
+            final newAccessToken = await _refreshAccessToken();
+
+            if (newAccessToken == null || newAccessToken.isEmpty) {
+              await AuthService().performLogout();
+              return handler.next(error);
+            }
+
+            try {
+              final retryResponse = await _retryRequest(
+                error.requestOptions,
+                newAccessToken,
+              );
+              return handler.resolve(retryResponse);
+            } catch (retryError) {
+              if (retryError is DioException &&
+                  retryError.response?.statusCode == 401) {
+                await AuthService().performLogout();
+              }
+            }
+
             return handler.next(error);
           },
         ),
@@ -77,6 +84,141 @@ class DioService {
     String encodedCredentials = base64.encode(
         utf8.encode(credentials));
     return 'Basic $encodedCredentials';
+  }
+
+  bool _shouldAttachAuthorizationHeader(RequestOptions options) {
+    final extraFlag = options.extra['requiresAuth'];
+    if (extraFlag is bool) {
+      return extraFlag;
+    }
+
+    return !_isAuthFreeEndpoint(options.path);
+  }
+
+  bool _isAuthFreeEndpoint(String path) {
+    return path == ApiConstants.login ||
+        path == ApiConstants.signUp ||
+        path == ApiConstants.sendOTP ||
+        path == ApiConstants.verifyOTP ||
+        path == ApiConstants.resetPassword ||
+        path == ApiConstants.refreshToken;
+  }
+
+  bool _shouldAttemptTokenRefresh(DioException error) {
+    if (error.response?.statusCode != 401) {
+      return false;
+    }
+
+    if (SharedPreferencesService().accessToken.isEmpty ||
+        SharedPreferencesService().refreshToken.isEmpty) {
+      return false;
+    }
+
+    final requestOptions = error.requestOptions;
+    if (requestOptions.extra['skipRefresh'] == true ||
+        requestOptions.path == ApiConstants.refreshToken) {
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<String?> _refreshAccessToken() async {
+    if (_refreshTokenFuture != null) {
+      return _refreshTokenFuture;
+    }
+
+    final completer = Future<String?>(() async {
+      final refreshToken = SharedPreferencesService().refreshToken;
+      if (refreshToken.isEmpty) {
+        return null;
+      }
+
+      try {
+        final refreshDio = Dio(
+          BaseOptions(
+            connectTimeout: dio.options.connectTimeout,
+            receiveTimeout: dio.options.receiveTimeout,
+            responseType: ResponseType.json,
+            headers: {
+              'content-type': 'application/json',
+              'Accept-Language': SharedPreferencesService().language,
+            },
+          ),
+        );
+
+        final response = await refreshDio.post(
+          ApiConstants.refreshToken,
+          data: {'refreshToken': refreshToken},
+          options: Options(
+            extra: {
+              'skipRefresh': true,
+              'requiresAuth': false,
+            },
+          ),
+        );
+
+        final newAccessToken = response.data['access'] as String?;
+        final newRefreshToken = response.data['refresh'] as String?;
+
+        if (newAccessToken == null || newAccessToken.isEmpty) {
+          return null;
+        }
+
+        await SharedPreferencesService().setAccessToken(newAccessToken);
+        if (newRefreshToken != null && newRefreshToken.isNotEmpty) {
+          await SharedPreferencesService().setRefreshToken(newRefreshToken);
+        }
+
+        log('Access token refreshed successfully');
+        return newAccessToken;
+      } catch (error) {
+        log('Refresh token failed: $error');
+        return null;
+      } finally {
+        _refreshTokenFuture = null;
+      }
+    });
+
+    _refreshTokenFuture = completer;
+    return completer;
+  }
+
+  Future<Response<dynamic>> _retryRequest(
+    RequestOptions requestOptions,
+    String accessToken,
+  ) {
+    final headers = Map<String, dynamic>.from(requestOptions.headers);
+    headers['Authorization'] = 'Bearer $accessToken';
+
+    final options = Options(
+      method: requestOptions.method,
+      headers: headers,
+      responseType: requestOptions.responseType,
+      contentType: requestOptions.contentType,
+      followRedirects: requestOptions.followRedirects,
+      receiveDataWhenStatusError: requestOptions.receiveDataWhenStatusError,
+      extra: Map<String, dynamic>.from(requestOptions.extra)
+        ..['skipRefresh'] = true,
+      listFormat: requestOptions.listFormat,
+      maxRedirects: requestOptions.maxRedirects,
+      persistentConnection: requestOptions.persistentConnection,
+      receiveTimeout: requestOptions.receiveTimeout,
+      requestEncoder: requestOptions.requestEncoder,
+      responseDecoder: requestOptions.responseDecoder,
+      sendTimeout: requestOptions.sendTimeout,
+      validateStatus: requestOptions.validateStatus,
+    );
+
+    return dio.request<dynamic>(
+      requestOptions.path,
+      data: requestOptions.data,
+      queryParameters: requestOptions.queryParameters,
+      options: options,
+      cancelToken: requestOptions.cancelToken,
+      onReceiveProgress: requestOptions.onReceiveProgress,
+      onSendProgress: requestOptions.onSendProgress,
+    );
   }
 
   Future<Response> get({

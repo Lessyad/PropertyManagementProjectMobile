@@ -13,6 +13,7 @@ class ApiConstants {
   static const String land= "${baseUrl}lands/";
   static const String login= "${baseUrl}auth/login/";
   static const String signUp= "${baseUrl}auth/register/";
+  static const String refreshToken= "${baseUrl}auth/refresh/";
 
   static const String sendOTP= "${baseUrl}auth/send-otp/";
   static const String verifyOTP= "${baseUrl}auth/verify-otp/";
