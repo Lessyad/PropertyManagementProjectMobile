@@ -22,7 +22,7 @@ abstract class LocaleKeys {
   static const halls = 'halls';
   static const hotels = 'hotels';
   static const addYourRealState = 'addYourRealState';
-  static const update ='update';
+  static const update = 'update';
 
   static const authenticateToAccessTheApp = 'authenticateToAccessTheApp';
 
@@ -30,8 +30,6 @@ abstract class LocaleKeys {
   static const myBookings = 'myBookings';
   static const favorites = 'favorites';
   static const myProfile = 'myProfile';
-
-
 
   static const chooseYourIdealPropertyEasily = 'chooseYourIdealPropertyEasily';
   static const String baseRental = 'base_rental';
@@ -180,6 +178,10 @@ abstract class LocaleKeys {
   static const String userScreensAppointments = 'userScreensAppointments';
   static const String userScreensElectronicContracts =
       'userScreensElectronicContracts';
+  static const String userScreensRentalHistory = 'userScreensRentalHistory';
+  static const String myRentalHistory = 'myRentalHistory';
+  static const String noRentalHistory = 'noRentalHistory';
+  static const String rentalHistoryAppearance = 'rentalHistoryAppearance';
 
   static const String changePassword = 'changePassword';
 
@@ -363,7 +365,7 @@ abstract class LocaleKeys {
   static const String chooseDate = 'chooseDate';
   static const String advisorWarningMessage = 'advisorWarningMessage';
   static const String transparencyWarningMessage = 'transparencyWarningMessage';
-  static const String transmission ='transmission';
+  static const String transmission = 'transmission';
 
   static const String paymentDetails = 'paymentDetails';
   static const String amountToBePaid = 'amountToBePaid';
@@ -499,7 +501,6 @@ abstract class LocaleKeys {
   static const String returnPlace = 'return_place';
   static const String selectOnMap = 'select_on_map';
 
-
   // static const String currency = 'currency';
   static const String currencyPerDay = 'currency_per_day';
   static const String vehicleDescription = 'vehicle_description';
@@ -523,7 +524,6 @@ abstract class LocaleKeys {
   static const String missingInfoTitle = 'missing_info_title';
   static const String missingInfoMessage = 'missing_info_message';
   //des const pour les libele de  l'ecran LocationPickerScreen
-
 
   static const String searchAddressHint = 'search_address_hint';
   static const String addressNotFound = 'address_not_found';
@@ -604,7 +604,7 @@ abstract class LocaleKeys {
   static const String allFilters = 'all_filters';
   static const String searchResultsFound = 'search_results_found';
   static const String clearAll = 'clear_all';
-  
+
   // Price filter keys
   static const String filterByPrice = 'filter_by_price';
   static const String maximumDailyPrice = 'maximum_daily_price';
@@ -695,7 +695,6 @@ abstract class LocaleKeys {
   static const String payNow = 'pay_now';
   static const String paymentSuccess = 'payment_success';
 
-
   static const String tenantInfo = 'tenant_info';
   static const String mainTenant = 'main_tenant';
   static const String idDocumentType = 'id_document_type';
@@ -729,9 +728,11 @@ abstract class LocaleKeys {
   static const String documents = 'documents';
   static const String idDocumentPhoto = 'id_document_photo';
   static const String licensePhoto = 'license_photo';
-  static const String secondDriverFirstNameHint = 'second_driver_first_name_hint';
+  static const String secondDriverFirstNameHint =
+      'second_driver_first_name_hint';
   static const String secondDriverLastNameHint = 'second_driver_last_name_hint';
-  static const String secondDriverFamilyNameHint = 'second_driver_family_name_hint';
+  static const String secondDriverFamilyNameHint =
+      'second_driver_family_name_hint';
   // static const String age = 'age';
   static const String ageHint = 'age_hint';
   // static const String ageRequired = 'age_required';
@@ -783,7 +784,6 @@ abstract class LocaleKeys {
   static const String acceptTerms = 'accept_terms';
   static const String proceedToPayment = 'proceed_to_payment';
 
-
   // contact infos
   static const contact_us = 'contact_us';
   static const name = 'name';
@@ -823,7 +823,8 @@ abstract class LocaleKeys {
 
   // Add New Real Estate Screen Labels
   static const String propertyAddedSuccessfully = 'propertyAddedSuccessfully';
-  static const String propertyUpdatedSuccessfully = 'propertyUpdatedSuccessfully';
+  static const String propertyUpdatedSuccessfully =
+      'propertyUpdatedSuccessfully';
   static const String processingProperty = 'processingProperty';
   static const String loadingPropertyData = 'loadingPropertyData';
   static const String editProperty = 'editProperty';
@@ -831,7 +832,8 @@ abstract class LocaleKeys {
   static const String deletePropertyConfirm = 'deletePropertyConfirm';
   static const String deletePropertyButton = 'deletePropertyButton';
   static const String keepProperty = 'keepProperty';
-  static const String propertyErrorCannotDeleteAvailable = 'propertyErrorCannotDeleteAvailable';
+  static const String propertyErrorCannotDeleteAvailable =
+      'propertyErrorCannotDeleteAvailable';
   static const String basicInformation = 'basicInformation';
   static const String priceAndDescription = 'priceAndDescription';
   static const String locationAndFeatures = 'locationAndFeatures';
@@ -855,8 +857,9 @@ abstract class LocaleKeys {
   // static const String no = 'no';
   static const String firstImageWillBeMain = 'firstImageWillBeMain';
   static const String uploadClearPropertyImages = 'uploadClearPropertyImages';
-  static const String nearbyServicesAndFacilities = 'nearbyServicesAndFacilities';
-  static const String furniture ='furniture';
+  static const String nearbyServicesAndFacilities =
+      'nearbyServicesAndFacilities';
+  static const String furniture = 'furniture';
 
   // static const String floor = 'floor';
   static const String enterFloorNumber = 'enter_floor_number';
@@ -880,7 +883,8 @@ abstract class LocaleKeys {
   static const String numberOfFloors = 'number_of_floors';
   static const String specifyNumberOfFloors = 'specify_number_of_floors';
   static const String apartmentsPerFloor = 'apartments_per_floor';
-  static const String specifyApartmentsPerFloor = 'specify_apartments_per_floor';
+  static const String specifyApartmentsPerFloor =
+      'specify_apartments_per_floor';
 
   static const String selectCountry = 'select_country';
   // static const String country = 'country';
@@ -898,10 +902,11 @@ abstract class LocaleKeys {
   static const String deliveryCity = 'delivery_city';
 
   // Vehicle Payment Authentication
-  static const String vehicle_payment_requires_login = 'vehicle_payment_requires_login';
+  static const String vehicle_payment_requires_login =
+      'vehicle_payment_requires_login';
   static const String please_login_to_pay = 'please_login_to_pay';
   static const String redirect_to_login = 'redirect_to_login';
-  
+
   // Currency Labels
   static const String default_currency_mru = 'default_currency_mru';
   static const String currency_per_day = 'currency_per_day';
@@ -909,15 +914,20 @@ abstract class LocaleKeys {
   static const String payment_amount = 'payment_amount';
 
   // Vehicle Deal Error Messages
-  static const String errorCannotRentOwnVehicle = 'error_cannot_rent_own_vehicle';
+  static const String errorCannotRentOwnVehicle =
+      'error_cannot_rent_own_vehicle';
   static const String errorVehicleNotAvailable = 'error_vehicle_not_available';
   static const String errorNoPartnerAssociated = 'error_no_partner_associated';
-  static const String errorPartnerInfoIncomplete = 'error_partner_info_incomplete';
-  static const String errorInvalidRentalDuration = 'error_invalid_rental_duration';
+  static const String errorPartnerInfoIncomplete =
+      'error_partner_info_incomplete';
+  static const String errorInvalidRentalDuration =
+      'error_invalid_rental_duration';
   static const String errorInsufficientDeposit = 'error_insufficient_deposit';
   static const String errorMainDriverRequired = 'error_main_driver_required';
-  static const String errorSecondDriverRequired = 'error_second_driver_required';
-  static const String errorUserNotAuthenticated = 'error_user_not_authenticated';
+  static const String errorSecondDriverRequired =
+      'error_second_driver_required';
+  static const String errorUserNotAuthenticated =
+      'error_user_not_authenticated';
   static const String errorVehicleNotFound = 'error_vehicle_not_found';
   static const String errorPartnerNotFound = 'error_partner_not_found';
   static const String errorConfigMissing = 'error_config_missing';
@@ -929,29 +939,38 @@ abstract class LocaleKeys {
   static const String errorUnauthorizedAction = 'error_unauthorized_action';
   static const String errorPropertyNotFound = 'error_property_not_found';
   static const String errorCityNotFound = 'error_city_not_found';
-  static const String errorInvalidPropertySubtype = 'error_invalid_property_subtype';
+  static const String errorInvalidPropertySubtype =
+      'error_invalid_property_subtype';
   static const String errorViewingDatePast = 'error_viewing_date_past';
   static const String errorUserNotFound = 'error_user_not_found';
   static const String errorInvalidCredentials = 'error_invalid_credentials';
-  static const String errorPhoneNumberAlreadyExists = 'error_phone_number_already_exists';
+  static const String errorPhoneNumberAlreadyExists =
+      'error_phone_number_already_exists';
   static const String errorInvalidOtp = 'error_invalid_otp';
   static const String errorTokenExpired = 'error_token_expired';
-  
+
   // Property Deal Error Messages
-  static const String errorCannotDealOwnProperty = 'error_cannot_deal_own_property';
-  static const String errorPropertyNotAvailable = 'error_property_not_available';
+  static const String errorCannotDealOwnProperty =
+      'error_cannot_deal_own_property';
+  static const String errorPropertyNotAvailable =
+      'error_property_not_available';
   static const String errorRentalDatesRequired = 'error_rental_dates_required';
-  static const String errorEndDateAfterStartDate = 'error_end_date_after_start_date';
+  static const String errorEndDateAfterStartDate =
+      'error_end_date_after_start_date';
   static const String errorStartDateNotPast = 'error_start_date_not_past';
-  static const String errorMinimumRentalDuration = 'error_minimum_rental_duration';
-  static const String errorPropertyNotAvailableForDates = 'error_property_not_available_for_dates';
-  static const String errorDatesNotApplicableForSale = 'error_dates_not_applicable_for_sale';
-  
+  static const String errorMinimumRentalDuration =
+      'error_minimum_rental_duration';
+  static const String errorPropertyNotAvailableForDates =
+      'error_property_not_available_for_dates';
+  static const String errorDatesNotApplicableForSale =
+      'error_dates_not_applicable_for_sale';
+
   // Property Filter Labels
   static const String filterPropertyCategory = 'filter_property_category';
   static const String filterFurnishing = 'filter_furnishing';
   static const String filterLicenseStatus = 'filter_license_status';
-  static const String filterRentalDurationMonths = 'filter_rental_duration_months';
+  static const String filterRentalDurationMonths =
+      'filter_rental_duration_months';
   static const String filterMinimum = 'filter_minimum';
   static const String filterMaximum = 'filter_maximum';
   static const String filterPrice = 'filter_price';
@@ -967,15 +986,19 @@ abstract class LocaleKeys {
   static const String filterSquareMeters = 'filter_square_meters';
   static const String filterClearAll = 'filter_clear_all';
   static const String filterShowResults = 'filter_show_results';
-  static const String filterAvailableForRenewal = 'filter_available_for_renewal';
+  static const String filterAvailableForRenewal =
+      'filter_available_for_renewal';
   static const String filterMonth = 'filter_month';
   static const String filterMonths = 'filter_months';
-  
+
   // Vehicle Filter Labels
   static const String filterLocationSection = 'filter_location_section';
-  static const String filterReceptionInfoSection = 'filter_reception_info_section';
-  static const String filterDeliveryInfoSection = 'filter_delivery_info_section';
-  static const String filterVehicleDetailsSection = 'filter_vehicle_details_section';
+  static const String filterReceptionInfoSection =
+      'filter_reception_info_section';
+  static const String filterDeliveryInfoSection =
+      'filter_delivery_info_section';
+  static const String filterVehicleDetailsSection =
+      'filter_vehicle_details_section';
   static const String filterDriverInfoSection = 'filter_driver_info_section';
   static const String filterGasoline = 'filter_gasoline';
   static const String filterDiesel = 'filter_diesel';
@@ -983,9 +1006,10 @@ abstract class LocaleKeys {
   static const String filterManual = 'filter_manual';
   static const String filterFuelType = 'filter_fuel_type';
   static const String filterTransmission = 'filter_transmission';
-  static const String filterAgeValidationMessage = 'filter_age_validation_message';
+  static const String filterAgeValidationMessage =
+      'filter_age_validation_message';
   static const String filterHybrid = 'filter_hybrid';
-  
+
   // Notification Labels
   static const String notificationNew = 'notification_new';
   static const String notificationRead = 'notification_read';
@@ -1002,44 +1026,70 @@ abstract class LocaleKeys {
   static const String notificationHoursAgo = 'notification_hours_ago';
   static const String notificationMinutesAgo = 'notification_minutes_ago';
   static const String notificationJustNow = 'notification_just_now';
-  
+
   // Property Service Messages
-  static const String propertyNotificationRented = 'property_notification_rented';
+  static const String propertyNotificationRented =
+      'property_notification_rented';
   static const String propertyNotificationSold = 'property_notification_sold';
   static const String propertyErrorNotFound = 'property_error_not_found';
-  static const String propertyErrorCannotUpdatePendingDeals = 'property_error_cannot_update_pending_deals';
-  static const String propertyErrorCannotDeletePendingDeals = 'property_error_cannot_delete_pending_deals';
+  static const String propertyErrorCannotUpdatePendingDeals =
+      'property_error_cannot_update_pending_deals';
+  static const String propertyErrorCannotDeletePendingDeals =
+      'property_error_cannot_delete_pending_deals';
   static const String propertyErrorNotOwner = 'property_error_not_owner';
-  static const String propertyErrorImageNotFound = 'property_error_image_not_found';
-  static const String propertyErrorCannotDeleteMainImage = 'property_error_cannot_delete_main_image';
-  static const String propertyErrorImageNotAssociated = 'property_error_image_not_associated';
-  static const String propertyErrorInvalidSubtype = 'property_error_invalid_subtype';
-  static const String propertyErrorCityNotFound = 'property_error_city_not_found';
-  static const String propertyErrorInvalidAmenities = 'property_error_invalid_amenities';
-  static const String propertyErrorInvalidOperation = 'property_error_invalid_operation';
-  static const String propertyErrorMonthlyRentRequired = 'property_error_monthly_rent_required';
-  static const String propertyErrorMonthlyRentNotAllowed = 'property_error_monthly_rent_not_allowed';
-  static const String propertyErrorUserNotFound = 'property_error_user_not_found';
-  
+  static const String propertyErrorImageNotFound =
+      'property_error_image_not_found';
+  static const String propertyErrorCannotDeleteMainImage =
+      'property_error_cannot_delete_main_image';
+  static const String propertyErrorImageNotAssociated =
+      'property_error_image_not_associated';
+  static const String propertyErrorInvalidSubtype =
+      'property_error_invalid_subtype';
+  static const String propertyErrorCityNotFound =
+      'property_error_city_not_found';
+  static const String propertyErrorInvalidAmenities =
+      'property_error_invalid_amenities';
+  static const String propertyErrorInvalidOperation =
+      'property_error_invalid_operation';
+  static const String propertyErrorMonthlyRentRequired =
+      'property_error_monthly_rent_required';
+  static const String propertyErrorMonthlyRentNotAllowed =
+      'property_error_monthly_rent_not_allowed';
+  static const String propertyErrorUserNotFound =
+      'property_error_user_not_found';
+
   // Vehicle Service Messages
   static const String vehicleNotificationRented = 'vehicle_notification_rented';
   static const String vehicleErrorNotFound = 'vehicle_error_not_found';
-  static const String vehicleErrorNotAuthorized = 'vehicle_error_not_authorized';
-  static const String vehicleErrorUserIdRequired = 'vehicle_error_user_id_required';
+  static const String vehicleErrorNotAuthorized =
+      'vehicle_error_not_authorized';
+  static const String vehicleErrorUserIdRequired =
+      'vehicle_error_user_id_required';
   static const String vehicleErrorUserNotFound = 'vehicle_error_user_not_found';
-  static const String vehicleErrorFullNamePhoneRequired = 'vehicle_error_full_name_phone_required';
-  static const String vehicleErrorNotAssociatedWithPartner = 'vehicle_error_not_associated_with_partner';
-  static const String vehicleErrorCouldNotRetrieveAfterCreation = 'vehicle_error_could_not_retrieve_after_creation';
-  static const String vehicleErrorUnauthorizedAction = 'vehicle_error_unauthorized_action';
-  static const String vehicleErrorInvalidStatusTransition = 'vehicle_error_invalid_status_transition';
-  static const String vehicleErrorDailyPriceMustBePositive = 'vehicle_error_daily_price_must_be_positive';
-  static const String vehicleErrorSeatsMustBeBetween = 'vehicle_error_seats_must_be_between';
-  static const String vehicleErrorAtLeastOneImageRequired = 'vehicle_error_at_least_one_image_required';
-  static const String vehicleErrorImageExceedsLimit = 'vehicle_error_image_exceeds_limit';
-  static const String vehicleErrorInvalidImageFormat = 'vehicle_error_invalid_image_format';
-  
+  static const String vehicleErrorFullNamePhoneRequired =
+      'vehicle_error_full_name_phone_required';
+  static const String vehicleErrorNotAssociatedWithPartner =
+      'vehicle_error_not_associated_with_partner';
+  static const String vehicleErrorCouldNotRetrieveAfterCreation =
+      'vehicle_error_could_not_retrieve_after_creation';
+  static const String vehicleErrorUnauthorizedAction =
+      'vehicle_error_unauthorized_action';
+  static const String vehicleErrorInvalidStatusTransition =
+      'vehicle_error_invalid_status_transition';
+  static const String vehicleErrorDailyPriceMustBePositive =
+      'vehicle_error_daily_price_must_be_positive';
+  static const String vehicleErrorSeatsMustBeBetween =
+      'vehicle_error_seats_must_be_between';
+  static const String vehicleErrorAtLeastOneImageRequired =
+      'vehicle_error_at_least_one_image_required';
+  static const String vehicleErrorImageExceedsLimit =
+      'vehicle_error_image_exceeds_limit';
+  static const String vehicleErrorInvalidImageFormat =
+      'vehicle_error_invalid_image_format';
+
   // Success Messages
-  static const String successVehicleDealCreated = 'success_vehicle_deal_created';
+  static const String successVehicleDealCreated =
+      'success_vehicle_deal_created';
   static const String successPaymentCompleted = 'success_payment_completed';
   static const String successVehicleAdded = 'success_vehicle_added';
   static const String successVehicleUpdated = 'success_vehicle_updated';
@@ -1050,13 +1100,14 @@ abstract class LocaleKeys {
 
   // Empty states & appointment card
   static const String emptyScreenNoProperties = 'emptyScreenNoProperties';
-  static const String emptyScreenAddPropertyToStart = 'emptyScreenAddPropertyToStart';
+  static const String emptyScreenAddPropertyToStart =
+      'emptyScreenAddPropertyToStart';
   static const String addNewPropertyButton = 'addNewPropertyButton';
   static const String emptyScreenNoAppointments = 'emptyScreenNoAppointments';
-  static const String emptyScreenBookAppointmentsToStart = 'emptyScreenBookAppointmentsToStart';
+  static const String emptyScreenBookAppointmentsToStart =
+      'emptyScreenBookAppointmentsToStart';
   static const String cancelPreview = 'cancelPreview';
   static const String previewCompletedOnDate = 'previewCompletedOnDate';
   static const String previewCancelled = 'previewCancelled';
   static const String filterPriceSection = 'filter_price_section';
-
 }

@@ -526,5 +526,9 @@
   "success_property_added": "Propriété ajoutée avec succès",
   "success_property_updated": "Propriété mise à jour avec succès",
   "success_operation_completed": "Opération effectuée avec succès"
-
+  ,
+  "userScreensRentalHistory": "Historique de location",
+  "myRentalHistory": "Historique de location",
+  "noRentalHistory": "Aucune location",
+  "rentalHistoryAppearance": "Vos locations apparaitront ici"
 }

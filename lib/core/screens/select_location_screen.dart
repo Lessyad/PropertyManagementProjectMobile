@@ -67,14 +67,20 @@ class SelectLocationScreen extends StatelessWidget {
                   height: context.scale(48),
                   child: ElevatedButton(
                     onPressed: () {
-                      if(ServiceLocator.getIt<SelectLocationServiceCubit>().state.selectedCity != null){
+                      final locState = ServiceLocator.getIt<SelectLocationServiceCubit>().state;
+                      if (locState.selectedCity != null &&
+                          locState.selectedState != null &&
+                          locState.selectedCountry != null) {
+                        final prefs = SharedPreferencesService();
+                        prefs.storeValue(LocalKeys.userCountryID, locState.selectedCountry!.id);
+                        prefs.storeValue(LocalKeys.userStateID, locState.selectedState!.id);
+                        prefs.storeValue(LocalKeys.userCityID, locState.selectedCity!.id);
                         context.read<HomeBloc>().add(UpdateUserLocation(
-                            cityID: ServiceLocator.getIt<SelectLocationServiceCubit>().state.selectedCity!.id,
-                            cityName: ServiceLocator.getIt<SelectLocationServiceCubit>().state.selectedCity!.name,
+                          cityID: locState.selectedCity!.id,
+                          cityName: locState.selectedCity!.name,
                         ));
+                        Navigator.pop(context);
                       }
-            
-            
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorManager.primaryColor,

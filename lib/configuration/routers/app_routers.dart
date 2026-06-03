@@ -1,13 +1,12 @@
- 
 import 'package:enmaa/features/authentication_module/presentation/screens/bio_metric_screen.dart';
- 
+
 import 'package:enmaa/features/book_property/presentation/screens/book_property_main_screen.dart';
 import 'package:enmaa/features/home_module/presentation/controller/home_bloc.dart';
- 
+
 import 'package:enmaa/features/home_module/presentation/screens/home_search_screen.dart';
 import 'package:enmaa/features/home_module/presentation/screens/notifications_screen.dart';
 import 'package:enmaa/features/home_module/presentation/screens/see_all_screen.dart';
- import 'package:enmaa/features/my_profile/modules/user_appointments/presentation/screens/user_appointments_screen.dart';
+import 'package:enmaa/features/my_profile/modules/user_appointments/presentation/screens/user_appointments_screen.dart';
 import 'package:enmaa/features/my_profile/modules/user_data_module/user_data_DI.dart';
 import 'package:enmaa/features/my_profile/modules/user_properties_module/presentation/screens/user_properties_screen.dart';
 import 'package:enmaa/features/my_profile/modules/user_properties_module/user_properties_DI.dart';
@@ -60,12 +59,15 @@ import 'package:enmaa/features/add_new_real_estate/presentation/screens/add_new_
 import 'package:enmaa/features/my_profile/modules/user_properties_module/presentation/controller/user_properties_cubit.dart';
 import 'package:enmaa/features/my_profile/modules/user_electronic_contracts_module/user_electronic_contracts_DI.dart';
 import 'package:enmaa/features/my_profile/modules/user_electronic_contracts_module/presentation/controller/user_electronic_contracts_cubit.dart';
+import 'package:enmaa/features/my_profile/modules/user_rental_history_module/presentation/controller/rental_history_cubit.dart';
+import 'package:enmaa/features/my_profile/modules/user_rental_history_module/presentation/screens/rental_history_screen.dart';
+import 'package:enmaa/features/my_profile/modules/user_rental_history_module/user_rental_history_DI.dart';
 import 'package:enmaa/features/my_profile/modules/contact_us_module/contact_us_DI.dart';
 import 'package:enmaa/features/my_profile/modules/contact_us_module/presenation/controller/contact_us_cubit.dart';
- 
+
 import 'package:enmaa/features/wallet/presentation/screens/charge_wallet_screen.dart';
 import 'package:enmaa/features/wallet/presentation/screens/see_all_transactions.dart';
- 
+
 import 'route_names.dart';
 import '../../core/screens/splash_screen.dart';
 
@@ -90,7 +92,7 @@ class AppRouters {
             create: (context) {
               // S'assurer que les dépendances des véhicules sont configurées
               VehicleWishListDi().setup();
-              
+
               if (ServiceLocator.getIt.isRegistered<HomeBloc>()) {
                 final bloc = ServiceLocator.getIt<HomeBloc>();
                 if (bloc.isClosed) {
@@ -115,6 +117,7 @@ class AppRouters {
               }
 
               return ServiceLocator.getIt<HomeBloc>()
+                ..add(GetUserLocation())
                 ..add(FetchBanners())
                 ..add(FetchAppServices());
             },
@@ -212,6 +215,19 @@ class AppRouters {
             child: UserElectronicContractsScreen(),
           ),
         );
+      case RoutersNames.userRentalHistory:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: RoutersNames.userRentalHistory),
+          builder: (_) => BlocProvider(
+            create: (context) {
+              UserRentalHistoryDi().setup();
+              return RentalHistoryCubit(
+                ServiceLocator.getIt(),
+              )..getRentalHistory(refresh: true);
+            },
+            child: const RentalHistoryScreen(),
+          ),
+        );
 
       case RoutersNames.realEstateDetailsScreen:
         final args = (settings.arguments as int).toString();
@@ -250,7 +266,7 @@ class AppRouters {
         String propertyId;
         String? operation;
         String? monthlyRentPeriod;
-        
+
         if (args is Map<String, dynamic>) {
           propertyId = args['propertyId'] as String;
           operation = args['operation'] as String?;
@@ -259,7 +275,7 @@ class AppRouters {
           // Pour compatibilité avec l'ancien code
           propertyId = args as String;
         }
-        
+
         return MaterialPageRoute(
           settings: RouteSettings(name: RoutersNames.bookPropertyScreen),
           builder: (_) => BookPropertyMainScreen(
@@ -330,11 +346,10 @@ class AppRouters {
           settings: RouteSettings(name: RoutersNames.realEstatesMapScreen),
           builder: (_) => BlocProvider.value(
             value: args,
-            child: RealEstateMapScreen(
-            ),
+            child: RealEstateMapScreen(),
           ),
         );
-        case RoutersNames.homeSearchScreen:
+      case RoutersNames.homeSearchScreen:
         final args = settings.arguments as HomeBloc;
         return MaterialPageRoute(
           settings: RouteSettings(name: RoutersNames.homeSearchScreen),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:enmaa/core/constants/local_keys.dart';
 import 'package:enmaa/core/services/auth_service.dart';
 import 'package:enmaa/core/services/change_user_language_function.dart';
 import 'package:enmaa/core/services/dio_service.dart';
@@ -82,6 +83,10 @@ class AuthenticationRemoteDataSource extends BaseAuthenticationRemoteDataSource 
         await SharedPreferencesService().storeValue('state_name', stateName);
         await SharedPreferencesService().storeValue('country_id', countryId);
         await SharedPreferencesService().storeValue('country_name', countryName);
+        // Keys used by SelectLocationScreen to pre-fill dropdowns
+        await SharedPreferencesService().storeValue(LocalKeys.userCountryID, countryId.toString());
+        await SharedPreferencesService().storeValue(LocalKeys.userStateID, stateId.toString());
+        await SharedPreferencesService().storeValue(LocalKeys.userCityID, cityId.toString());
       }
 
       return token;

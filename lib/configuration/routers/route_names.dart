@@ -15,11 +15,12 @@ class RoutersNames {
   static const String withdrawScreen = "/withdraw-screen";
   static const String seeAllTransactionsScreen = "/see-all-transactions-screen";
   static const String realEstatesMapScreen = "/real-estates-map-screen";
-  static const String vehicleSearchScreen = "/vehicle_Search_Screen" ;
+  static const String vehicleSearchScreen = "/vehicle_Search_Screen";
 
   static const String myPropertiesScreen = "/my-properties-screen";
   static const String userAppointmentsScreen = "/user-appointments-screen";
   static const String userElectronicContracts = '/user-electronic-contracts';
+  static const String userRentalHistory = '/user-rental-history';
   static const String editUserDataScreen = "/edit-user-data-screen";
   static const String contactUsScreen = "/contact-us-screen";
   static const String changePasswordScreen = "/change-password-screen";
@@ -37,10 +38,9 @@ class RoutersNames {
   static const String vehicleDetails = "/vehicle-details";
   static const String vehicleDetailsScreen = "/vehicle_detail_screen";
   //pour terster les ecran
-  static const String bookVsehicleScreen = "book-vehicle-screen" ;
+  static const String bookVsehicleScreen = "book-vehicle-screen";
   static const String testDriveVehicleScreen = "testDriveVehicleScreen";
   static const String rentVehicleScreen = "rent_vehicle_screen";
   static const String locationPickerScreen = "/location-picker-screen";
-  static const String homeVehicleScreen ="home_vehicle_screen";
-
+  static const String homeVehicleScreen = "home_vehicle_screen";
 }

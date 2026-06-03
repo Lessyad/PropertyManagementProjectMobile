@@ -11,19 +11,20 @@ class ImageModel extends ImageEntity{
 
   factory ImageModel.fromJson(Map<String, dynamic> json) {
     String rawImage = json[JsonKeys.image] ?? '';
-    
-    // Construire l'URL complète de l'image
+
     String imageUrl = rawImage;
     if (rawImage.isNotEmpty && !rawImage.startsWith('http')) {
-      // Extraire l'URL de base sans le "/api/" final
-      String baseUrl = ApiConstants.baseUrl.replaceAll('/api/', '');
-      imageUrl = "$baseUrl/$rawImage";
+      // Retire /api/ et tout ce qui suit pour obtenir la racine du domaine
+      final String base = ApiConstants.baseUrl
+          .replaceAll(RegExp(r'/api/.*'), ''); // "https://domain.net" sans trailing slash
+      final String path = rawImage.startsWith('/') ? rawImage : '/$rawImage';
+      imageUrl = '$base$path';
     }
-    
+
     return ImageModel(
-     id: json[JsonKeys.id] ?? 0,
+      id: json[JsonKeys.id] ?? 0,
       image: imageUrl,
-      isMain: json[JsonKeys.isMain] ?? true ,
+      isMain: json[JsonKeys.isMain] ?? true,
     );
   }
 

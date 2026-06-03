@@ -18,7 +18,7 @@ class UserScreensWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: context.scale(112),
+      height: context.scale(158),
       decoration: BoxDecoration(
         color: ColorManager.whiteColor,
         borderRadius: BorderRadius.circular(20),
@@ -37,7 +37,8 @@ class UserScreensWidget extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         if (isAuth) {
-                          Navigator.pushNamed(context, RoutersNames.userAppointmentsScreen);
+                          Navigator.pushNamed(
+                              context, RoutersNames.userAppointmentsScreen);
                         } else {
                           LoginBottomSheet.show();
                         }
@@ -54,7 +55,8 @@ class UserScreensWidget extends StatelessWidget {
                           Text(
                             LocaleKeys.userScreensAppointments.tr(),
                             style: getBoldStyle(
-                                color: ColorManager.blackColor, fontSize: FontSize.s16),
+                                color: ColorManager.blackColor,
+                                fontSize: FontSize.s16),
                           ),
                           Spacer(),
                           Icon(Icons.arrow_forward_ios),
@@ -64,7 +66,8 @@ class UserScreensWidget extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         if (isAuth) {
-                          Navigator.pushNamed(context, RoutersNames.userElectronicContracts);
+                          Navigator.pushNamed(
+                              context, RoutersNames.userElectronicContracts);
                         } else {
                           LoginBottomSheet.show();
                         }
@@ -81,7 +84,37 @@ class UserScreensWidget extends StatelessWidget {
                           Text(
                             LocaleKeys.userScreensElectronicContracts.tr(),
                             style: getBoldStyle(
-                                color: ColorManager.blackColor, fontSize: FontSize.s16),
+                                color: ColorManager.blackColor,
+                                fontSize: FontSize.s16),
+                          ),
+                          Spacer(),
+                          Icon(Icons.arrow_forward_ios),
+                        ],
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        if (isAuth) {
+                          Navigator.pushNamed(
+                              context, RoutersNames.userRentalHistory);
+                        } else {
+                          LoginBottomSheet.show();
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          SvgImageComponent(
+                            width: 20,
+                            height: 20,
+                            iconPath: AppAssets.rentIcon,
+                            color: ColorManager.grey,
+                          ),
+                          SizedBox(width: context.scale(8)),
+                          Text(
+                            _rentalHistoryLabel(context),
+                            style: getBoldStyle(
+                                color: ColorManager.blackColor,
+                                fontSize: FontSize.s16),
                           ),
                           Spacer(),
                           Icon(Icons.arrow_forward_ios),
@@ -96,5 +129,16 @@ class UserScreensWidget extends StatelessWidget {
         },
       ),
     );
+  }
+
+  String _rentalHistoryLabel(BuildContext context) {
+    switch (context.locale.languageCode) {
+      case 'fr':
+        return 'Historique de location';
+      case 'ar':
+        return 'سجل الإيجار';
+      default:
+        return 'Rental history';
+    }
   }
 }

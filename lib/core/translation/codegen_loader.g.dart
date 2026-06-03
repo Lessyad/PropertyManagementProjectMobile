@@ -6,7 +6,7 @@ import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart' show AssetLoader;
 
-class CodegenLoader extends AssetLoader{
+class CodegenLoader extends AssetLoader {
   const CodegenLoader();
 
   @override
@@ -14,7 +14,9 @@ class CodegenLoader extends AssetLoader{
     return Future.value(mapLocales[locale.toString()]);
   }
 
-  static const Map<String,dynamic> _ar = {
+
+static const Map<String,dynamic> _ar = {
+    "rentalHistoryAppearance": "Your rentals will appear here",
     "wrongCurrentPassword": "كلمة المرور الحالية التي أدخلتها غير صحيحة. يرجى التحقق منها والمحاولة مجدداً.",
     "currentPasswordRequired": "كلمة المرور الحالية مطلوبة لتغيير كلمة المرور.",
     "confirm_button" : "أضف",
@@ -2071,4 +2073,5 @@ static const Map<String,dynamic> _fr = {
   // "success_payment_completed": "Paiement effectué avec succès"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ar": _ar, "en": _en, "fr": _fr};
+
 }
