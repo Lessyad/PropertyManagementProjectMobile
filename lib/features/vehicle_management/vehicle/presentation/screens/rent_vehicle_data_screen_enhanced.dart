@@ -741,7 +741,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                 child: _buildDateField(
                   tr(LocaleKeys.birthDate),
                   _birthDate,
-                      (date) => setState(() => _birthDate = date),
+                  (date) => setState(() => _birthDate = date),
+                  maxDate: DateTime(DateTime.now().year - 18, DateTime.now().month, DateTime.now().day),
                 ),
               ),
               SizedBox(width: context.scale(16)),
@@ -749,7 +750,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                 child: _buildDateField(
                   tr(LocaleKeys.expiryDate),
                   _idExpirationDate,
-                      (date) => setState(() => _idExpirationDate = date),
+                  (date) => setState(() => _idExpirationDate = date),
+                  minDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
                 ),
               ),
             ],
@@ -1246,7 +1248,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                 child: _buildDateField(
                   tr(LocaleKeys.birthDate),
                   _secondBirthDate,
-                      (date) => setState(() => _secondBirthDate = date),
+                  (date) => setState(() => _secondBirthDate = date),
+                  maxDate: DateTime(DateTime.now().year - 18, DateTime.now().month, DateTime.now().day),
                 ),
               ),
               SizedBox(width: context.scale(16)),
@@ -1254,7 +1257,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                 child: _buildDateField(
                   tr(LocaleKeys.expiryDate),
                   _secondIdExpirationDate,
-                      (date) => setState(() => _secondIdExpirationDate = date),
+                  (date) => setState(() => _secondIdExpirationDate = date),
+                  minDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
                 ),
               ),
             ],
@@ -1422,7 +1426,15 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
     );
   }
 
-  Widget _buildDateField(String label, DateTime? selectedDate, Function(DateTime) onDateSelected) {
+
+
+  Widget _buildDateField(
+    String label,
+    DateTime? selectedDate,
+    Function(DateTime) onDateSelected, {
+    DateTime? minDate,
+    DateTime? maxDate,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1440,51 +1452,143 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
               context: context,
               builder: (BuildContext dialogContext) {
                 DateTime? tempSelectedDate = selectedDate;
+                final int startYear = minDate?.year ?? 1920;
+                final int endYear = maxDate?.year ?? 2040;
+                DateTime rawDisplay = selectedDate ?? maxDate ?? DateTime.now();
+                if (rawDisplay.year < startYear) rawDisplay = DateTime(startYear, rawDisplay.month, 1);
+                if (rawDisplay.year > endYear) rawDisplay = DateTime(endYear, rawDisplay.month, 1);
+                DateTime displayDate = rawDisplay;
 
-                return Dialog(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(context.scale(12)),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.all(context.scale(16)),
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    decoration: BoxDecoration(
-                      color: ColorManager.whiteColor,
-                      borderRadius: BorderRadius.circular(context.scale(12)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: ColorManager.blackColor.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
+                return StatefulBuilder(
+                  builder: (context, setDialogState) {
+                    return Dialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(context.scale(12)),
+                      ),
+                      child: Container(
+                        padding: EdgeInsets.all(context.scale(16)),
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        height: MediaQuery.of(context).size.height * 0.47,
+                        decoration: BoxDecoration(
+                          color: ColorManager.whiteColor,
+                          borderRadius: BorderRadius.circular(context.scale(12)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: ColorManager.blackColor.withOpacity(0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          tr(LocaleKeys.selectDate),
-                          style: getBoldStyle(
-                            color: ColorManager.blackColor,
-                            fontSize: FontSize.s16,
-                          ),
-                        ),
-                        SizedBox(height: context.scale(16)),
+                        child: Column(
+                          children: [
+                            Text(
+                              tr(LocaleKeys.selectDate),
+                              style: getBoldStyle(
+                                color: ColorManager.blackColor,
+                                fontSize: FontSize.s16,
+                              ),
+                            ),
+                            SizedBox(height: context.scale(8)),
 
-                        Expanded(
-                          child: CustomDatePicker(
-                            showPreviousDates: true,
-                            selectedDate: tempSelectedDate,
-                            onSelectionChanged: (calendarSelectionDetails) {
-                              if (calendarSelectionDetails.date != null) {
-                                Navigator.of(dialogContext).pop(calendarSelectionDetails.date);
-                              }
-                            },
-                          ),
+                            // Quick year/month navigation
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    height: context.scale(36),
+                                    padding: EdgeInsets.symmetric(horizontal: context.scale(8)),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: ColorManager.greyShade, width: 0.5),
+                                      borderRadius: BorderRadius.circular(context.scale(8)),
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<int>(
+                                        value: displayDate.year,
+                                        isDense: true,
+                                        isExpanded: true,
+                                        style: getRegularStyle(
+                                          color: ColorManager.blackColor,
+                                          fontSize: FontSize.s12,
+                                        ),
+                                        items: List.generate(endYear - startYear + 1, (i) {
+                                          final year = startYear + i;
+                                          return DropdownMenuItem(
+                                            value: year,
+                                            child: Text(year.toString()),
+                                          );
+                                        }),
+                                        onChanged: (year) {
+                                          if (year != null) {
+                                            setDialogState(() {
+                                              displayDate = DateTime(year, displayDate.month, 1);
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: context.scale(8)),
+                                Expanded(
+                                  child: Container(
+                                    height: context.scale(36),
+                                    padding: EdgeInsets.symmetric(horizontal: context.scale(8)),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: ColorManager.greyShade, width: 0.5),
+                                      borderRadius: BorderRadius.circular(context.scale(8)),
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<int>(
+                                        value: displayDate.month,
+                                        isDense: true,
+                                        isExpanded: true,
+                                        style: getRegularStyle(
+                                          color: ColorManager.blackColor,
+                                          fontSize: FontSize.s12,
+                                        ),
+                                        items: List.generate(12, (i) {
+                                          return DropdownMenuItem(
+                                            value: i + 1,
+                                            child: Text(
+                                              DateFormat('MMMM', context.locale.toString()).format(DateTime(2000, i + 1)),
+                                            ),
+                                          );
+                                        }),
+                                        onChanged: (month) {
+                                          if (month != null) {
+                                            setDialogState(() {
+                                              displayDate = DateTime(displayDate.year, month, 1);
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: context.scale(8)),
+
+                            Expanded(
+                              child: CustomDatePicker(
+                                key: ValueKey(displayDate),
+                                showPreviousDates: true,
+                                selectedDate: tempSelectedDate,
+                                minDate: minDate,
+                                maxDate: maxDate,
+                                onSelectionChanged: (calendarSelectionDetails) {
+                                  if (calendarSelectionDetails.date != null) {
+                                    Navigator.of(dialogContext).pop(calendarSelectionDetails.date);
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 );
               },
             );

@@ -430,6 +430,8 @@ abstract class LocaleKeys {
 
   static const String logOutWarning = 'logOutWarning';
   static const String logOutConfirmation = 'logOutConfirmation';
+  static const String wrongCurrentPassword = 'wrongCurrentPassword';
+  static const String currentPasswordRequired = 'currentPasswordRequired';
 
   static const completingPayment = 'completingPayment';
   static const reviewData = 'reviewData';

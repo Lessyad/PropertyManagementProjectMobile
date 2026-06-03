@@ -104,6 +104,7 @@
       final String preservedLanguage = language;
       final bool preservedFirstLaunch = _prefs.getBool(_keyFirstLaunch) ?? true;
       final String preservedTheme = theme;
+      final bool preservedNotifications = _prefs.getBool('notifications_enabled') ?? true;
 
       // Clear all data
       await _prefs.clear();
@@ -112,5 +113,6 @@
       await setLanguage(preservedLanguage);
       await setFirstLaunch(preservedFirstLaunch);
       await setTheme(preservedTheme);
+      await _prefs.setBool('notifications_enabled', preservedNotifications);
     }
   }

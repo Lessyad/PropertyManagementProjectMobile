@@ -1,23 +1,25 @@
 class ApiConstants {
   ApiConstants._();
 
-  static const String baseUrl =
-      "https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/";
-  //static const String baseUrl ="http://192.168.100.173:5000/api/" ;
-  static const String properties = "${baseUrl}properties/";
-  static const String banners = "${baseUrl}banners/";
-  static const String notifications = "${baseUrl}notifications/";
-  static const String apartment = "${baseUrl}apartments/";
-  static const String villa = "${baseUrl}villas/";
-  static const String building = "${baseUrl}buildings/";
-  static const String land = "${baseUrl}lands/";
-  static const String login = "${baseUrl}auth/login/";
-  static const String signUp = "${baseUrl}auth/register/";
-  static const String refreshToken = "${baseUrl}auth/refresh/";
 
-  static const String sendOTP = "${baseUrl}auth/send-otp/";
-  static const String verifyOTP = "${baseUrl}auth/verify-otp/";
-  static const String resetPassword = "${baseUrl}auth/reset-password/";
+
+  static const String baseUrl = "https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/";
+  // static const String baseUrl ="http://192.168.100.13:5000/api/" ;
+  static const String properties= "${baseUrl}properties/";
+  static const String banners= "${baseUrl}banners/";
+  static const String notifications= "${baseUrl}notifications/";
+  static const String apartment= "${baseUrl}apartments/";
+  static const String villa= "${baseUrl}villas/";
+  static const String building= "${baseUrl}buildings/";
+  static const String land= "${baseUrl}lands/";
+  static const String login= "${baseUrl}auth/login/";
+  static const String signUp= "${baseUrl}auth/register/";
+  static const String refreshToken= "${baseUrl}auth/refresh/";
+
+  static const String sendOTP= "${baseUrl}auth/send-otp/";
+  static const String verifyOTP= "${baseUrl}auth/verify-otp/";
+  static const String resetPassword= "${baseUrl}auth/reset-password/";
+
 
   /// location
 

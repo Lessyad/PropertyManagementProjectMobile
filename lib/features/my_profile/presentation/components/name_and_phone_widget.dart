@@ -3,7 +3,7 @@ import 'package:enmaa/configuration/managers/style_manager.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
 import 'package:enmaa/core/services/convert_numbers.dart';
 import 'package:enmaa/core/services/shared_preferences_service.dart';
-import 'package:enmaa/main.dart';
+import 'package:enmaa/core/services/auth_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:enmaa/core/translation/locale_keys.dart';
 import '../../../../configuration/managers/color_manager.dart';
@@ -20,7 +20,21 @@ class NameAndPhoneWidget extends StatefulWidget {
 class _NameAndPhoneWidgetState extends State<NameAndPhoneWidget> {
   String name = '', phoneNumber = '';
 
+  @override
+  void initState() {
+    super.initState();
+    AuthService.authStateNotifier.addListener(_onAuthChanged);
+  }
 
+  void _onAuthChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    AuthService.authStateNotifier.removeListener(_onAuthChanged);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +54,7 @@ class _NameAndPhoneWidgetState extends State<NameAndPhoneWidget> {
       padding: const EdgeInsets.all(16),
       child: InkWell(
         onTap: () {
-          if (isAuth) {
+          if (AuthService.authStateNotifier.value) {
             Navigator.of(context).pushNamed(RoutersNames.editUserDataScreen);
           } else {
             Navigator.of(context).pushNamed(RoutersNames.authenticationFlow);

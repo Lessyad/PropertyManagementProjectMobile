@@ -210,7 +210,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       } else if (state.changePasswordRequestState == RequestState.error) {
                         CustomSnackBar.show(
                           context: context,
-                          message: state.changePasswordErrorMessage,
+                          message: state.changePasswordErrorMessage.tr(),
                           type: SnackBarType.error,
                         );
                       }

@@ -1,6 +1,5 @@
 import 'package:enmaa/configuration/routers/route_names.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:enmaa/core/translation/locale_keys.dart';
 import '../../../../configuration/managers/color_manager.dart';
@@ -10,8 +9,8 @@ import '../../../../core/components/button_app_component.dart';
 import '../../../../core/components/custom_bottom_sheet.dart';
 import '../../../../core/components/svg_image_component.dart';
 import '../../../../core/constants/app_assets.dart';
+import '../../../../core/services/auth_service.dart';
 import '../../../../core/services/shared_preferences_service.dart';
-import '../../../../main.dart';
 import '../../../home_module/home_imports.dart';
 
 class LogOutAndContactUsWidget extends StatelessWidget {
@@ -28,9 +27,10 @@ class LogOutAndContactUsWidget extends StatelessWidget {
       builder: (context) {
         return CustomBottomSheet(
           widget: LogoutComponent(
-            onLogoutConfirmed: () {
-              SharedPreferencesService().clearCachedData();
-              Navigator.pushReplacementNamed(context, RoutersNames.authenticationFlow);
+            onLogoutConfirmed: () async {
+              await SharedPreferencesService().clearCachedData();
+              AuthService.authStateNotifier.value = false;
+              // LayoutScreen écoute authStateNotifier et revient automatiquement à l'onglet Home
             },
           ),
           headerText: '',
@@ -48,9 +48,9 @@ class LogOutAndContactUsWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       padding: const EdgeInsets.all(16),
-      child: Builder(
-        builder: (BuildContext context) {
-          final locale = context.locale;
+      child: ValueListenableBuilder<bool>(
+        valueListenable: AuthService.authStateNotifier,
+        builder: (context, isLoggedIn, _) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             spacing: context.scale(20),
@@ -78,7 +78,7 @@ class LogOutAndContactUsWidget extends StatelessWidget {
               ),
               InkWell(
                 onTap: () async {
-                  if (!isAuth) {
+                  if (!isLoggedIn) {
                     Navigator.pushNamed(context, RoutersNames.authenticationFlow);
                   } else {
                     _showLogoutConfirmationBottomSheet(context);
@@ -86,10 +86,10 @@ class LogOutAndContactUsWidget extends StatelessWidget {
                 },
                 child: Row(
                   children: [
-                    if (isAuth)
+                    if (isLoggedIn)
                       SvgImageComponent(
                           width: 20, height: 20, iconPath: AppAssets.logOutIcon),
-                    if (!isAuth)
+                    if (!isLoggedIn)
                       Transform(
                         alignment: Alignment.center,
                         transform: Matrix4.rotationY(3.1416),
@@ -103,7 +103,7 @@ class LogOutAndContactUsWidget extends StatelessWidget {
                       width: context.scale(8),
                     ),
                     Text(
-                      isAuth ? LocaleKeys.logOutAndContactUsLogOut.tr() : LocaleKeys.login.tr(),
+                      isLoggedIn ? LocaleKeys.logOutAndContactUsLogOut.tr() : LocaleKeys.login.tr(),
                       style: getSemiBoldStyle(
                           color: ColorManager.blackColor, fontSize: FontSize.s16),
                     ),
