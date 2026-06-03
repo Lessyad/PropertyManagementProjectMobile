@@ -37,6 +37,18 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
     emit(state.copyWith(confirmPassword: value));
   }
 
+  String _mapPasswordErrorMessage(String backendMessage) {
+    final normalized = backendMessage.toLowerCase().trim();
+    if (normalized == 'invalid current password' ||
+        normalized == 'mot de passe actuel incorrect') {
+      return 'wrongCurrentPassword';
+    }
+    if (normalized == 'current password is required') {
+      return 'currentPasswordRequired';
+    }
+    return backendMessage;
+  }
+
   void sendChangePasswordRequest() async {
     emit(state.copyWith(changePasswordRequestState: RequestState.loading));
     final dio = ServiceLocator.getIt<DioService>();
@@ -65,7 +77,7 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
           (failure) {
         emit(state.copyWith(
           changePasswordRequestState: RequestState.error,
-          changePasswordErrorMessage: failure.message,
+          changePasswordErrorMessage: _mapPasswordErrorMessage( failure.message),
         ));
       },
           (_) {

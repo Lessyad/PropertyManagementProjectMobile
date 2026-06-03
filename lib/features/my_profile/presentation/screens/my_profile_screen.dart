@@ -4,7 +4,7 @@ import 'package:enmaa/core/extensions/context_extension.dart';
 import '../../../../configuration/managers/color_manager.dart';
 import '../../../../core/components/app_bar_component.dart';
 import '../../../../core/translation/locale_keys.dart';
-import '../../../../main.dart';
+import '../../../../core/services/auth_service.dart';
 import '../../../home_module/home_imports.dart';
 import '../components/app_controls_widget.dart';
 import '../components/log_out_and_contact_us_widget.dart';
@@ -47,10 +47,12 @@ class ProfileScreen extends StatelessWidget {
 
                     LogOutAndContactUsWidget(),
 
-
-                    if(isAuth)
-                      RemoveAccountWidget()
-
+                    ValueListenableBuilder<bool>(
+                      valueListenable: AuthService.authStateNotifier,
+                      builder: (context, isLoggedIn, _) {
+                        return isLoggedIn ? RemoveAccountWidget() : const SizedBox.shrink();
+                      },
+                    ),
                   ],
                 ),
               ),

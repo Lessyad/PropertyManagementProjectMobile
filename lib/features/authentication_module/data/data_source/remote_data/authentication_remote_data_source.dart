@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:enmaa/core/services/auth_service.dart';
 import 'package:enmaa/core/services/change_user_language_function.dart';
 import 'package:enmaa/core/services/dio_service.dart';
 import 'package:enmaa/features/authentication_module/data/models/otp_response_model.dart';
@@ -57,6 +58,7 @@ class AuthenticationRemoteDataSource extends BaseAuthenticationRemoteDataSource 
       SharedPreferencesService().setUserName(fullName) ;
       SharedPreferencesService().setAccessToken(token) ;
       SharedPreferencesService().setRefreshToken(refreshToken) ;
+      AuthService.authStateNotifier.value = true;
       
       // Stocker l'ID utilisateur
       if (idUser != null) {
@@ -155,7 +157,8 @@ class AuthenticationRemoteDataSource extends BaseAuthenticationRemoteDataSource 
     
     SharedPreferencesService().setAccessToken(accessToken);
     SharedPreferencesService().setRefreshToken(refreshToken);
-    
+    AuthService.authStateNotifier.value = true;
+
     // Stocker le nom complet
     final fullName = response.data['full_name'] as String? ?? '';
     SharedPreferencesService().setUserName(fullName);

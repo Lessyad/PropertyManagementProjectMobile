@@ -4,6 +4,7 @@ import 'package:enmaa/configuration/managers/style_manager.dart';
 import 'package:enmaa/core/components/svg_image_component.dart';
 import 'package:enmaa/core/constants/app_assets.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
+import 'package:enmaa/core/services/auth_service.dart';
 import 'package:enmaa/core/services/shared_preferences_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -18,7 +19,6 @@ import '../../../../core/constants/api_constants.dart';
 import '../../../../core/services/dio_service.dart';
 import '../../../../core/services/handle_api_request_service.dart';
 import '../../../../core/services/service_locator.dart';
-import '../../../../main.dart';
 import '../../../home_module/home_imports.dart';
 import 'package:flutter/material.dart';
 import 'language_bottom_sheet_component.dart';
@@ -32,7 +32,8 @@ class AppControlsWidget extends StatefulWidget {
 
 class _AppControlsWidgetState extends State<AppControlsWidget> {
   bool isDarkModeEnabled = false;
-  bool areNotificationsEnabled = SharedPreferencesService().getValue('notifications_enabled') ?? true;
+  bool areNotificationsEnabled =
+      SharedPreferencesService().getValue('notifications_enabled') ?? true;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +79,7 @@ class _AppControlsWidgetState extends State<AppControlsWidget> {
                   iconPath: AppAssets.keyIcon,
                   text: LocaleKeys.changePassword.tr(),
                   onTap: () async {
-                    if (isAuth) {
+                    if (AuthService.authStateNotifier.value) {
                       Navigator.pushNamed(context, RoutersNames.changePasswordScreen);
                     } else {
                       LoginBottomSheet.show();
@@ -115,14 +116,14 @@ class _AppControlsWidgetState extends State<AppControlsWidget> {
                   text: LocaleKeys.appControlsNotifications.tr(),
                   value: areNotificationsEnabled,
                   onChanged: (value) {
-                    if (!isAuth) {
+                    if (!AuthService.authStateNotifier.value) {
                       LoginBottomSheet.show();
                       return;
                     }
                     setState(() {
                       areNotificationsEnabled = value;
                     });
-                    _updateNotificationAvailability(context, value);
+                    _updateNotificationAvailability(value);
                   },
                 ),
               ],
@@ -202,34 +203,41 @@ class _AppControlsWidgetState extends State<AppControlsWidget> {
     );
   }
 
-  Future<void> _updateNotificationAvailability(BuildContext context, bool notificationAvailability) async {
-    SharedPreferencesService().storeValue('notifications_enabled', notificationAvailability);
+  Future<void> _updateNotificationAvailability(bool newValue) async {
+    final bool previousValue = !newValue;
+
+    await SharedPreferencesService().storeValue('notifications_enabled', newValue);
 
     final dio = ServiceLocator.getIt<DioService>();
 
     final result = await HandleRequestService.handleApiCall<void>(
-          () async {
-        final response = await dio.patch(
+      () async {
+        await dio.patch(
           url: ApiConstants.user,
-          data: {
-            "notifications_enabled": notificationAvailability,
-          },
+          data: {"notifications_enabled": newValue},
           options: Options(contentType: 'application/json'),
         );
       },
     );
 
+    if (!mounted) return;
+
     result.fold(
-          (failure) {
-        SharedPreferencesService().storeValue('notifications_enabled', false);
-        areNotificationsEnabled = false;
-        setState(() {});
+      (failure) async {
+        // Revert to the previous state on API error
+        await SharedPreferencesService().storeValue('notifications_enabled', previousValue);
+        setState(() => areNotificationsEnabled = previousValue);
         CustomSnackBar.show(
           message: failure.message,
           type: SnackBarType.error,
         );
       },
-          (_) {},
+      (_) {
+        CustomSnackBar.show(
+          message: LocaleKeys.successOperationCompleted.tr(),
+          type: SnackBarType.success,
+        );
+      },
     );
   }
 }

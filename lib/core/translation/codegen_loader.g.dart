@@ -15,6 +15,8 @@ class CodegenLoader extends AssetLoader{
   }
 
   static const Map<String,dynamic> _ar = {
+    "wrongCurrentPassword": "كلمة المرور الحالية التي أدخلتها غير صحيحة. يرجى التحقق منها والمحاولة مجدداً.",
+    "currentPasswordRequired": "كلمة المرور الحالية مطلوبة لتغيير كلمة المرور.",
     "confirm_button" : "أضف",
   "myAppointments" :"مواعيدي",
   "vehiclesSearchscreen": "المركبات" ,
@@ -697,6 +699,8 @@ class CodegenLoader extends AssetLoader{
   // "success_payment_completed": "تم إتمام الدفع بنجاح"
 };
 static const Map<String,dynamic> _en = {
+  "wrongCurrentPassword": "The current password you entered is incorrect. Please verify it and try again.",
+  "currentPasswordRequired": "Current password is required to change your password.",
   "confirm_button" : "add",
   "myAppointments" :"my Appointments",
   "vehiclesSearchscreen": "Vehicles" ,
@@ -1383,6 +1387,8 @@ static const Map<String,dynamic> _en = {
   // "success_payment_completed": "Payment completed successfully"
 };
 static const Map<String,dynamic> _fr = {
+  "wrongCurrentPassword": "Le mot de passe actuel que vous avez saisi est incorrect. Veuillez le vérifier et réessayer.",
+  "currentPasswordRequired": "Le mot de passe actuel est requis pour modifier votre mot de passe.",
   "confirm_button" : "Ajouter",
   "myAppointments" :"Mes rendez-vous",
   "vehiclesSearchscreen": "Véhicules" ,

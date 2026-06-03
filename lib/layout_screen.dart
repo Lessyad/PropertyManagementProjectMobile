@@ -17,6 +17,7 @@ import 'package:enmaa/features/wallet/domain/use_cases/get_wallet_data_use_case.
 import 'package:enmaa/features/wallet/domain/use_cases/get_transaction_history_data_use_case.dart';
 import 'package:enmaa/features/wallet/domain/use_cases/get_banks_use_case.dart';
 import 'package:enmaa/features/wallet/domain/use_cases/get_user_balance_use_case.dart';
+import 'package:enmaa/core/services/auth_service.dart';
 import 'package:enmaa/main.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -55,6 +56,15 @@ class _LayoutScreenState extends State<LayoutScreen> {
     currentIndex = widget.initialIndex;
     storeFirebaseMessagingToken();
     _pageController = PageController(initialPage: currentIndex);
+    AuthService.authStateNotifier.addListener(_onAuthChanged);
+  }
+
+  void _onAuthChanged() {
+    if (!mounted) return;
+    if (!AuthService.authStateNotifier.value) {
+      setState(() => currentIndex = 0);
+      _pageController.jumpToPage(0);
+    }
   }
 
   Future<void>storeFirebaseMessagingToken() async {
@@ -226,6 +236,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
 
   @override
   void dispose() {
+    AuthService.authStateNotifier.removeListener(_onAuthChanged);
     _pageController.dispose();
     super.dispose();
   }
