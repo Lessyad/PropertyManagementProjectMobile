@@ -53,6 +53,9 @@ class ApiConstants {
   static const String vehicleWishList = '${baseUrl}VehicleWishlist/';
   static const String vehicleMakes = "${baseUrl}VehicleMakes/";
   static const String VehicleDeals = "${baseUrl}Vehicles/deal/";
+  static const String vehicleRentals = "${baseUrl}Vehicles/rentals";
+  static String cancelVehicleRental(int rentalId) =>
+      "${baseUrl}Vehicles/rentals/$rentalId/cancel";
 
   // Nouveaux endpoints pour l'upload direct d'images
   static const String generateUploadUrls =

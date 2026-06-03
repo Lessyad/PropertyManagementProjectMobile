@@ -2,6 +2,7 @@ import '../../../../core/services/service_locator.dart';
 import 'data/data_source/rental_history_remote_data_source.dart';
 import 'data/repository/rental_history_repository.dart';
 import 'domain/repository/base_rental_history_repository.dart';
+import 'domain/use_cases/cancel_rental_use_case.dart';
 import 'domain/use_cases/get_rental_history_use_case.dart';
 
 class UserRentalHistoryDi {
@@ -28,9 +29,11 @@ class UserRentalHistoryDi {
   }
 
   void _registerUseCases() {
-    if (sl.isRegistered<GetRentalHistoryUseCase>()) return;
-    sl.registerLazySingleton(
-      () => GetRentalHistoryUseCase(sl()),
-    );
+    if (!sl.isRegistered<GetRentalHistoryUseCase>()) {
+      sl.registerLazySingleton(() => GetRentalHistoryUseCase(sl()));
+    }
+    if (!sl.isRegistered<CancelRentalUseCase>()) {
+      sl.registerLazySingleton(() => CancelRentalUseCase(sl()));
+    }
   }
 }

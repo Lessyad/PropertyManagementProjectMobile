@@ -101,11 +101,24 @@ class NotificationComponent extends StatelessWidget {
         if (parts.length > 1) {
           translated = translated.replaceAll('{propertyTitle}', parts[1]);
         }
-      } else if (translationKey == 'vehicle_notification_rented') {
+      } else if (translationKey == 'vehicle_notification_rented' ||
+                 translationKey == 'vehicle_notification_booked') {
         if (parts.length > 3) {
           translated = translated.replaceAll('{vehicleModel}', parts[1]);
           translated = translated.replaceAll('{licensePlate}', parts[2]);
           translated = translated.replaceAll('{days}', parts[3]);
+        }
+      } else if (translationKey == 'vehicle_notification_cancelled' ||
+                 translationKey == 'vehicle_notification_client_cancelled') {
+        if (parts.length > 2) {
+          translated = translated.replaceAll('{vehicleModel}', parts[1]);
+          translated = translated.replaceAll('{licensePlate}', parts[2]);
+        }
+      } else if (translationKey == 'withdrawal_notification_created' ||
+                 translationKey == 'withdrawal_notification_approved' ||
+                 translationKey == 'withdrawal_notification_rejected') {
+        if (parts.length > 1) {
+          translated = translated.replaceAll('{amount}', parts[1]);
         }
       } else if (translationKey == 'property_error_image_not_associated') {
         if (parts.length > 2) {
@@ -146,6 +159,18 @@ class NotificationComponent extends StatelessWidget {
           return LocaleKeys.propertyNotificationSold.tr();
         case 'vehicle_notification_rented':
           return LocaleKeys.vehicleNotificationRented.tr();
+        case 'vehicle_notification_booked':
+          return LocaleKeys.vehicleNotificationBooked.tr();
+        case 'vehicle_notification_cancelled':
+          return LocaleKeys.vehicleNotificationCancelled.tr();
+        case 'vehicle_notification_client_cancelled':
+          return LocaleKeys.vehicleNotificationClientCancelled.tr();
+        case 'withdrawal_notification_created':
+          return LocaleKeys.withdrawalNotificationCreated.tr();
+        case 'withdrawal_notification_approved':
+          return LocaleKeys.withdrawalNotificationApproved.tr();
+        case 'withdrawal_notification_rejected':
+          return LocaleKeys.withdrawalNotificationRejected.tr();
         case 'property_error_not_found':
           return LocaleKeys.propertyErrorNotFound.tr();
         case 'property_error_cannot_update_pending_deals':

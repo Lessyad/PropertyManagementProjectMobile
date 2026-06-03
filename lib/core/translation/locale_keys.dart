@@ -1060,6 +1060,12 @@ abstract class LocaleKeys {
 
   // Vehicle Service Messages
   static const String vehicleNotificationRented = 'vehicle_notification_rented';
+  static const String vehicleNotificationBooked = 'vehicle_notification_booked';
+  static const String vehicleNotificationCancelled = 'vehicle_notification_cancelled';
+  static const String vehicleNotificationClientCancelled = 'vehicle_notification_client_cancelled';
+  static const String withdrawalNotificationCreated = 'withdrawal_notification_created';
+  static const String withdrawalNotificationApproved = 'withdrawal_notification_approved';
+  static const String withdrawalNotificationRejected = 'withdrawal_notification_rejected';
   static const String vehicleErrorNotFound = 'vehicle_error_not_found';
   static const String vehicleErrorNotAuthorized =
       'vehicle_error_not_authorized';

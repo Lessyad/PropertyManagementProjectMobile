@@ -7,4 +7,5 @@ abstract class BaseRentalHistoryRepository {
   Future<Either<Failure, List<RentalHistoryEntity>>> getRentalHistory(
     Map<String, dynamic> data,
   );
+  Future<Either<Failure, bool>> cancelRental(int rentalId);
 }

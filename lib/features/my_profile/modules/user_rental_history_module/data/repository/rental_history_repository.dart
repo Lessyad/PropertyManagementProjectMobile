@@ -19,4 +19,14 @@ class RentalHistoryRepository extends BaseRentalHistoryRepository {
       () async => remoteDataSource.getRentalHistory(data),
     );
   }
+
+  @override
+  Future<Either<Failure, bool>> cancelRental(int rentalId) {
+    return HandleRequestService.handleApiCall<bool>(
+      () async {
+        await remoteDataSource.cancelRental(rentalId);
+        return true;
+      },
+    );
+  }
 }

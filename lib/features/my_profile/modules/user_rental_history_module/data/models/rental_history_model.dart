@@ -27,40 +27,48 @@ class RentalHistoryModel extends RentalHistoryEntity {
     required super.clientPhoneNumber,
   });
 
-  factory RentalHistoryModel.fromJson(Map<String, dynamic> json) {
-    final property = (json['property'] as Map<String, dynamic>?) ?? {};
-    final city = (property['city'] as Map<String, dynamic>?) ?? {};
-    final state = (city['state'] as Map<String, dynamic>?) ?? {};
-    final country = (state['country'] as Map<String, dynamic>?) ?? {};
+  /// Parse une réponse de GET /api/Vehicles/rentals
+  factory RentalHistoryModel.fromVehicleJson(Map<String, dynamic> json) {
+    final deal = (json['vehicleDealData'] as Map<String, dynamic>?) ?? {};
+    final vehicle = (deal['vehicle'] as Map<String, dynamic>?) ?? {};
+    final clientInfo = (deal['clientInfo'] as Map<String, dynamic>?) ?? {};
+
+    final images = (vehicle['imageUrls'] as List<dynamic>?) ?? [];
+    final String image = images.isNotEmpty ? images.first.toString() : '';
+
+    final String makeName = vehicle['makeName']?.toString() ?? '';
+    final String modelName = vehicle['modelName']?.toString() ?? '';
+    final int year = _toInt(vehicle['year']);
+    final String vehicleLabel = [makeName, modelName, if (year > 0) year.toString()]
+        .where((s) => s.isNotEmpty)
+        .join(' ');
+
+    final bool isActive = json['isActive'] == true;
 
     return RentalHistoryModel(
       id: _toInt(json['id']),
-      propertyId: _toInt(property['id']),
-      propertyTitle: property['title']?.toString() ?? '',
-      propertyType: property['property_type']?.toString() ?? '',
-      propertyCity: city['name']?.toString() ?? '',
-      propertyState: state['name']?.toString() ?? '',
-      propertyCountry: country['name']?.toString() ?? '',
-      propertyImage: property['mainImage']?.toString() ??
-          property['main_image']?.toString() ??
-          '',
-      propertyArea: _toDouble(property['area']),
-      userRole: json['user_role']?.toString() ?? '',
-      contractUrl: json['contract_url']?.toString() ?? '',
-      created: json['created']?.toString() ?? '',
-      startDate: json['start_date']?.toString(),
-      endDate: json['end_date']?.toString(),
-      dealStatus: json['deal_status']?.toString() ?? '',
-      orderStatus: json['order_status']?.toString() ?? '',
-      operation: json['operation']?.toString() ?? '',
-      totalAmount: _toDouble(json['total_amount']),
-      paidAmount: _toDouble(json['paid_amount']),
-      ownerPortion: json['owner_portion'] == null
-          ? null
-          : _toDouble(json['owner_portion']),
-      paymentMethod: json['payment_method']?.toString() ?? '',
-      clientName: json['client_name']?.toString() ?? '',
-      clientPhoneNumber: json['client_phone_number']?.toString() ?? '',
+      propertyId: _toInt(deal['vehicleId']),
+      propertyTitle: vehicleLabel,
+      propertyType: makeName,
+      propertyCity: '',
+      propertyState: '',
+      propertyCountry: '',
+      propertyImage: image,
+      propertyArea: 0,
+      userRole: 'Client',
+      contractUrl: deal['contractPath']?.toString() ?? '',
+      created: json['dateAtStartOfRent']?.toString() ?? '',
+      startDate: deal['startDate']?.toString(),
+      endDate: deal['endDate']?.toString(),
+      dealStatus: deal['status']?.toString() ?? '',
+      orderStatus: isActive ? 'active' : 'completed',
+      operation: '',
+      totalAmount: _toDouble(json['totalAmountDue']),
+      paidAmount: _toDouble(json['amountAlreadyPaid']),
+      ownerPortion: null,
+      paymentMethod: '',
+      clientName: clientInfo['name']?.toString() ?? '',
+      clientPhoneNumber: clientInfo['phoneNumber']?.toString() ?? '',
     );
   }
 
