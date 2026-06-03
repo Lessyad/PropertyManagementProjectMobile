@@ -105,6 +105,11 @@
       final bool preservedFirstLaunch = _prefs.getBool(_keyFirstLaunch) ?? true;
       final String preservedTheme = theme;
       final bool preservedNotifications = _prefs.getBool('notifications_enabled') ?? true;
+      final String preservedCityName = _prefs.getString('city_name') ?? '';
+      final String preservedCityId = _prefs.get('city_id')?.toString() ?? '';
+      final String preservedUserCountryID = _prefs.get('user_country_id')?.toString() ?? '';
+      final String preservedUserStateID = _prefs.get('user_state_id')?.toString() ?? '';
+      final String preservedUserCityID = _prefs.get('user_city_id')?.toString() ?? '';
 
       // Clear all data
       await _prefs.clear();
@@ -114,5 +119,20 @@
       await setFirstLaunch(preservedFirstLaunch);
       await setTheme(preservedTheme);
       await _prefs.setBool('notifications_enabled', preservedNotifications);
+      if (preservedCityName.isNotEmpty) {
+        await _prefs.setString('city_name', preservedCityName);
+      }
+      if (preservedCityId.isNotEmpty) {
+        await _prefs.setString('city_id', preservedCityId);
+      }
+      if (preservedUserCountryID.isNotEmpty) {
+        await _prefs.setString('user_country_id', preservedUserCountryID);
+      }
+      if (preservedUserStateID.isNotEmpty) {
+        await _prefs.setString('user_state_id', preservedUserStateID);
+      }
+      if (preservedUserCityID.isNotEmpty) {
+        await _prefs.setString('user_city_id', preservedUserCityID);
+      }
     }
   }

@@ -22,19 +22,26 @@ class HomeRemoteDataSource extends BaseHomeRemoteData {
   HomeRemoteDataSource({required this.dioService});
 
   @override
-  Future<List<ImageEntity>> getBanners()async {
+  Future<List<ImageEntity>> getBanners() async {
     final response = await dioService.get(
       url: ApiConstants.banners,
     );
 
-    List<dynamic> jsonResponse = response.data['results'] ?? [];
+    final dynamic data = response.data;
+    List<dynamic> jsonResponse;
+    if (data is List) {
+      jsonResponse = data;
+    } else if (data is Map) {
+      jsonResponse = (data['results'] ?? data['data'] ?? data['banners'] ?? []) as List<dynamic>;
+    } else {
+      jsonResponse = [];
+    }
 
-    List<ImageModel> banners = jsonResponse.map((banner) {
-      return ImageModel.fromJson(banner);
-    }).toList();
-
-
-    return banners;
+    return jsonResponse.map((banner) => ImageModel(
+      id: banner['id'] ?? 0,
+      image: banner['imagePath'] ?? '',
+      isMain: true,
+    )).toList();
   }
 
   @override

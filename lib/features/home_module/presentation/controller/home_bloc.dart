@@ -172,18 +172,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       GetUserLocation event,
       Emitter<HomeState> emit,
       ) async {
-
+    emit(state.copyWith(updateUserLocationState: RequestState.loading));
+    final pref = await SharedPreferences.getInstance();
+    final String cityName = pref.getString('city_name') ?? '';
     emit(state.copyWith(
-      updateUserLocationState: RequestState.loading,
+      selectedCityName: cityName,
+      updateUserLocationState: RequestState.loaded,
     ));
-    SharedPreferences.getInstance().then((pref){
-      String cityName = pref.getString('city_name')??'';
-
-      emit(state.copyWith(
-        selectedCityName: cityName,
-        updateUserLocationState: RequestState.loaded,
-      ));
-    });
   }
 
   Future<void> _onUpdateUserLocation(

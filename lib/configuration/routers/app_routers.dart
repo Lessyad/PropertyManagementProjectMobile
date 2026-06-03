@@ -117,6 +117,7 @@ class AppRouters {
               }
 
               return ServiceLocator.getIt<HomeBloc>()
+                ..add(GetUserLocation())
                 ..add(FetchBanners())
                 ..add(FetchAppServices());
             },
