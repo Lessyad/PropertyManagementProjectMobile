@@ -10,7 +10,6 @@ import '../../../../../../core/components/custom_image.dart';
 import '../../../../../../core/services/dateformatter_service.dart';
 import '../../../../../../core/translation/locale_keys.dart';
 import '../../domain/entity/rental_history_entity.dart';
-import '../components/rental_history_card.dart';
 import '../controller/rental_history_cubit.dart';
 
 class RentalHistoryDetailScreen extends StatelessWidget {
@@ -59,15 +58,22 @@ class RentalHistoryDetailScreen extends StatelessWidget {
         ),
         body: BlocBuilder<RentalHistoryCubit, RentalHistoryState>(
           builder: (context, state) {
-            final current = state.rentals.firstWhere(
-              (r) => r.id == rental.id,
-              orElse: () => rental,
-            );
+            final current = _findCurrentRental(state.rentals, rental);
             return _DetailBody(rental: current);
           },
         ),
       ),
     );
+  }
+
+  RentalHistoryEntity _findCurrentRental(
+    List<RentalHistoryEntity> rentals,
+    RentalHistoryEntity fallback,
+  ) {
+    for (final item in rentals) {
+      if (item.id == fallback.id) return item;
+    }
+    return fallback;
   }
 }
 
@@ -182,7 +188,11 @@ class _InfoCard extends StatelessWidget {
 
   String _fmt(String? v) {
     if (v == null || v.isEmpty) return '-';
-    return DateFormatterService.getFormattedDate(v);
+    try {
+      return DateFormatterService.getFormattedDate(v);
+    } catch (_) {
+      return v;
+    }
   }
 }
 
@@ -372,24 +382,34 @@ class _AmountRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: bold
-              ? getBoldStyle(
-                  color: ColorManager.blackColor,
-                  fontSize: FontSize.s13,
-                )
-              : getMediumStyle(
-                  color: ColorManager.grey,
-                  fontSize: FontSize.s13,
-                ),
+        Expanded(
+          child: Text(
+            label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: bold
+                ? getBoldStyle(
+                    color: ColorManager.blackColor,
+                    fontSize: FontSize.s13,
+                  )
+                : getMediumStyle(
+                    color: ColorManager.grey,
+                    fontSize: FontSize.s13,
+                  ),
+          ),
         ),
-        CurrencyDisplayWidget(
-          amount: amount,
-          textColor:
-              bold ? ColorManager.primaryColor : ColorManager.blackColor,
-          fontSize: FontSize.s13,
-          fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
+        const SizedBox(width: 12),
+        Flexible(
+          child: Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: CurrencyDisplayWidget(
+              amount: amount,
+              textColor:
+                  bold ? ColorManager.primaryColor : ColorManager.blackColor,
+              fontSize: FontSize.s13,
+              fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
+            ),
+          ),
         ),
       ],
     );
@@ -413,7 +433,7 @@ class _StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withOpacity(.12),
+        color: color.withValues(alpha: .12),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(

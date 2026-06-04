@@ -16,7 +16,10 @@ class RentalHistoryRepository extends BaseRentalHistoryRepository {
     Map<String, dynamic> data,
   ) {
     return HandleRequestService.handleApiCall<List<RentalHistoryEntity>>(
-      () async => remoteDataSource.getRentalHistory(data),
+      () async {
+        final rentals = await remoteDataSource.getRentalHistory(data);
+        return List<RentalHistoryEntity>.from(rentals);
+      },
     );
   }
 

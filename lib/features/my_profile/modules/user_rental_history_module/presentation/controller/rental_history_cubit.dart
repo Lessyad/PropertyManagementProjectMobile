@@ -1,5 +1,5 @@
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../../core/utils/enums.dart';
 import '../../domain/entity/rental_history_entity.dart';
@@ -45,8 +45,13 @@ class RentalHistoryCubit extends Cubit<RentalHistoryState> {
         errorMessage: failure.message,
       )),
       (rentals) {
-        final updatedRentals =
-            refresh ? rentals : [...state.rentals, ...rentals];
+        final loadedRentals = List<RentalHistoryEntity>.from(rentals);
+        final updatedRentals = refresh
+            ? loadedRentals
+            : List<RentalHistoryEntity>.from([
+                ...state.rentals,
+                ...loadedRentals,
+              ]);
 
         emit(state.copyWith(
           requestState: RequestState.loaded,
@@ -73,7 +78,7 @@ class RentalHistoryCubit extends Cubit<RentalHistoryState> {
         cancelError: failure.message,
       )),
       (_) {
-        final updated = state.rentals.map((r) {
+        final updated = state.rentals.map<RentalHistoryEntity>((r) {
           if (r.id == rentalId) {
             return RentalHistoryEntity(
               id: r.id,

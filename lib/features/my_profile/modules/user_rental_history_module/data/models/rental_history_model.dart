@@ -1,4 +1,5 @@
 import '../../domain/entity/rental_history_entity.dart';
+import '../../../../../../core/constants/api_constants.dart';
 
 class RentalHistoryModel extends RentalHistoryEntity {
   const RentalHistoryModel({
@@ -33,8 +34,13 @@ class RentalHistoryModel extends RentalHistoryEntity {
     final vehicle = (deal['vehicle'] as Map<String, dynamic>?) ?? {};
     final clientInfo = (deal['clientInfo'] as Map<String, dynamic>?) ?? {};
 
-    final images = (vehicle['imageUrls'] as List<dynamic>?) ?? [];
-    final String image = images.isNotEmpty ? images.first.toString() : '';
+    final String image = _normalizeImageUrl(
+      _firstStringFromList(vehicle['imageUrls']) ??
+          _firstStringFromList(vehicle['imagesUrl']) ??
+          vehicle['mainImageUrl']?.toString() ??
+          vehicle['imageUrl']?.toString() ??
+          '',
+    );
 
     final String makeName = vehicle['makeName']?.toString() ?? '';
     final String modelName = vehicle['modelName']?.toString() ?? '';
@@ -44,6 +50,24 @@ class RentalHistoryModel extends RentalHistoryEntity {
         .join(' ');
 
     final bool isActive = json['isActive'] == true;
+    final paidAmount = _firstPositiveDouble([
+      json['amountAlreadyPaid'],
+      json['paidAmount'],
+      json['amountPaid'],
+      deal['amountAlreadyPaid'],
+      deal['paidAmount'],
+      deal['amountPaid'],
+    ]);
+    final totalAmount = _firstPositiveDouble([
+      json['totalAmountDue'],
+      json['totalAmount'],
+      json['amount'],
+      json['total'],
+      deal['totalAmountDue'],
+      deal['totalAmount'],
+      deal['amount'],
+      deal['total'],
+    ]);
 
     return RentalHistoryModel(
       id: _toInt(json['id']),
@@ -63,8 +87,8 @@ class RentalHistoryModel extends RentalHistoryEntity {
       dealStatus: deal['status']?.toString() ?? '',
       orderStatus: isActive ? 'active' : 'completed',
       operation: '',
-      totalAmount: _toDouble(json['totalAmountDue']),
-      paidAmount: _toDouble(json['amountAlreadyPaid']),
+      totalAmount: totalAmount > 0 ? totalAmount : paidAmount,
+      paidAmount: paidAmount,
       ownerPortion: null,
       paymentMethod: '',
       clientName: clientInfo['name']?.toString() ?? '',
@@ -80,5 +104,29 @@ class RentalHistoryModel extends RentalHistoryEntity {
   static double _toDouble(dynamic value) {
     if (value is num) return value.toDouble();
     return double.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
+  static String? _firstStringFromList(dynamic value) {
+    if (value is List && value.isNotEmpty) {
+      final first = value.first?.toString();
+      if (first != null && first.isNotEmpty) return first;
+    }
+    return null;
+  }
+
+  static double _firstPositiveDouble(List<dynamic> values) {
+    for (final value in values) {
+      final parsed = _toDouble(value);
+      if (parsed > 0) return parsed;
+    }
+    return 0;
+  }
+
+  static String _normalizeImageUrl(String rawImage) {
+    if (rawImage.isEmpty || rawImage.startsWith('http')) return rawImage;
+
+    final String base = ApiConstants.baseUrl.replaceAll(RegExp(r'/api/.*'), '');
+    final String path = rawImage.startsWith('/') ? rawImage : '/$rawImage';
+    return '$base$path';
   }
 }
