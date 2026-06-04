@@ -20,7 +20,7 @@ import '../../../../configuration/managers/style_manager.dart';
 import '../../../../configuration/routers/route_names.dart';
 import '../../../../core/components/circular_icon_button.dart';
 import '../../../../core/components/custom_image.dart';
-import '../../../../core/components/reserved_component.dart';
+import '../../../../core/components/property_status_badge.dart';
 import '../../../../core/components/svg_image_component.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/translation/locale_keys.dart';
@@ -109,10 +109,9 @@ class RealStateCardComponent extends StatelessWidget {
                               ),
                             ),
                             if (isScreenWidth)
-                              Visibility(
-                                 visible: currentProperty.status == 'reserved' || currentProperty.status == 'rented',
-                                child: ReservedComponent(),
-                              )
+                              PropertyStatusBadge(
+                                status: currentProperty.status,
+                              ),
                           ],
                         ),
                         SizedBox(height: context.scale(6)),

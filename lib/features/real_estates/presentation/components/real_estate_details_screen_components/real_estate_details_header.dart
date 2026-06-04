@@ -5,7 +5,7 @@ import 'package:enmaa/core/translation/locale_keys.dart';
 import '../../../../../configuration/managers/color_manager.dart';
 import '../../../../../configuration/managers/font_manager.dart';
 import '../../../../../configuration/managers/style_manager.dart';
-import '../../../../../core/components/reserved_component.dart';
+import '../../../../../core/components/property_status_badge.dart';
 import '../../../../../core/components/svg_image_component.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../home_module/home_imports.dart';
@@ -44,10 +44,7 @@ class RealEstateDetailsHeader extends StatelessWidget {
               ),
             ),
 
-            Visibility(
-              visible: realEstateDetailsStatus == 'reserved' || realEstateDetailsStatus == 'rented',
-              child: ReservedComponent(),
-            )
+            PropertyStatusBadge(status: realEstateDetailsStatus)
 
 
           ],

@@ -45,6 +45,8 @@
   "cancelled": "Cancelled",
   "reserved": "Reserved",
   "available": "Available",
+  "rented": "Rented",
+  "sold": "Sold",
   "coming": "Coming",
   "iAmBuyer": "I am a Buyer",
   "anotherBuyer": "Another Buyer",

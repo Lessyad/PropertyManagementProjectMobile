@@ -45,6 +45,8 @@
   "cancelled": "ملغي",
   "reserved": "محجوز",
   "available": "متاح",
+  "rented": "مؤجر",
+  "sold": "مباع",
   "coming": "قادم",
   "iAmBuyer": "أنا مشتري",
   "anotherBuyer": "مشتري آخر",
