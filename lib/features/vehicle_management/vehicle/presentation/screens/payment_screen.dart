@@ -500,7 +500,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           _buildTextField(
             controller: _bankilyPhoneController,
             label: 'Numéro de téléphone Bankily',
-            hint: 'Entrez votre numéro Bankily (8-10 chiffres)',
+            hint: 'Entrez votre numéro Bankily ',
             icon: Icons.phone_android,
             keyboardType: TextInputType.phone,
             onChanged: (_) => _updatePaymentButtonState(),

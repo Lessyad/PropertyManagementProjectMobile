@@ -350,7 +350,7 @@ abstract class LocaleKeys {
   static const String createAccountForFeatures = 'createAccountForFeatures';
   static const String location = 'location';
   static const String selectLocation = 'selectLocation';
-
+  static const String addBankilyNumber ='addBankilyNumber';
   static const String filter = 'filter';
   static const String choosePerfectProperty = 'choosePerfectProperty';
   static const String searchForProperty = 'searchForProperty';
@@ -1124,4 +1124,5 @@ abstract class LocaleKeys {
   static const String mapLabel = 'mapLabel';
   static const String propertyTypeAll = 'propertyTypeAll';
   static const String mapLoadingProperties = 'mapLoadingProperties';
+  static const String mapPropertiesCount = 'mapPropertiesCount';
 }

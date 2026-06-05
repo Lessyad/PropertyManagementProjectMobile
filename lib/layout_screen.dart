@@ -187,6 +187,8 @@ class _LayoutScreenState extends State<LayoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Force rebuild when locale changes so nav bar labels update immediately
+    context.locale;
     return MultiBlocProvider(
       providers: [
         BlocProvider(

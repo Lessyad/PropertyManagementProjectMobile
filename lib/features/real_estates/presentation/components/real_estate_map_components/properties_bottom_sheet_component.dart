@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:enmaa/configuration/managers/color_manager.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
+import 'package:enmaa/core/translation/locale_keys.dart';
 
 class PropertiesBottomSheetComponent extends StatelessWidget {
   final DraggableScrollableController controller;
@@ -59,7 +61,8 @@ class PropertiesBottomSheetComponent extends StatelessWidget {
                   ),
                   SizedBox(height: context.scale(10)),
                   Text(
-                    'أكثر من $propertiesCount عقار',
+                    tr(LocaleKeys.mapPropertiesCount,
+                        namedArgs: {'count': propertiesCount.toString()}),
                     style: TextStyle(
                       fontSize: context.scale(16),
                       color: ColorManager.blackColor,

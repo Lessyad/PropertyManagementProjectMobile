@@ -282,6 +282,15 @@ class BookPropertyCubit extends Cubit<BookPropertyState> {
       print('💰 Vente: pas de dates nécessaires');
     }
 
+    // Guard: verify the ID image file still exists before uploading
+    if (state.selectedImages.isEmpty || !state.selectedImages[0].existsSync()) {
+      emit(state.copyWith(
+        bookPropertyState: RequestState.error,
+        bookPropertyError: 'L\'image d\'identité n\'est plus disponible. Veuillez la re-sélectionner.',
+      ));
+      return;
+    }
+
     final bookPropertyRequest = BookPropertyRequestModel(
       propertyId: int.parse(propertyId), // Convert String to int
       isUser: state.buyerType.amIABuyer,

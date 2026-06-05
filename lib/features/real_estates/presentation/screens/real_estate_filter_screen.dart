@@ -77,12 +77,12 @@ class RealEstateFilterScreen extends StatelessWidget {
                           SizedBox(height: context.scale(20)),
                           BlocBuilder<FilterPropertyCubit, FilterPropertyState>(
                             builder: (context, state) {
+                              // Only show for apartment and villa — not when no type selected
                               bool showIsFurnished =
                                   state.currentPropertyType ==
                                           PropertyType.apartment ||
                                       state.currentPropertyType ==
-                                          PropertyType.villa ||
-                                      state.currentPropertyType == null;
+                                          PropertyType.villa;
 
                               return Visibility(
                                 visible: showIsFurnished,
