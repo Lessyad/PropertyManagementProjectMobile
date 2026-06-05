@@ -30,48 +30,53 @@ class RentalHistoryModel extends RentalHistoryEntity {
 
   /// Parse une réponse de GET /api/Vehicles/rentals
   factory RentalHistoryModel.fromVehicleJson(Map<String, dynamic> json) {
-    final deal = (json['vehicleDealData'] as Map<String, dynamic>?) ?? {};
-    final vehicle = (deal['vehicle'] as Map<String, dynamic>?) ?? {};
-    final clientInfo = (deal['clientInfo'] as Map<String, dynamic>?) ?? {};
+    final deal = _mapFromAny(_value(json, ['vehicleDealData', 'VehicleDealData']));
+    final vehicle = _mapFromAny(_value(deal, ['vehicle', 'Vehicle']));
+    final clientInfo = _mapFromAny(_value(deal, ['clientInfo', 'ClientInfo']));
 
     final String image = _normalizeImageUrl(
-      _firstStringFromList(vehicle['imageUrls']) ??
-          _firstStringFromList(vehicle['imagesUrl']) ??
-          vehicle['mainImageUrl']?.toString() ??
-          vehicle['imageUrl']?.toString() ??
+      _firstStringFromList(_value(vehicle, ['imageUrls', 'ImageUrls'])) ??
+          _firstStringFromList(_value(vehicle, ['imagesUrl', 'ImagesUrl'])) ??
+          _firstStringFromList(_value(json, ['imageUrls', 'ImageUrls'])) ??
+          _firstStringFromList(_value(json, ['imagesUrl', 'ImagesUrl'])) ??
+          _value(vehicle, ['mainImageUrl', 'MainImageUrl'])?.toString() ??
+          _value(vehicle, ['imageUrl', 'ImageUrl'])?.toString() ??
+          _value(json, ['mainImageUrl', 'MainImageUrl'])?.toString() ??
+          _value(json, ['imageUrl', 'ImageUrl'])?.toString() ??
           '',
     );
 
-    final String makeName = vehicle['makeName']?.toString() ?? '';
-    final String modelName = vehicle['modelName']?.toString() ?? '';
-    final int year = _toInt(vehicle['year']);
+    final String makeName = _value(vehicle, ['makeName', 'MakeName'])?.toString() ?? '';
+    final String modelName =
+        _value(vehicle, ['modelName', 'ModelName', 'model', 'Model'])?.toString() ?? '';
+    final int year = _toInt(_value(vehicle, ['year', 'Year']));
     final String vehicleLabel = [makeName, modelName, if (year > 0) year.toString()]
         .where((s) => s.isNotEmpty)
         .join(' ');
 
-    final bool isActive = json['isActive'] == true;
+    final bool isActive = _value(json, ['isActive', 'IsActive']) == true;
     final paidAmount = _firstPositiveDouble([
-      json['amountAlreadyPaid'],
-      json['paidAmount'],
-      json['amountPaid'],
-      deal['amountAlreadyPaid'],
-      deal['paidAmount'],
-      deal['amountPaid'],
+      _value(json, ['amountAlreadyPaid', 'AmountAlreadyPaid']),
+      _value(json, ['paidAmount', 'PaidAmount']),
+      _value(json, ['amountPaid', 'AmountPaid']),
+      _value(deal, ['amountAlreadyPaid', 'AmountAlreadyPaid']),
+      _value(deal, ['paidAmount', 'PaidAmount']),
+      _value(deal, ['amountPaid', 'AmountPaid']),
     ]);
     final totalAmount = _firstPositiveDouble([
-      json['totalAmountDue'],
-      json['totalAmount'],
-      json['amount'],
-      json['total'],
-      deal['totalAmountDue'],
-      deal['totalAmount'],
-      deal['amount'],
-      deal['total'],
+      _value(json, ['totalAmountDue', 'TotalAmountDue']),
+      _value(json, ['totalAmount', 'TotalAmount']),
+      _value(json, ['amount', 'Amount']),
+      _value(json, ['total', 'Total']),
+      _value(deal, ['totalAmountDue', 'TotalAmountDue']),
+      _value(deal, ['totalAmount', 'TotalAmount']),
+      _value(deal, ['amount', 'Amount']),
+      _value(deal, ['total', 'Total']),
     ]);
 
     return RentalHistoryModel(
-      id: _toInt(json['id']),
-      propertyId: _toInt(deal['vehicleId']),
+      id: _toInt(_value(json, ['id', 'Id'])),
+      propertyId: _toInt(_value(deal, ['vehicleId', 'VehicleId'])),
       propertyTitle: vehicleLabel,
       propertyType: makeName,
       propertyCity: '',
@@ -80,20 +85,34 @@ class RentalHistoryModel extends RentalHistoryEntity {
       propertyImage: image,
       propertyArea: 0,
       userRole: 'Client',
-      contractUrl: deal['contractPath']?.toString() ?? '',
-      created: json['dateAtStartOfRent']?.toString() ?? '',
-      startDate: deal['startDate']?.toString(),
-      endDate: deal['endDate']?.toString(),
-      dealStatus: deal['status']?.toString() ?? '',
+      contractUrl: _value(deal, ['contractPath', 'ContractPath'])?.toString() ?? '',
+      created: _value(json, ['dateAtStartOfRent', 'DateAtStartOfRent'])?.toString() ?? '',
+      startDate: _value(deal, ['startDate', 'StartDate'])?.toString(),
+      endDate: _value(deal, ['endDate', 'EndDate'])?.toString(),
+      dealStatus: _value(deal, ['status', 'Status'])?.toString() ?? '',
       orderStatus: isActive ? 'active' : 'completed',
       operation: '',
       totalAmount: totalAmount > 0 ? totalAmount : paidAmount,
       paidAmount: paidAmount,
       ownerPortion: null,
       paymentMethod: '',
-      clientName: clientInfo['name']?.toString() ?? '',
-      clientPhoneNumber: clientInfo['phoneNumber']?.toString() ?? '',
+      clientName: _value(clientInfo, ['name', 'Name'])?.toString() ?? '',
+      clientPhoneNumber:
+          _value(clientInfo, ['phoneNumber', 'PhoneNumber'])?.toString() ?? '',
     );
+  }
+
+  static Map<String, dynamic> _mapFromAny(dynamic value) {
+    if (value is Map<String, dynamic>) return value;
+    if (value is Map) return Map<String, dynamic>.from(value);
+    return {};
+  }
+
+  static dynamic _value(Map<String, dynamic> json, List<String> keys) {
+    for (final key in keys) {
+      if (json.containsKey(key)) return json[key];
+    }
+    return null;
   }
 
   static int _toInt(dynamic value) {

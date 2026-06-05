@@ -1,4 +1,3 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:enmaa/core/extensions/booking_status_extension.dart';
 import 'package:enmaa/core/translation/locale_keys.dart';
@@ -61,7 +60,7 @@ class UserPropertiesListBuilderComponent extends StatelessWidget {
               properties.isEmpty &&
               !state.isLoadingMore) {
             return EmptyScreen(
-              alertText1: '${LocaleKeys.emptyScreenNoProperties.tr()} ${LocaleKeys.reserved.tr()}',
+              alertText1: '${LocaleKeys.emptyScreenNoProperties.tr()} ${status.getName}',
               alertText2: LocaleKeys.emptyScreenAddPropertyToStart.tr(),
               buttonText: LocaleKeys.addNewPropertyButton.tr(),
               showActionButtonIcon: false,

@@ -515,7 +515,10 @@ class CodegenLoader extends AssetLoader{
   "userScreensRentalHistory": "Rental history",
   "myRentalHistory": "Rental history",
   "noRentalHistory": "No rentals yet",
-  "rentalHistoryAppearance": "Your rentals will appear here"
+  "rentalHistoryAppearance": "Your rentals will appear here",
+  "emptyScreenNoProperties": "لا توجد عقارات",
+  "emptyScreenAddPropertyToStart": "أضف عقارا للبدء",
+  "addNewPropertyButton": "أضف عقارا"
 };
 static const Map<String,dynamic> _en = {
   "somethingWentWrong": "Something went wrong",
@@ -1022,7 +1025,10 @@ static const Map<String,dynamic> _en = {
   "userScreensRentalHistory": "Rental history",
   "myRentalHistory": "Rental history",
   "noRentalHistory": "No rentals yet",
-  "rentalHistoryAppearance": "Your rentals will appear here"
+  "rentalHistoryAppearance": "Your rentals will appear here",
+  "emptyScreenNoProperties": "No properties",
+  "emptyScreenAddPropertyToStart": "Add a property to get started",
+  "addNewPropertyButton": "Add property"
 };
 static const Map<String,dynamic> _fr = {
   "somethingWentWrong": "Quelque chose s'est mal passé",
@@ -1525,7 +1531,10 @@ static const Map<String,dynamic> _fr = {
   "userScreensRentalHistory": "Historique de location",
   "myRentalHistory": "Historique de location",
   "noRentalHistory": "Aucune location",
-  "rentalHistoryAppearance": "Vos locations apparaitront ici"
+  "rentalHistoryAppearance": "Vos locations apparaitront ici",
+  "emptyScreenNoProperties": "Aucune propriété",
+  "emptyScreenAddPropertyToStart": "Ajoutez une propriété pour commencer",
+  "addNewPropertyButton": "Ajouter une propriété"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ar": _ar, "en": _en, "fr": _fr};
 }

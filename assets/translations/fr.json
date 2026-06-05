@@ -539,4 +539,8 @@
   "myRentalHistory": "Historique de location",
   "noRentalHistory": "Aucune location",
   "rentalHistoryAppearance": "Vos locations apparaitront ici"
+  ,
+  "emptyScreenNoProperties": "Aucune propriété",
+  "emptyScreenAddPropertyToStart": "Ajoutez une propriété pour commencer",
+  "addNewPropertyButton": "Ajouter une propriété"
 }

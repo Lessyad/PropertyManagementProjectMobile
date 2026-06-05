@@ -5,6 +5,7 @@ import '../utils/enums.dart';
 extension BookingStatusExtension on BookingStatus {
   bool get isReserved => this == BookingStatus.reserved;
   bool get isAvailable => this == BookingStatus.available;
+  bool get isSold => this == BookingStatus.sold;
 
   String get getName {
     switch (this) {
@@ -12,6 +13,8 @@ extension BookingStatusExtension on BookingStatus {
         return LocaleKeys.reserved.tr();
       case BookingStatus.available:
         return LocaleKeys.available.tr();
+      case BookingStatus.sold:
+        return LocaleKeys.sold.tr();
     }
   }
 
@@ -21,6 +24,8 @@ extension BookingStatusExtension on BookingStatus {
         return 'pending';
       case BookingStatus.available:
         return 'available';
+      case BookingStatus.sold:
+        return 'sold';
     }
   }
 }

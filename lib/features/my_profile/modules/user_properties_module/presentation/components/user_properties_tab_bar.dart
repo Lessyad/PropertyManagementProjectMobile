@@ -24,6 +24,8 @@ class UserPropertiesTabBar extends StatelessWidget {
         return ColorManager.greenColor;
       case BookingStatus.reserved:
         return ColorManager.grey2;
+      case BookingStatus.sold:
+        return ColorManager.redColor;
     }
   }
 
@@ -33,6 +35,8 @@ class UserPropertiesTabBar extends StatelessWidget {
         return AppAssets.completedIcon;
       case BookingStatus.reserved:
         return AppAssets.lockIcon;
+      case BookingStatus.sold:
+        return AppAssets.reservedIcon;
     }
   }
 
@@ -71,9 +75,9 @@ class UserPropertiesTabBar extends StatelessWidget {
           tabs: tabStatuses.map((status) {
             return Tab(
               child: Container(
-                width: context.scale(103),
+                width: context.scale(86),
                 height: context.scale(36),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -81,14 +85,14 @@ class UserPropertiesTabBar extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SvgImageComponent(
-                      width: 20,
-                      height: 20,
+                      width: 16,
+                      height: 16,
                       iconPath: _getIconForStatus(status),
                       color: tabController.index == tabStatuses.indexOf(status)
                           ? ColorManager.whiteColor
                           : ColorManager.blackColor,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
 
                     Expanded(
                       child: Text(

@@ -32,7 +32,8 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen>
   late TabController _tabController;
   final List<BookingStatus> _tabStatuses = [
     BookingStatus.available,
-    BookingStatus.reserved
+    BookingStatus.reserved,
+    BookingStatus.sold,
   ];
   final List<ScrollController> _scrollControllers = [];
 

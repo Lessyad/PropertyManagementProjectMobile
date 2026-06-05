@@ -545,4 +545,8 @@
   "myRentalHistory": "Rental history",
   "noRentalHistory": "No rentals yet",
   "rentalHistoryAppearance": "Your rentals will appear here"
+  ,
+  "emptyScreenNoProperties": "No properties",
+  "emptyScreenAddPropertyToStart": "Add a property to get started",
+  "addNewPropertyButton": "Add property"
 }
