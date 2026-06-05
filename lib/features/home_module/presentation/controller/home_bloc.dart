@@ -7,6 +7,7 @@ import 'package:enmaa/core/extensions/property_type_extension.dart';
 import 'package:enmaa/core/services/service_locator.dart';
 import 'package:enmaa/features/home_module/domain/use_cases/get_app_services_use_case.dart';
 import 'package:enmaa/features/home_module/domain/use_cases/get_notifications_use_case.dart';
+import 'package:enmaa/features/real_estates/data/models/paged_property_response.dart';
 import 'package:enmaa/features/real_estates/domain/use_cases/get_properties_use_case.dart';
 import 'package:enmaa/features/real_estates/real_estates_DI.dart';
 import 'package:equatable/equatable.dart';
@@ -84,7 +85,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       searchErrorMessage: '',
     ));
 
-    final Either<Failure, List<PropertyEntity>> result = await getRealEstatesUseCase(
+    final Either<Failure, PagedPropertyResponse> result = await getRealEstatesUseCase(
       filters: {
         'search': event.query,
       },
@@ -97,10 +98,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           searchErrorMessage: failure.message,
         ));
       },
-          (properties) {
+          (paged) {
         emit(state.copyWith(
           searchPropertiesState: RequestState.loaded,
-          searchProperties: properties,
+          searchProperties: paged.items,
         ));
       },
     );
@@ -256,12 +257,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             image: AppAssets.carIcon,
           ),
           AppServiceEntity(
-            text:  LocaleKeys.halls,
+            text: LocaleKeys.halls,
             image: AppAssets.hallIcon,
+            isComingSoon: true,
           ),
           AppServiceEntity(
             text: LocaleKeys.hotels,
             image: AppAssets.hotelIcon,
+            isComingSoon: true,
           ),
         ];
 
@@ -284,7 +287,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       },
     ));
 
-    final Either<Failure, List<PropertyEntity>> result = await getRealEstatesUseCase(
+    final Either<Failure, PagedPropertyResponse> result = await getRealEstatesUseCase(
         filters:
         {
           JsonKeys.propertyTypeName: propertyType.toApiPropertyTypeName,
@@ -306,13 +309,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           },
         ));
       },
-          (properties) {
+          (paged) {
         emit(state.copyWith(
           properties: {
             ...state.properties,
             propertyType: PropertyData(
               state: RequestState.loaded,
-              properties: properties,
+              properties: paged.items,
             ),
           },
         ));
@@ -386,7 +389,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       allPropertiesState: RequestState.loading,
     ));
 
-    final Either<Failure, List<PropertyEntity>> result = await getRealEstatesUseCase(
+    final Either<Failure, PagedPropertyResponse> result = await getRealEstatesUseCase(
         filters: {
           JsonKeys.propertyTypeName: event.propertyType.toApiPropertyTypeName,
           JsonKeys.limit: event.limit,
@@ -402,10 +405,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           errorMessage: failure.message,
         ));
       },
-          (properties) {
+          (paged) {
         emit(state.copyWith(
           allPropertiesState: RequestState.loaded,
-          allProperties: properties,
+          allProperties: paged.items,
+          allPropertiesTotalCount: paged.totalCount,
         ));
       },
     );

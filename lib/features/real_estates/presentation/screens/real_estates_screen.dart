@@ -45,6 +45,10 @@ class _RealStateScreenState extends State<RealStateScreen>
   late TabController _tabController;
   final ScrollController _saleScrollController = ScrollController();
   final ScrollController _rentScrollController = ScrollController();
+  bool _salePaginationVisible = false;
+  bool _rentPaginationVisible = false;
+  bool _saleChangingPage = false;
+  bool _rentChangingPage = false;
 
   @override
   void initState() {
@@ -70,28 +74,43 @@ class _RealStateScreenState extends State<RealStateScreen>
 
   void _setupScrollControllers() {
     _saleScrollController.addListener(() {
-      if (_saleScrollController.position.pixels >=
-          _saleScrollController.position.maxScrollExtent - 200) {
-        final filterData =
-            context.read<FilterPropertyCubit>().prepareDataForApi();
-        context.read<RealEstateCubit>().loadMoreProperties(
-              PropertyOperationType.forSale,
-              filters: filterData,
-            );
+      if (!_saleScrollController.hasClients) return;
+      final atBottom = _saleScrollController.position.pixels >=
+          _saleScrollController.position.maxScrollExtent - 60;
+      if (atBottom && !_salePaginationVisible) {
+        setState(() => _salePaginationVisible = true);
       }
     });
 
     _rentScrollController.addListener(() {
-      if (_rentScrollController.position.pixels >=
-          _rentScrollController.position.maxScrollExtent - 200) {
-        final filterData =
-            context.read<FilterPropertyCubit>().prepareDataForApi();
-        context.read<RealEstateCubit>().loadMoreProperties(
-              PropertyOperationType.forRent,
-              filters: filterData,
-            );
+      if (!_rentScrollController.hasClients) return;
+      final atBottom = _rentScrollController.position.pixels >=
+          _rentScrollController.position.maxScrollExtent - 60;
+      if (atBottom && !_rentPaginationVisible) {
+        setState(() => _rentPaginationVisible = true);
       }
     });
+  }
+
+  void _goToPage(PropertyOperationType type, int page) {
+    final isSale = type == PropertyOperationType.forSale;
+    // Shimmer immédiat + cache pagination avant tout appel API
+    setState(() {
+      if (isSale) {
+        _salePaginationVisible = false;
+        _saleChangingPage = true;
+      } else {
+        _rentPaginationVisible = false;
+        _rentChangingPage = true;
+      }
+    });
+    final filterData = context.read<FilterPropertyCubit>().prepareDataForApi();
+    context.read<RealEstateCubit>().goToPage(type, page, filters: filterData);
+    final ctrl = isSale ? _saleScrollController : _rentScrollController;
+    if (ctrl.hasClients) {
+      ctrl.animateTo(0,
+          duration: const Duration(milliseconds: 400), curve: Curves.easeOut);
+    }
   }
 
   void _onTabChanged() {
@@ -117,6 +136,145 @@ class _RealStateScreenState extends State<RealStateScreen>
     _saleScrollController.dispose();
     _rentScrollController.dispose();
     super.dispose();
+  }
+
+  List<int?> _getVisiblePages(int current, int total) {
+    if (total <= 0) return [current];
+    if (total <= 7) return List.generate(total, (i) => i + 1);
+    if (current <= 4) return [1, 2, 3, 4, 5, null, total];
+    if (current >= total - 3) {
+      return [1, null, total - 4, total - 3, total - 2, total - 1, total];
+    }
+    return [1, null, current - 1, current, current + 1, null, total];
+  }
+
+  Widget _buildPaginationBar({
+    required int currentPage,
+    required int totalCount,
+    required int limit,
+    required bool hasMore,
+    required PropertyOperationType type,
+  }) {
+    final totalPages = (totalCount / limit).ceil();
+    final hasPrev = currentPage > 1;
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.07),
+            blurRadius: 10,
+            offset: const Offset(0, -3),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (totalCount > 0)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Text(
+                '$totalCount résultat${totalCount > 1 ? 's' : ''}',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: ColorManager.grey2,
+                ),
+              ),
+            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildNavArrow(
+                icon: Icons.chevron_left_rounded,
+                enabled: hasPrev,
+                onTap: () => _goToPage(type, currentPage - 1),
+              ),
+              const SizedBox(width: 6),
+              ..._getVisiblePages(currentPage, totalPages).map((page) {
+                if (page == null) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: SizedBox(
+                      width: 28,
+                      child: Text(
+                        '···',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: ColorManager.grey2,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                final isActive = page == currentPage;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 3),
+                  child: GestureDetector(
+                    onTap: isActive ? null : () => _goToPage(type, page),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: isActive ? ColorManager.primaryColor : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: isActive ? ColorManager.primaryColor : ColorManager.grey3,
+                          width: 1.5,
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '$page',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+                          color: isActive ? Colors.white : ColorManager.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+              const SizedBox(width: 6),
+              _buildNavArrow(
+                icon: Icons.chevron_right_rounded,
+                enabled: hasMore,
+                onTap: () => _goToPage(type, currentPage + 1),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavArrow({
+    required IconData icon,
+    required bool enabled,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: enabled ? onTap : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: enabled ? ColorManager.primaryColor : ColorManager.greyShade,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        alignment: Alignment.center,
+        child: Icon(icon, size: 22,
+            color: enabled ? Colors.white : ColorManager.grey2),
+      ),
+    );
   }
 
   void _openFilterBottomSheet() {
@@ -298,7 +456,7 @@ class _RealStateScreenState extends State<RealStateScreen>
                           SvgImageComponent(iconPath: AppAssets.locationIcon),
                           const SizedBox(width: 8),
                           Text(
-                            'الخريطة',
+                            tr(LocaleKeys.mapLabel),
                             style: getMediumStyle(
                               color: ColorManager.whiteColor,
                               fontSize: FontSize.s12,
@@ -320,13 +478,24 @@ class _RealStateScreenState extends State<RealStateScreen>
   Widget _buildSaleTab() {
     return BlocBuilder<RealEstateCubit, RealEstateState>(
       builder: (context, state) {
+        // Réinitialiser le flag de changement de page quand les données arrivent
+        if (_saleChangingPage &&
+            state.getPropertiesSaleState == RequestState.loaded) {
+          WidgetsBinding.instance.addPostFrameCallback(
+              (_) => setState(() => _saleChangingPage = false));
+        }
         return _buildPropertyList(
-          state.getPropertiesSaleState,
-          state.saleProperties,
-          state.getPropertiesSaleError,
-          state.hasMoreSaleProperties,
-          PropertyOperationType.forSale,
-          _saleScrollController,
+          requestState: state.getPropertiesSaleState,
+          properties: state.saleProperties,
+          errorMessage: state.getPropertiesSaleError,
+          hasMore: state.hasMoreSaleProperties,
+          type: PropertyOperationType.forSale,
+          scrollController: _saleScrollController,
+          totalCount: state.saleTotalCount,
+          currentPage: state.saleCurrentPage,
+          limit: state.limit,
+          showPagination: _salePaginationVisible,
+          isChangingPage: _saleChangingPage,
         );
       },
     );
@@ -335,92 +504,119 @@ class _RealStateScreenState extends State<RealStateScreen>
   Widget _buildRentTab() {
     return BlocBuilder<RealEstateCubit, RealEstateState>(
       builder: (context, state) {
+        if (_rentChangingPage &&
+            state.getPropertiesRentState == RequestState.loaded) {
+          WidgetsBinding.instance.addPostFrameCallback(
+              (_) => setState(() => _rentChangingPage = false));
+        }
         return _buildPropertyList(
-          state.getPropertiesRentState,
-          state.rentProperties,
-          state.getPropertiesRentError,
-          state.hasMoreRentProperties,
-          PropertyOperationType.forRent,
-          _rentScrollController,
+          requestState: state.getPropertiesRentState,
+          properties: state.rentProperties,
+          errorMessage: state.getPropertiesRentError,
+          hasMore: state.hasMoreRentProperties,
+          type: PropertyOperationType.forRent,
+          scrollController: _rentScrollController,
+          totalCount: state.rentTotalCount,
+          currentPage: state.rentCurrentPage,
+          limit: state.limit,
+          showPagination: _rentPaginationVisible,
+          isChangingPage: _rentChangingPage,
         );
       },
     );
   }
 
-  Widget _buildPropertyList(
-    RequestState state,
-    List<PropertyEntity> properties,
-    String errorMessage,
-    bool hasMore,
-    PropertyOperationType type,
-    ScrollController scrollController,
-  ) {
-    if (state == RequestState.loading && properties.isEmpty) {
+  Widget _buildPropertyList({
+    required RequestState requestState,
+    required List<PropertyEntity> properties,
+    required String errorMessage,
+    required bool hasMore,
+    required PropertyOperationType type,
+    required ScrollController scrollController,
+    required int totalCount,
+    required int currentPage,
+    required int limit,
+    required bool showPagination,
+    bool isChangingPage = false,
+  }) {
+    // Shimmer immédiat dès le clic sur une page (isChangingPage)
+    // ou au premier chargement (loading + liste vide)
+    if (isChangingPage ||
+        (requestState == RequestState.loading && properties.isEmpty)) {
       return CardShimmerList(
         scrollDirection: Axis.vertical,
         cardHeight: context.scale(282),
         cardWidth: context.screenWidth,
         numberOfCards: 3,
       );
-    } else if (state == RequestState.error && properties.isEmpty) {
+    } else if (requestState == RequestState.error && properties.isEmpty) {
       return ErrorAppScreen(
         showBackButton: false,
         showActionButton: false,
         backgroundColor: ColorManager.greyShade,
       );
     }
-      // else if (properties.isEmpty) {
-    //   return EmptyScreen(
-    //     alertText1: LocaleKeys.didntFindSuitableProperty.tr(),
-    //     alertText2: LocaleKeys.contactUsForBestOptions.tr(),
-    //     buttonText: LocaleKeys.contactUs.tr(),
-    //     onTap: () async {
-    //       final Uri url = Uri.parse('https://github.com/AmrAbdElHamed26');
-    //       if (await canLaunchUrl(url)) {
-    //         await launchUrl(url, mode: LaunchMode.externalApplication);
-    //       } else {
-    //         CustomSnackBar.show(
-    //           message: LocaleKeys.errorOpeningLink.tr(),
-    //           type: SnackBarType.error,
-    //         );
-    //       }
-    //     },
-    //   );
-    // }
 
-    return RefreshIndicator(
-      onRefresh: () async {
-        final filterData =
-            context.read<FilterPropertyCubit>().prepareDataForApi();
-        await context.read<RealEstateCubit>().fetchProperties(
-              operationType: type,
-              filters: filterData,
-              refresh: true,
-            );
-      },
-      child: ListView.builder(
-        controller: scrollController,
-        padding: const EdgeInsets.all(8.0),
-        itemCount: properties.length + (hasMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index == properties.length) {
-            return CardListingShimmer(
-              width: context.screenWidth,
-              height: context.scale(282),
-            );
-          }
-
-          final property = properties[index];
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: RealStateCardComponent(
-              width: MediaQuery.of(context).size.width,
-              height: context.scale(290),
-              currentProperty: property,
+    return Column(
+      children: [
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              final filterData =
+                  context.read<FilterPropertyCubit>().prepareDataForApi();
+              await context.read<RealEstateCubit>().fetchProperties(
+                    operationType: type,
+                    filters: filterData,
+                    refresh: true,
+                  );
+              setState(() {
+                if (type == PropertyOperationType.forSale) {
+                  _salePaginationVisible = false;
+                } else {
+                  _rentPaginationVisible = false;
+                }
+              });
+            },
+            child: ListView.builder(
+              controller: scrollController,
+              padding: const EdgeInsets.all(8.0),
+              itemCount: properties.length,
+              itemBuilder: (context, index) {
+                final property = properties[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: RealStateCardComponent(
+                    width: MediaQuery.of(context).size.width,
+                    height: context.scale(290),
+                    currentProperty: property,
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
+          ),
+        ),
+        // Pagination : visible uniquement après scroll jusqu'au dernier item
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          transitionBuilder: (child, animation) => SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 1),
+              end: Offset.zero,
+            ).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOut)),
+            child: FadeTransition(opacity: animation, child: child),
+          ),
+          child: showPagination
+              ? _buildPaginationBar(
+                  currentPage: currentPage,
+                  totalCount: totalCount,
+                  limit: limit,
+                  hasMore: hasMore,
+                  type: type,
+                )
+              : const SizedBox.shrink(),
+        ),
+      ],
     );
   }
 }

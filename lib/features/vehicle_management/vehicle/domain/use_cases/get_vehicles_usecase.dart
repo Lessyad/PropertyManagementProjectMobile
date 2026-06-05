@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:enmaa/core/errors/failure.dart';
 
 import '../../data/models/vehicle_filter_model.dart';
-import '../entities/vehicle_entity.dart';
+import '../entities/paged_vehicles.dart';
 import '../repository/vehicle_repository.dart';
 
 
@@ -11,7 +11,7 @@ class GetVehiclesUseCase {
 
   GetVehiclesUseCase(this.repository);
 
-  Future<Either<Failure, List<VehicleEntity>>> call({
+  Future<Either<Failure, PagedVehicles>> call({
     int pageNumber = 1,
     int pageSize = 10,
     VehicleFilterModel? filter,

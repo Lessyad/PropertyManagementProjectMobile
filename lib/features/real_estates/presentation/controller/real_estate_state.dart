@@ -12,6 +12,8 @@ class RealEstateState extends Equatable {
     this.saleOffset = 0,
     this.hasMoreSaleProperties = true,
     this.saleTabLoaded = false,
+    this.saleTotalCount = 0,
+    this.saleCurrentPage = 1,
 
     // Rent properties (Tab 2)
     this.getPropertiesRentState = RequestState.initial,
@@ -20,6 +22,8 @@ class RealEstateState extends Equatable {
     this.rentOffset = 0,
     this.hasMoreRentProperties = true,
     this.rentTabLoaded = false,
+    this.rentTotalCount = 0,
+    this.rentCurrentPage = 1,
 
     // Backward compatibility
     this.getPropertiesState = RequestState.initial,
@@ -47,6 +51,8 @@ class RealEstateState extends Equatable {
   final int saleOffset;
   final bool hasMoreSaleProperties;
   final bool saleTabLoaded;
+  final int saleTotalCount;
+  final int saleCurrentPage;
 
   // Rent properties (Tab 2)
   final RequestState getPropertiesRentState;
@@ -55,6 +61,8 @@ class RealEstateState extends Equatable {
   final int rentOffset;
   final bool hasMoreRentProperties;
   final bool rentTabLoaded;
+  final int rentTotalCount;
+  final int rentCurrentPage;
 
   // Backward compatibility
   final RequestState getPropertiesState;
@@ -81,6 +89,8 @@ class RealEstateState extends Equatable {
     int? saleOffset,
     bool? hasMoreSaleProperties,
     bool? saleTabLoaded,
+    int? saleTotalCount,
+    int? saleCurrentPage,
 
     // Rent properties
     RequestState? getPropertiesRentState,
@@ -89,6 +99,8 @@ class RealEstateState extends Equatable {
     int? rentOffset,
     bool? hasMoreRentProperties,
     bool? rentTabLoaded,
+    int? rentTotalCount,
+    int? rentCurrentPage,
 
     // Backward compatibility
     RequestState? getPropertiesState,
@@ -115,6 +127,8 @@ class RealEstateState extends Equatable {
       saleOffset: saleOffset ?? this.saleOffset,
       hasMoreSaleProperties: hasMoreSaleProperties ?? this.hasMoreSaleProperties,
       saleTabLoaded: saleTabLoaded ?? this.saleTabLoaded,
+      saleTotalCount: saleTotalCount ?? this.saleTotalCount,
+      saleCurrentPage: saleCurrentPage ?? this.saleCurrentPage,
 
       // Rent properties
       getPropertiesRentState: getPropertiesRentState ?? this.getPropertiesRentState,
@@ -123,6 +137,8 @@ class RealEstateState extends Equatable {
       rentOffset: rentOffset ?? this.rentOffset,
       hasMoreRentProperties: hasMoreRentProperties ?? this.hasMoreRentProperties,
       rentTabLoaded: rentTabLoaded ?? this.rentTabLoaded,
+      rentTotalCount: rentTotalCount ?? this.rentTotalCount,
+      rentCurrentPage: rentCurrentPage ?? this.rentCurrentPage,
 
       // Backward compatibility
       getPropertiesState: getPropertiesState ?? this.getPropertiesState,
@@ -152,6 +168,8 @@ class RealEstateState extends Equatable {
     saleOffset,
     hasMoreSaleProperties,
     saleTabLoaded,
+    saleTotalCount,
+    saleCurrentPage,
 
     // Rent properties
     getPropertiesRentState,
@@ -160,6 +178,8 @@ class RealEstateState extends Equatable {
     rentOffset,
     hasMoreRentProperties,
     rentTabLoaded,
+    rentTotalCount,
+    rentCurrentPage,
 
     // Backward compatibility
     getPropertiesState,

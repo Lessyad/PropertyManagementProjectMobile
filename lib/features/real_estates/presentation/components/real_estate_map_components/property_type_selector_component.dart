@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:enmaa/configuration/managers/color_manager.dart';
@@ -5,6 +6,7 @@ import 'package:enmaa/core/extensions/context_extension.dart';
 import 'package:enmaa/core/extensions/property_type_extension.dart';
 import 'package:enmaa/core/components/svg_image_component.dart';
 import 'package:enmaa/core/constants/app_assets.dart';
+import 'package:enmaa/core/translation/locale_keys.dart';
 import 'package:enmaa/core/utils/enums.dart';
 import '../../controller/filter_properties_controller/filter_property_cubit.dart';
 
@@ -32,13 +34,13 @@ class PropertyTypeSelectorComponent extends StatelessWidget {
   String _getPropertyTypeLabel(PropertyType type) {
     switch (type) {
       case PropertyType.apartment:
-        return type.toArabic;
+        return tr(LocaleKeys.apartment);
       case PropertyType.villa:
-        return 'فيلا';
+        return tr(LocaleKeys.villa);
       case PropertyType.building:
-        return 'عمارة';
+        return tr(LocaleKeys.building);
       case PropertyType.land:
-        return 'أرض';
+        return tr(LocaleKeys.land);
     }
   }
 
@@ -89,7 +91,7 @@ class PropertyTypeSelectorComponent extends StatelessWidget {
                           ),
                           SizedBox(width: context.scale(8)),
                           Text(
-                            'الكل',
+                            tr(LocaleKeys.propertyTypeAll),
                             style: TextStyle(
                               color: currentPropertyType == null
                                   ? Colors.white

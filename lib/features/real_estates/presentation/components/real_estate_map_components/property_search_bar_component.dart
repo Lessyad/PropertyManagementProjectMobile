@@ -7,14 +7,18 @@ import 'package:enmaa/core/components/app_text_field.dart';
 
 class PropertySearchBarComponent extends StatelessWidget {
   final VoidCallback onTap;
+  final VoidCallback? onBack;
 
   const PropertySearchBarComponent({
     Key? key,
     required this.onTap,
+    this.onBack,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
+
     return Positioned(
       top: 0,
       left: 0,
@@ -25,24 +29,48 @@ class PropertySearchBarComponent extends StatelessWidget {
           bottomRight: Radius.circular(context.scale(16)),
         ),
         child: Container(
-          height: context.scale(120),
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: ColorManager.whiteColor,
+          color: ColorManager.whiteColor,
+          padding: EdgeInsets.only(
+            top: topPadding + context.scale(8),
+            bottom: context.scale(8),
+            left: context.scale(8),
+            right: context.scale(8),
           ),
-          alignment: Alignment.bottomCenter,
-          child: InkWell(
-            onTap: onTap,
-            child: SizedBox(
-              height: context.scale(70),
-              child: AppTextField(
-                editable: false,
-                width: double.infinity,
-                backgroundColor: ColorManager.greyShade,
-                hintText: LocaleKeys.searchForProperty.tr(),
-                prefixIcon: Icon(Icons.search, color: ColorManager.blackColor),
+          child: Row(
+            children: [
+              if (onBack != null)
+                GestureDetector(
+                  onTap: onBack,
+                  child: Container(
+                    width: context.scale(38),
+                    height: context.scale(38),
+                    margin: EdgeInsets.only(right: context.scale(6)),
+                    decoration: BoxDecoration(
+                      color: ColorManager.greyShade,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: context.scale(16),
+                      color: ColorManager.primaryColor,
+                    ),
+                  ),
+                ),
+              Expanded(
+                child: InkWell(
+                  onTap: onTap,
+                  child: AppTextField(
+                    editable: false,
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: context.scale(8)),
+                    backgroundColor: ColorManager.greyShade,
+                    hintText: LocaleKeys.searchForProperty.tr(),
+                    prefixIcon:
+                        Icon(Icons.search, color: ColorManager.blackColor),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),

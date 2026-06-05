@@ -1118,4 +1118,10 @@ abstract class LocaleKeys {
   static const String previewCompletedOnDate = 'previewCompletedOnDate';
   static const String previewCancelled = 'previewCancelled';
   static const String filterPriceSection = 'filter_price_section';
+
+  // Map & Property Type Selector
+  static const String comingSoon = 'comingSoon';
+  static const String mapLabel = 'mapLabel';
+  static const String propertyTypeAll = 'propertyTypeAll';
+  static const String mapLoadingProperties = 'mapLoadingProperties';
 }
