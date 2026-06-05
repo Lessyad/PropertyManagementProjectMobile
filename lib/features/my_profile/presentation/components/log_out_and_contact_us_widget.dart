@@ -51,6 +51,8 @@ class LogOutAndContactUsWidget extends StatelessWidget {
       child: ValueListenableBuilder<bool>(
         valueListenable: AuthService.authStateNotifier,
         builder: (context, isLoggedIn, _) {
+          // Force rebuild when locale changes
+          context.locale;
           return Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             spacing: context.scale(20),

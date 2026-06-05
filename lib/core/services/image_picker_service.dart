@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dartz/dartz.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ImagePickingFailure {
   final String message;
@@ -148,14 +149,22 @@ class ImagePickerHelper {
   Future<List<File>> processImagesWithResiliency(List<XFile> xFiles) async {
     List<File> successfulFiles = [];
 
+    final appDocDir = await getApplicationDocumentsDirectory();
+    final persistDir = Directory('${appDocDir.path}/id_images');
+    await persistDir.create(recursive: true);
+
     for (var xFile in xFiles) {
       try {
         File file = File(xFile.path);
 
-         if (await file.exists()) {
+        if (await file.exists()) {
           try {
-             await file.openRead(0, 4).first;
-            successfulFiles.add(file);
+            await file.openRead(0, 4).first;
+            // Copy to permanent storage so the file survives cache eviction
+            final fileName = xFile.path.split('/').last;
+            final destPath = '${persistDir.path}/$fileName';
+            final persistedFile = await file.copy(destPath);
+            successfulFiles.add(persistedFile);
           } catch (e) {
             print('File exists but cannot be read: ${file.path}');
           }

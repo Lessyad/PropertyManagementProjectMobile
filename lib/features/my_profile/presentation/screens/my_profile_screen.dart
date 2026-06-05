@@ -18,6 +18,8 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Force rebuild when locale changes (CodegenLoader doesn't use InheritedWidget)
+    context.locale;
     return Scaffold(
       backgroundColor: ColorManager.greyShade,
       body: Column(

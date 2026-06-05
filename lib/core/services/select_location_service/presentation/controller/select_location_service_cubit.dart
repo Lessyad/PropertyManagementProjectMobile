@@ -246,6 +246,26 @@ class SelectLocationServiceCubit extends Cubit<SelectLocationServiceState> {
     ));
   }
 
+  /// Sets only the user's country (by ID), clears state and city.
+  /// Use this for filter initialization so only country is pre-filled.
+  void setUserCountryOnly(String countryId) {
+    if (state.countries.isEmpty) return;
+    try {
+      final country = state.countries.firstWhere((c) => c.id == countryId);
+      emit(state.copyWith(
+        selectedCountry: country,
+        selectedState: null,
+        selectedCity: null,
+        clearSelectedState: true,
+        clearSelectedCity: true,
+        states: [],
+        cities: [],
+      ));
+    } catch (_) {
+      // Country not found in loaded list — leave unchanged
+    }
+  }
+
   /// Restores country, state and city from saved IDs (e.g. from SharedPreferences).
   /// Call after getCountries() so that countries are loaded. Loads states/cities as needed.
   Future<void> restoreUserLocation({

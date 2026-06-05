@@ -13,6 +13,7 @@ import '../../../../../core/constants/json_keys.dart';
 import '../../../../../core/constants/local_keys.dart';
 import '../../../../../core/services/select_location_service/presentation/controller/select_location_service_cubit.dart';
 import '../../../../../core/services/service_locator.dart';
+import '../../../../../core/services/shared_preferences_service.dart';
 import '../../../../../core/utils/enums.dart';
 import '../../../../home_module/home_imports.dart';
 
@@ -307,15 +308,9 @@ class FilterPropertyCubit extends Cubit<FilterPropertyState> {
       if (landLicenseStatuses.length == 1) {
         data[JsonKeys.isLicensed] = landLicenseStatuses.contains(LandLicenseStatus.licensed);
       }
-    } else {
-      // For villa and apartment (when property type is not specified)
-      if (furnishingStatuses.isNotEmpty) {
-        if (furnishingStatuses.length != 2) {
-          bool isFurnished = furnishingStatuses.contains(FurnishingStatus.furnished);
-          data[JsonKeys.isFurnitured] = isFurnished;
-        }
-      }
     }
+    // is_furnitured is only valid when apartment or villa is explicitly selected.
+    // Never send it without a property type — the backend returns 500.
 
     // Add selected sub-types
     if (isForSale) {
@@ -354,8 +349,21 @@ class FilterPropertyCubit extends Cubit<FilterPropertyState> {
   }
 
   void resetFilters() {
-    // Reset location data
-    ServiceLocator.getIt<SelectLocationServiceCubit>().removeSelectedData();
+    // Reset location: clear state/city, keep only user's saved country
+    final locationCubit = ServiceLocator.getIt<SelectLocationServiceCubit>();
+    locationCubit.removeSelectedData();
+    final countryId = SharedPreferencesService()
+        .getValue(LocalKeys.userCountryID)
+        ?.toString();
+    if (countryId != null && countryId.isNotEmpty) {
+      if (locationCubit.state.countries.isNotEmpty) {
+        locationCubit.setUserCountryOnly(countryId);
+      } else {
+        locationCubit.getCountries().then((_) {
+          locationCubit.setUserCountryOnly(countryId);
+        });
+      }
+    }
 
 
 

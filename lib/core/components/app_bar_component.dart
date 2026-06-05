@@ -103,6 +103,8 @@ class _AppBarComponentState extends State<AppBarComponent> {
 
   @override
   Widget build(BuildContext context) {
+    // Force rebuild when locale changes so appBarTextMessage updates immediately
+    context.locale;
     return Container(
       width: double.infinity,
       height: context.scale(110),

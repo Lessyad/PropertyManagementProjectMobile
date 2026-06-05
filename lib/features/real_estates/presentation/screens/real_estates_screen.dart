@@ -2,7 +2,10 @@ import 'package:enmaa/configuration/managers/font_manager.dart';
 import 'package:enmaa/core/components/custom_bottom_sheet.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
 import 'package:enmaa/core/screens/error_app_screen.dart';
+import 'package:enmaa/core/constants/local_keys.dart';
+import 'package:enmaa/core/services/select_location_service/presentation/controller/select_location_service_cubit.dart';
 import 'package:enmaa/core/services/service_locator.dart';
+import 'package:enmaa/core/services/shared_preferences_service.dart';
 import 'package:enmaa/features/real_estates/presentation/controller/filter_properties_controller/filter_property_cubit.dart';
 import 'package:enmaa/features/real_estates/presentation/controller/real_estate_cubit.dart';
 import 'package:enmaa/features/real_estates/presentation/screens/real_estate_filter_screen.dart';
@@ -278,6 +281,22 @@ class _RealStateScreenState extends State<RealStateScreen>
   }
 
   void _openFilterBottomSheet() {
+    // Reset location to user's country only — no GPS city pre-filled
+    final locationCubit = context.read<SelectLocationServiceCubit>();
+    locationCubit.removeSelectedData();
+    final countryId = SharedPreferencesService()
+        .getValue(LocalKeys.userCountryID)
+        ?.toString();
+    if (countryId != null && countryId.isNotEmpty) {
+      if (locationCubit.state.countries.isNotEmpty) {
+        locationCubit.setUserCountryOnly(countryId);
+      } else {
+        locationCubit.getCountries().then((_) {
+          locationCubit.setUserCountryOnly(countryId);
+        });
+      }
+    }
+
     final rootContext = Navigator.of(context, rootNavigator: true).context;
     showModalBottomSheet(
       context: rootContext,
