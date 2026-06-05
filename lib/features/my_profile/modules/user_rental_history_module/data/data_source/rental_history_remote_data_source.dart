@@ -4,6 +4,7 @@ import '../models/rental_history_model.dart';
 
 abstract class BaseRentalHistoryRemoteDataSource {
   Future<List<RentalHistoryModel>> getRentalHistory(Map<String, dynamic> data);
+  Future<void> cancelRental(int rentalId);
 }
 
 class RentalHistoryRemoteDataSource extends BaseRentalHistoryRemoteDataSource {
@@ -16,11 +17,18 @@ class RentalHistoryRemoteDataSource extends BaseRentalHistoryRemoteDataSource {
     Map<String, dynamic> data,
   ) async {
     final response = await dioService.get(
-      url: ApiConstants.rentalHistory,
+      url: ApiConstants.vehicleRentals,
       queryParameters: data,
     );
 
-    final List<dynamic> results = response.data['results'] ?? [];
-    return results.map((item) => RentalHistoryModel.fromJson(item)).toList();
+    final List<dynamic> items = response.data['items'] ?? [];
+    return items.map((item) => RentalHistoryModel.fromVehicleJson(item)).toList();
+  }
+
+  @override
+  Future<void> cancelRental(int rentalId) async {
+    await dioService.patch(
+      url: ApiConstants.cancelVehicleRental(rentalId),
+    );
   }
 }

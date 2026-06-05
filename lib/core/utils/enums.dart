@@ -64,6 +64,7 @@ enum RequestStatus {
 enum BookingStatus {
   reserved,
   available,
+  sold,
 }
 
 enum AppointmentStatus {

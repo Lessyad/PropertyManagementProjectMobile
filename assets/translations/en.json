@@ -45,6 +45,8 @@
   "cancelled": "Cancelled",
   "reserved": "Reserved",
   "available": "Available",
+  "rented": "Rented",
+  "sold": "Sold",
   "coming": "Coming",
   "iAmBuyer": "I am a Buyer",
   "anotherBuyer": "Another Buyer",
@@ -510,6 +512,12 @@
   "property_error_monthly_rent_not_allowed": "Monthly rent period is not allowed for sale properties",
   "property_error_user_not_found": "User ID not found in token",
   "vehicle_notification_rented": "Vehicle {vehicleModel} - {licensePlate} has been rented for {days} days",
+  "vehicle_notification_booked": "Your booking for {vehicleModel} - {licensePlate} is confirmed for {days} days",
+  "vehicle_notification_cancelled": "Your rental for {vehicleModel} - {licensePlate} has been cancelled",
+  "vehicle_notification_client_cancelled": "The client cancelled the rental for {vehicleModel} - {licensePlate}",
+  "withdrawal_notification_created": "Your withdrawal request of {amount} MRU has been submitted",
+  "withdrawal_notification_approved": "Your withdrawal of {amount} MRU has been approved",
+  "withdrawal_notification_rejected": "Your withdrawal request of {amount} MRU has been rejected",
   "vehicle_error_not_found": "Vehicle not found or access not authorized",
   "vehicle_error_not_authorized": "Unauthorized action on this vehicle",
   "vehicle_error_user_id_required": "User ID is required",
@@ -537,4 +545,8 @@
   "myRentalHistory": "Rental history",
   "noRentalHistory": "No rentals yet",
   "rentalHistoryAppearance": "Your rentals will appear here"
+  ,
+  "emptyScreenNoProperties": "No properties",
+  "emptyScreenAddPropertyToStart": "Add a property to get started",
+  "addNewPropertyButton": "Add property"
 }

@@ -68,7 +68,7 @@ class RentalHistoryCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 _IconText(
                   iconPath: AppAssets.locationIcon,
-                  text: _location,
+                  text: _locationOrClient,
                   color: ColorManager.grey,
                 ),
                 const SizedBox(height: 6),
@@ -122,12 +122,14 @@ class RentalHistoryCard extends StatelessWidget {
     return [title, area].where((item) => item.isNotEmpty).join(' - ');
   }
 
-  String get _location {
-    return [
+  String get _locationOrClient {
+    final location = [
       rental.propertyCity,
       rental.propertyState,
       rental.propertyCountry,
     ].where((item) => item.isNotEmpty).join(' - ');
+    if (location.isNotEmpty) return location;
+    return rental.clientName.isNotEmpty ? rental.clientName : '-';
   }
 
   String get _period {
@@ -192,7 +194,7 @@ class _StatusBadge extends StatelessWidget {
     final color = switch (normalized) {
       'completed' => ColorManager.greenColor,
       'cancelled' => ColorManager.redColor,
-      'confirmed' => ColorManager.primaryColor,
+      'active' || 'confirmed' => ColorManager.primaryColor,
       _ => ColorManager.yellowColor,
     };
 

@@ -1,11 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:enmaa/configuration/managers/color_manager.dart';
 import 'package:enmaa/configuration/managers/font_manager.dart';
 import 'package:enmaa/configuration/managers/style_manager.dart';
-import 'package:enmaa/core/components/svg_image_component.dart';
-import 'package:enmaa/core/constants/app_assets.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
-import 'package:easy_localization/easy_localization.dart';
-import '../../../../core/translation/locale_keys.dart';
 
 import '../../../../core/services/dateformatter_service.dart';
 import '../../../wish_list/favorite_imports.dart';
@@ -15,7 +12,7 @@ class NotificationComponent extends StatelessWidget {
   final NotificationEntity notification;
   final bool isRead;
   final VoidCallback? onTap;
-  
+
   const NotificationComponent({
     super.key,
     required this.notification,
@@ -25,190 +22,313 @@ class NotificationComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String formattedDate = DateFormatterService.getFormattedDate(notification.createdAt);
+    final formattedDate = _formatDate(notification.createdAt);
+    final message = _displayMessage(notification);
+    final backgroundColor =
+        isRead ? ColorManager.whiteColor : ColorManager.primaryColor2;
 
-    return Container(
-      height: context.scale(104),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isRead ? ColorManager.whiteColor: ColorManager.primaryColor2,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-
-            children: [
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        constraints: BoxConstraints(minHeight: context.scale(92)),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isRead
+                ? ColorManager.grey3.withValues(alpha: .45)
+                : ColorManager.primaryColor.withValues(alpha: .08),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: ColorManager.blackColor.withValues(alpha: .04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    message,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: getSemiBoldStyle(
+                      color: ColorManager.blackColor,
+                      fontSize: FontSize.s13,
+                    ).copyWith(height: 1.35),
+                  ),
+                  const SizedBox(height: 12),
+                  Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: Text(
+                      formattedDate,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: getRegularStyle(
+                        color: ColorManager.grey2,
+                        fontSize: FontSize.s11,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (!isRead) ...[
+              const SizedBox(width: 8),
               Container(
-                width: context.scale(32),
-                height: context.scale(32),
-                padding: EdgeInsets.all(8),
+                width: context.scale(8),
+                height: context.scale(8),
+                margin: const EdgeInsets.only(top: 4),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: ColorManager.primaryColor,
-                ),
-                child: SvgImageComponent(iconPath: AppAssets.notificationIcon),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  _translateNotificationMessage(notification.message),
-                  maxLines: 2,
-                  style: getSemiBoldStyle(
-                    color: ColorManager.blackColor,
-                    fontSize: FontSize.s14,
-                  ),
+                  color: ColorManager.yellowColor,
                 ),
               ),
             ],
-          ),
-          Spacer(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                formattedDate,
-                style: getRegularStyle(
-                  color: ColorManager.grey2,
-                  fontSize: FontSize.s12,
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  /// Traduit le message de notification en utilisant les codes de traduction
-  /// Format: "code|param1|param2|param3" ou simplement "code"
-  String _translateNotificationMessage(String message) {
-    if (message.isEmpty) return message;
-    
-    // Vérifier si le message contient des paramètres (format: code|param1|param2)
-    if (message.contains('|')) {
-      final parts = message.split('|');
-      final translationKey = parts[0];
-      
-      // Obtenir la traduction
-      String translated = _getTranslation(translationKey);
-      
-      // Remplacer les placeholders avec les paramètres
-      if (translationKey == 'property_notification_rented' || 
-          translationKey == 'property_notification_sold') {
-        if (parts.length > 1) {
-          translated = translated.replaceAll('{propertyTitle}', parts[1]);
-        }
-      } else if (translationKey == 'vehicle_notification_rented') {
-        if (parts.length > 3) {
-          translated = translated.replaceAll('{vehicleModel}', parts[1]);
-          translated = translated.replaceAll('{licensePlate}', parts[2]);
-          translated = translated.replaceAll('{days}', parts[3]);
-        }
-      } else if (translationKey == 'property_error_image_not_associated') {
-        if (parts.length > 2) {
-          translated = translated.replaceAll('{imageId}', parts[1]);
-          translated = translated.replaceAll('{propertyId}', parts[2]);
-        }
-      } else if (translationKey == 'property_error_invalid_amenities') {
-        if (parts.length > 1) {
-          translated = translated.replaceAll('{amenities}', parts[1]);
-        }
-      } else if (translationKey == 'vehicle_error_invalid_status_transition') {
-        if (parts.length > 2) {
-          translated = translated.replaceAll('{currentStatus}', parts[1]);
-          translated = translated.replaceAll('{newStatus}', parts[2]);
-        }
-      } else if (translationKey == 'vehicle_error_image_exceeds_limit' ||
-                 translationKey == 'vehicle_error_invalid_image_format') {
-        if (parts.length > 1) {
-          translated = translated.replaceAll('{fileName}', parts[1]);
-        }
-      }
-      
-      return translated;
-    } else {
-      // Pas de paramètres, traduire directement
-      return _getTranslation(message);
+  String _formatDate(String value) {
+    try {
+      return DateFormatterService.getFormattedDate(value);
+    } catch (_) {
+      return value;
     }
   }
 
-  /// Obtient la traduction pour une clé donnée
-  String _getTranslation(String key) {
-    try {
-      // Essayer de trouver la clé dans LocaleKeys
-      switch (key) {
-        case 'property_notification_rented':
-          return LocaleKeys.propertyNotificationRented.tr();
-        case 'property_notification_sold':
-          return LocaleKeys.propertyNotificationSold.tr();
-        case 'vehicle_notification_rented':
-          return LocaleKeys.vehicleNotificationRented.tr();
-        case 'property_error_not_found':
-          return LocaleKeys.propertyErrorNotFound.tr();
-        case 'property_error_cannot_update_pending_deals':
-          return LocaleKeys.propertyErrorCannotUpdatePendingDeals.tr();
-        case 'property_error_cannot_delete_pending_deals':
-          return LocaleKeys.propertyErrorCannotDeletePendingDeals.tr();
-        case 'property_error_not_owner':
-          return LocaleKeys.propertyErrorNotOwner.tr();
-        case 'property_error_image_not_found':
-          return LocaleKeys.propertyErrorImageNotFound.tr();
-        case 'property_error_cannot_delete_main_image':
-          return LocaleKeys.propertyErrorCannotDeleteMainImage.tr();
-        case 'property_error_image_not_associated':
-          return LocaleKeys.propertyErrorImageNotAssociated.tr();
-        case 'property_error_invalid_subtype':
-          return LocaleKeys.propertyErrorInvalidSubtype.tr();
-        case 'property_error_city_not_found':
-          return LocaleKeys.propertyErrorCityNotFound.tr();
-        case 'property_error_invalid_amenities':
-          return LocaleKeys.propertyErrorInvalidAmenities.tr();
-        case 'property_error_invalid_operation':
-          return LocaleKeys.propertyErrorInvalidOperation.tr();
-        case 'property_error_monthly_rent_required':
-          return LocaleKeys.propertyErrorMonthlyRentRequired.tr();
-        case 'property_error_monthly_rent_not_allowed':
-          return LocaleKeys.propertyErrorMonthlyRentNotAllowed.tr();
-        case 'property_error_user_not_found':
-          return LocaleKeys.propertyErrorUserNotFound.tr();
-        case 'vehicle_error_not_found':
-          return LocaleKeys.vehicleErrorNotFound.tr();
-        case 'vehicle_error_not_authorized':
-          return LocaleKeys.vehicleErrorNotAuthorized.tr();
-        case 'vehicle_error_user_id_required':
-          return LocaleKeys.vehicleErrorUserIdRequired.tr();
-        case 'vehicle_error_user_not_found':
-          return LocaleKeys.vehicleErrorUserNotFound.tr();
-        case 'vehicle_error_full_name_phone_required':
-          return LocaleKeys.vehicleErrorFullNamePhoneRequired.tr();
-        case 'vehicle_error_not_associated_with_partner':
-          return LocaleKeys.vehicleErrorNotAssociatedWithPartner.tr();
-        case 'vehicle_error_could_not_retrieve_after_creation':
-          return LocaleKeys.vehicleErrorCouldNotRetrieveAfterCreation.tr();
-        case 'vehicle_error_unauthorized_action':
-          return LocaleKeys.vehicleErrorUnauthorizedAction.tr();
-        case 'vehicle_error_invalid_status_transition':
-          return LocaleKeys.vehicleErrorInvalidStatusTransition.tr();
-        case 'vehicle_error_daily_price_must_be_positive':
-          return LocaleKeys.vehicleErrorDailyPriceMustBePositive.tr();
-        case 'vehicle_error_seats_must_be_between':
-          return LocaleKeys.vehicleErrorSeatsMustBeBetween.tr();
-        case 'vehicle_error_at_least_one_image_required':
-          return LocaleKeys.vehicleErrorAtLeastOneImageRequired.tr();
-        case 'vehicle_error_image_exceeds_limit':
-          return LocaleKeys.vehicleErrorImageExceedsLimit.tr();
-        case 'vehicle_error_invalid_image_format':
-          return LocaleKeys.vehicleErrorInvalidImageFormat.tr();
-        default:
-          // Si la clé n'est pas trouvée, retourner le message original
-          return key;
-      }
-    } catch (e) {
-      // En cas d'erreur, retourner le message original
-      return key;
+  String _displayMessage(NotificationEntity notification) {
+    final message = notification.message.trim();
+    final title = notification.title.trim();
+
+    if (message.isNotEmpty && !_isOnlyRawKey(message, title)) {
+      return _translateNotificationMessage(message);
     }
+
+    if (title.isNotEmpty) {
+      return _translateNotificationMessage(title);
+    }
+
+    return message;
   }
+
+  bool _isOnlyRawKey(String message, String title) {
+    return message == title && _isKnownTranslationKey(message);
+  }
+
+  String _translateNotificationMessage(String value) {
+    if (value.isEmpty) return value;
+
+    final parts = value.split('|').map((part) => part.trim()).toList();
+    final key = parts.first;
+
+    if (!_isKnownTranslationKey(key)) {
+      return value;
+    }
+
+    var translated = key.tr();
+    if (translated == key) {
+      translated = _fallbackTranslation(key);
+    }
+    translated = _replacePropertyPlaceholders(translated, key, parts);
+    translated = _replaceVehiclePlaceholders(translated, key, parts);
+    translated = _replaceWithdrawalPlaceholders(translated, key, parts);
+    translated = _replaceErrorPlaceholders(translated, key, parts);
+
+    return translated
+        .replaceAll(RegExp(r'\s+-\s+\{licensePlate\}'), '')
+        .replaceAll(RegExp(r'\s+pour\s+\{days\}\s+jours'), '')
+        .replaceAll(RegExp(r'\s+for\s+\{days\}\s+days'), '')
+        .replaceAll(RegExp(r'\s+لمدة\s+\{days\}\s+أيام'), '')
+        .replaceAll(RegExp(r'\{[^}]+\}'), '')
+        .replaceAll(RegExp(r'\s{2,}'), ' ')
+        .trim();
+  }
+
+  String _replacePropertyPlaceholders(
+    String translated,
+    String key,
+    List<String> parts,
+  ) {
+    if (!_propertyKeys.contains(key) || parts.length < 2) return translated;
+    return translated.replaceAll('{propertyTitle}', parts[1]);
+  }
+
+  String _replaceVehiclePlaceholders(
+    String translated,
+    String key,
+    List<String> parts,
+  ) {
+    if (!_vehicleKeys.contains(key)) return translated;
+
+    final vehicleInfo = _parseVehicleInfo(parts);
+    return translated
+        .replaceAll('{vehicleModel}', vehicleInfo.model)
+        .replaceAll('{licensePlate}', vehicleInfo.licensePlate)
+        .replaceAll('{days}', vehicleInfo.days);
+  }
+
+  String _replaceWithdrawalPlaceholders(
+    String translated,
+    String key,
+    List<String> parts,
+  ) {
+    if (!_withdrawalKeys.contains(key) || parts.length < 2) return translated;
+    return translated.replaceAll('{amount}', parts[1]);
+  }
+
+  String _replaceErrorPlaceholders(
+    String translated,
+    String key,
+    List<String> parts,
+  ) {
+    if (key == 'property_error_image_not_associated' && parts.length > 2) {
+      return translated
+          .replaceAll('{imageId}', parts[1])
+          .replaceAll('{propertyId}', parts[2]);
+    }
+
+    if (key == 'property_error_invalid_amenities' && parts.length > 1) {
+      return translated.replaceAll('{amenities}', parts[1]);
+    }
+
+    if (key == 'vehicle_error_invalid_status_transition' && parts.length > 2) {
+      return translated
+          .replaceAll('{currentStatus}', parts[1])
+          .replaceAll('{newStatus}', parts[2]);
+    }
+
+    if ((key == 'vehicle_error_image_exceeds_limit' ||
+            key == 'vehicle_error_invalid_image_format') &&
+        parts.length > 1) {
+      return translated.replaceAll('{fileName}', parts[1]);
+    }
+
+    return translated;
+  }
+
+  _VehicleNotificationInfo _parseVehicleInfo(List<String> parts) {
+    if (parts.length >= 4) {
+      return _VehicleNotificationInfo(parts[1], parts[2], parts[3]);
+    }
+
+    if (parts.length == 3) {
+      return _VehicleNotificationInfo(parts[1], parts[2], '');
+    }
+
+    if (parts.length == 2) {
+      final combined = parts[1];
+      final separatorIndex = combined.indexOf(' - ');
+      if (separatorIndex > -1) {
+        return _VehicleNotificationInfo(
+          combined.substring(0, separatorIndex).trim(),
+          combined.substring(separatorIndex + 3).trim(),
+          '',
+        );
+      }
+      return _VehicleNotificationInfo(combined, '', '');
+    }
+
+    return const _VehicleNotificationInfo('', '', '');
+  }
+
+  bool _isKnownTranslationKey(String key) => _knownTranslationKeys.contains(key);
+
+  String _fallbackTranslation(String key) {
+    return switch (key) {
+      'property_notification_rented' =>
+        'La propriété {propertyTitle} a été louée',
+      'property_notification_sold' =>
+        'La propriété {propertyTitle} a été vendue',
+      'vehicle_notification_rented' =>
+        'Le véhicule {vehicleModel} - {licensePlate} a été loué pour {days} jours',
+      'vehicle_notification_booked' =>
+        'Votre réservation pour {vehicleModel} - {licensePlate} est confirmée pour {days} jours',
+      'vehicle_notification_cancelled' =>
+        'Votre location pour {vehicleModel} - {licensePlate} a été annulée',
+      'vehicle_notification_client_cancelled' =>
+        'Le client a annulé la location du {vehicleModel} - {licensePlate}',
+      'withdrawal_notification_created' =>
+        'Votre demande de retrait de {amount} MRU a été soumise',
+      'withdrawal_notification_approved' =>
+        'Votre retrait de {amount} MRU a été approuvé',
+      'withdrawal_notification_rejected' =>
+        'Votre demande de retrait de {amount} MRU a été rejetée',
+      _ => key,
+    };
+  }
+
+  static const Set<String> _propertyKeys = {
+    'property_notification_rented',
+    'property_notification_sold',
+  };
+
+  static const Set<String> _vehicleKeys = {
+    'vehicle_notification_rented',
+    'vehicle_notification_booked',
+    'vehicle_notification_cancelled',
+    'vehicle_notification_client_cancelled',
+  };
+
+  static const Set<String> _withdrawalKeys = {
+    'withdrawal_notification_created',
+    'withdrawal_notification_approved',
+    'withdrawal_notification_rejected',
+  };
+
+  static const Set<String> _errorKeys = {
+    'property_error_image_not_associated',
+    'property_error_invalid_amenities',
+    'vehicle_error_invalid_status_transition',
+    'vehicle_error_image_exceeds_limit',
+    'vehicle_error_invalid_image_format',
+  };
+
+  static const Set<String> _knownTranslationKeys = {
+    ..._propertyKeys,
+    ..._vehicleKeys,
+    ..._withdrawalKeys,
+    ..._errorKeys,
+    'property_error_not_found',
+    'property_error_cannot_update_pending_deals',
+    'property_error_cannot_delete_pending_deals',
+    'property_error_not_owner',
+    'property_error_image_not_found',
+    'property_error_cannot_delete_main_image',
+    'property_error_invalid_subtype',
+    'property_error_city_not_found',
+    'property_error_invalid_operation',
+    'property_error_monthly_rent_required',
+    'property_error_monthly_rent_not_allowed',
+    'property_error_user_not_found',
+    'vehicle_error_not_found',
+    'vehicle_error_not_authorized',
+    'vehicle_error_user_id_required',
+    'vehicle_error_user_not_found',
+    'vehicle_error_full_name_phone_required',
+    'vehicle_error_not_associated_with_partner',
+    'vehicle_error_could_not_retrieve_after_creation',
+    'vehicle_error_unauthorized_action',
+    'vehicle_error_daily_price_must_be_positive',
+    'vehicle_error_seats_must_be_between',
+    'vehicle_error_at_least_one_image_required',
+  };
+}
+
+class _VehicleNotificationInfo {
+  const _VehicleNotificationInfo(this.model, this.licensePlate, this.days);
+
+  final String model;
+  final String licensePlate;
+  final String days;
 }

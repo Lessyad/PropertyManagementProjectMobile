@@ -94,9 +94,13 @@ RequestStatus getStatus(String type) {
 BookingStatus getBookingStatus(String type) {
   switch (type) {
     case "reserved":
+    case "pending":
       return BookingStatus.reserved;
     case "available":
       return BookingStatus.available;
+    case "sold":
+    case "completed":
+      return BookingStatus.sold;
     default:
       return BookingStatus.reserved;
   }

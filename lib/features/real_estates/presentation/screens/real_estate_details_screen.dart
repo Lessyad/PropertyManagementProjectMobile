@@ -48,6 +48,7 @@ class _RealEstateDetailsScreenState extends State<RealEstateDetailsScreen> {
               case RequestState.loaded:
 
                 BasePropertyDetailsEntity currentProperty = state.propertyDetails!;
+                final normalizedStatus = currentProperty.status.toLowerCase();
                 List<ImageEntity> banners = List.from(currentProperty.images)
                   ..sort((a, b) => b.isMain ? 1 : -1);
 
@@ -121,7 +122,9 @@ class _RealEstateDetailsScreenState extends State<RealEstateDetailsScreen> {
                       left: context.scale(0),
                       right: context.scale(0),
                       child: RealEstateDetailsScreenFooter(
-                        actionIsDimmed: currentProperty.isOwner || currentProperty.status != 'available' || currentProperty.status == 'reserved' || currentProperty.status == 'rented',
+                        actionIsDimmed:
+                            currentProperty.isOwner ||
+                            normalizedStatus != 'available',
                         propertyId: widget.propertyId,
                         officePhoneNUmber: currentProperty.officePhoneNumber,
                         operation: currentProperty.operation, // 🆕 Passer operation

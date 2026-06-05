@@ -223,6 +223,7 @@ class AppRouters {
               UserRentalHistoryDi().setup();
               return RentalHistoryCubit(
                 ServiceLocator.getIt(),
+                ServiceLocator.getIt(),
               )..getRentalHistory(refresh: true);
             },
             child: const RentalHistoryScreen(),

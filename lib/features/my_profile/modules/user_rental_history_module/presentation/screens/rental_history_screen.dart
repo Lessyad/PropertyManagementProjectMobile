@@ -11,6 +11,7 @@ import '../../../../../../core/translation/locale_keys.dart';
 import '../../../../../../core/utils/enums.dart';
 import '../components/rental_history_card.dart';
 import '../controller/rental_history_cubit.dart';
+import 'rental_history_detail_screen.dart';
 
 class RentalHistoryScreen extends StatefulWidget {
   const RentalHistoryScreen({super.key});
@@ -102,7 +103,18 @@ class _RentalHistoryScreenState extends State<RentalHistoryScreen> {
                         );
                       }
 
-                      return RentalHistoryCard(rental: state.rentals[index]);
+                      final rental = state.rentals[index];
+                      return GestureDetector(
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => BlocProvider.value(
+                              value: context.read<RentalHistoryCubit>(),
+                              child: RentalHistoryDetailScreen(rental: rental),
+                            ),
+                          ),
+                        ),
+                        child: RentalHistoryCard(rental: rental),
+                      );
                     },
                   ),
                 );
