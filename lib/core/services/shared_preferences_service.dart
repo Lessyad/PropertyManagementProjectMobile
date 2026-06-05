@@ -95,6 +95,11 @@
 
     bool hasKey(String key) => _prefs.containsKey(key);
 
+    String get userCountryName =>
+        _prefs.getString('user_country_name') ?? 'Mauritania';
+    Future<void> setUserCountryName(String value) async =>
+        await _prefs.setString('user_country_name', value);
+
     // Clear all data
     Future<void> clearAllData() async => await _prefs.clear();
 

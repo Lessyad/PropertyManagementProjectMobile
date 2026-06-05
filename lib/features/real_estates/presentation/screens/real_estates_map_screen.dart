@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
+import 'package:enmaa/core/translation/locale_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/components/loading_overlay_component.dart';
@@ -103,10 +105,11 @@ class _RealEstateMapScreenState extends State<RealEstateMapScreen>
                     ),
                   ),
 
-                  // Search Bar
+                  // Search Bar (with back button built-in)
                   PropertySearchBarComponent(
                     onTap: () => _mapController
                         .openFilterBottomSheet(context.read<RealEstateCubit>()),
+                    onBack: () => Navigator.of(context).pop(),
                   ),
 
                   // Tab Bar and Property Type Selector
@@ -130,7 +133,7 @@ class _RealEstateMapScreenState extends State<RealEstateMapScreen>
                       state.getMapPropertiesState == RequestState.loading)
                     LoadingOverlayComponent(
                       opacity: 0,
-                      text: 'جاري تحميل العقارات ...',
+                      text: tr(LocaleKeys.mapLoadingProperties),
                     ),
 
                   // Map Control Buttons

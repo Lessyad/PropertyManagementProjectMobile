@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:enmaa/core/errors/failure.dart';
 import 'package:enmaa/core/extensions/operation_type_property_extension.dart';
 import 'package:enmaa/core/utils/enums.dart';
+import 'package:enmaa/features/real_estates/data/models/paged_property_response.dart';
 import 'package:enmaa/features/real_estates/domain/entities/property_details_entity.dart';
 import 'package:enmaa/features/real_estates/domain/use_cases/get_property_details_use_case.dart';
 import 'package:equatable/equatable.dart';
@@ -105,7 +106,7 @@ class RealEstateCubit extends Cubit<RealEstateState> {
       JsonKeys.operation: operationType.isForSale ? 'for_sale' : 'for_rent',
     };
 
-    final Either<Failure, List<PropertyEntity>> result =
+    final Either<Failure, PagedPropertyResponse> result =
     await _getPropertiesUseCase(filters: paginatedFilters);
 
     result.fold(
@@ -122,32 +123,112 @@ class RealEstateCubit extends Cubit<RealEstateState> {
           ));
         }
       },
-          (properties) {
-        final bool hasMore = properties.length >= state.limit;
+          (paged) {
+        final bool hasMore = paged.items.length >= state.limit;
 
         if (operationType == PropertyOperationType.forSale) {
-          final List<PropertyEntity> updatedSaleProperties = refresh
-              ? properties
-              : [...state.saleProperties, ...properties];
+          final List<PropertyEntity> updated = refresh
+              ? paged.items
+              : [...state.saleProperties, ...paged.items];
 
           emit(state.copyWith(
             getPropertiesSaleState: RequestState.loaded,
-            saleProperties: updatedSaleProperties,
-            saleOffset: offset + properties.length,
+            saleProperties: updated,
+            saleOffset: offset + paged.items.length,
             hasMoreSaleProperties: hasMore,
             saleTabLoaded: true,
+            saleTotalCount: paged.totalCount,
+            saleCurrentPage: refresh ? 1 : state.saleCurrentPage,
           ));
         } else {
-          final List<PropertyEntity> updatedRentProperties = refresh
-              ? properties
-              : [...state.rentProperties, ...properties];
+          final List<PropertyEntity> updated = refresh
+              ? paged.items
+              : [...state.rentProperties, ...paged.items];
 
           emit(state.copyWith(
             getPropertiesRentState: RequestState.loaded,
-            rentProperties: updatedRentProperties,
-            rentOffset: offset + properties.length,
+            rentProperties: updated,
+            rentOffset: offset + paged.items.length,
             hasMoreRentProperties: hasMore,
             rentTabLoaded: true,
+            rentTotalCount: paged.totalCount,
+            rentCurrentPage: refresh ? 1 : state.rentCurrentPage,
+          ));
+        }
+      },
+    );
+  }
+
+  Future<void> goToPage(
+    PropertyOperationType operationType,
+    int page, {
+    Map<String, dynamic>? filters,
+  }) async {
+    final int offset = (page - 1) * state.limit;
+
+    if (operationType == PropertyOperationType.forSale) {
+      emit(state.copyWith(
+        saleProperties: [],
+        saleOffset: offset,
+        hasMoreSaleProperties: true,
+        saleCurrentPage: page,
+        getPropertiesSaleState: RequestState.loading,
+      ));
+    } else {
+      emit(state.copyWith(
+        rentProperties: [],
+        rentOffset: offset,
+        hasMoreRentProperties: true,
+        rentCurrentPage: page,
+        getPropertiesRentState: RequestState.loading,
+      ));
+    }
+
+    final paginatedFilters = {
+      ...?filters,
+      JsonKeys.offset: offset,
+      JsonKeys.limit: state.limit,
+      JsonKeys.operation: operationType.isForSale ? 'for_sale' : 'for_rent',
+    };
+
+    final Either<Failure, PagedPropertyResponse> result =
+        await _getPropertiesUseCase(filters: paginatedFilters);
+
+    result.fold(
+      (failure) {
+        if (operationType == PropertyOperationType.forSale) {
+          emit(state.copyWith(
+            getPropertiesSaleState: RequestState.error,
+            getPropertiesSaleError: failure.message,
+          ));
+        } else {
+          emit(state.copyWith(
+            getPropertiesRentState: RequestState.error,
+            getPropertiesRentError: failure.message,
+          ));
+        }
+      },
+      (paged) {
+        final bool hasMore = paged.items.length >= state.limit;
+        if (operationType == PropertyOperationType.forSale) {
+          emit(state.copyWith(
+            getPropertiesSaleState: RequestState.loaded,
+            saleProperties: paged.items,
+            saleOffset: offset + paged.items.length,
+            hasMoreSaleProperties: hasMore,
+            saleTabLoaded: true,
+            saleTotalCount: paged.totalCount,
+            saleCurrentPage: page,
+          ));
+        } else {
+          emit(state.copyWith(
+            getPropertiesRentState: RequestState.loaded,
+            rentProperties: paged.items,
+            rentOffset: offset + paged.items.length,
+            hasMoreRentProperties: hasMore,
+            rentTabLoaded: true,
+            rentTotalCount: paged.totalCount,
+            rentCurrentPage: page,
           ));
         }
       },
@@ -178,34 +259,36 @@ class RealEstateCubit extends Cubit<RealEstateState> {
       ...?filters,
     };
 
-    final Either<Failure, List<PropertyEntity>> result =
-    await _getPropertiesUseCase(filters: mergedFilters);
+    final Either<Failure, PagedPropertyResponse> result =
+        await _getPropertiesUseCase(filters: mergedFilters);
 
     result.fold(
-          (failure) {
+      (failure) {
         emit(state.copyWith(
           getMapPropertiesState: RequestState.error,
           getMapPropertiesError: failure.message,
         ));
       },
-          (properties) {
+      (paged) {
         if (operationType == PropertyOperationType.forSale) {
           emit(state.copyWith(
             getMapPropertiesState: RequestState.loaded,
-            mapProperties: properties,
-            saleProperties: properties,
-            saleOffset: properties.length,
-            hasMoreSaleProperties: properties.length >= state.limit,
-            saleTabLoaded: properties.isNotEmpty,
+            mapProperties: paged.items,
+            saleProperties: paged.items,
+            saleOffset: paged.items.length,
+            hasMoreSaleProperties: paged.items.length >= state.limit,
+            saleTabLoaded: paged.items.isNotEmpty,
+            saleTotalCount: paged.totalCount,
           ));
         } else {
           emit(state.copyWith(
             getMapPropertiesState: RequestState.loaded,
-            mapProperties: properties,
-            rentProperties: properties,
-            rentOffset: properties.length,
-            hasMoreRentProperties: properties.length >= state.limit,
-            rentTabLoaded: properties.isNotEmpty,
+            mapProperties: paged.items,
+            rentProperties: paged.items,
+            rentOffset: paged.items.length,
+            hasMoreRentProperties: paged.items.length >= state.limit,
+            rentTabLoaded: paged.items.isNotEmpty,
+            rentTotalCount: paged.totalCount,
           ));
         }
       },

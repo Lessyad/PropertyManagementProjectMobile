@@ -420,6 +420,7 @@ class MapControllerComponent extends ChangeNotifier {
 
     _selectedCountry = country;
     await _saveCountry(country);
+    await _prefsService.setUserCountryName(country);
     _setCountryBounds(country);
 
     currentLocation = _getCountryCapital(country);
@@ -532,12 +533,11 @@ class MapControllerComponent extends ChangeNotifier {
   }
 
   Future<void> _loadLastCountry() async {
-    final country = _prefsService.getValue(_countryKey, defaultValue: null) as String?;
-    if (country != null) {
-      _selectedCountry = country;
-      _setCountryBounds(country);
-      notifyListeners();
-    }
+    final lastCountry = _prefsService.getValue(_countryKey, defaultValue: null) as String?;
+    final country = lastCountry ?? _prefsService.userCountryName;
+    _selectedCountry = country;
+    _setCountryBounds(country);
+    notifyListeners();
   }
 
   Future<void> _saveCountry(String country) async {

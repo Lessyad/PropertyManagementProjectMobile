@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:enmaa/features/real_estates/data/models/apartment_model.dart';
+import 'package:enmaa/features/real_estates/data/models/paged_property_response.dart';
 import 'package:enmaa/features/real_estates/data/models/property_details_model.dart';
 import 'package:enmaa/features/real_estates/data/models/property_model.dart';
 import 'package:enmaa/features/real_estates/domain/entities/base_property_entity.dart';
@@ -9,7 +10,7 @@ import '../../../../../core/services/dio_service.dart';
 import '../../../domain/entities/property_details_entity.dart';
 
 abstract class BaseRealEstateRemoteData {
-  Future<List<PropertyEntity>> getProperties({Map<String, dynamic>? filters});
+  Future<PagedPropertyResponse> getProperties({Map<String, dynamic>? filters});
   Future<BasePropertyDetailsEntity> getPropertyDetails(String propertyId);
 }
 
@@ -18,33 +19,31 @@ class RealEstateRemoteDataSource extends BaseRealEstateRemoteData {
 
   RealEstateRemoteDataSource({required this.dioService});
 
-
   @override
-   Future<List<PropertyEntity>> getProperties({Map<String, dynamic>? filters}) async {
+  Future<PagedPropertyResponse> getProperties({Map<String, dynamic>? filters}) async {
     print('Filtres envoyés: $filters');
-    final response = await dioService.get( 
+    final response = await dioService.get(
       url: ApiConstants.properties,
       queryParameters: filters,
-      // options: Options(contentType: 'multipart/form-data'),
     );
-      print('Status code: ${response.statusCode}');
-      print('Réponse brute: ${response.data}');
+    print('Status code: ${response.statusCode}');
 
-    List<dynamic> jsonResponse = response.data['results'] ?? [];
-      print('JSON results: $jsonResponse');
-    List<PropertyEntity> properties = jsonResponse.map((jsonItem) {
+    final int totalCount = response.data['count'] as int? ?? 0;
+    final List<dynamic> jsonResponse = response.data['results'] ?? [];
+    print('JSON results count: ${jsonResponse.length}, total: $totalCount');
+
+    final List<PropertyEntity> properties = jsonResponse.map((jsonItem) {
       try {
-      return PropertyModel.fromJson(jsonItem);
-    } catch (e, stack) {
-      print('Erreur de parsing pour un item: $e');
-      print('Item problématique: $jsonItem');
-      print(stack);
-      rethrow;
-    }
+        return PropertyModel.fromJson(jsonItem);
+      } catch (e, stack) {
+        print('Erreur de parsing pour un item: $e');
+        print(stack);
+        rethrow;
+      }
     }).toList();
 
-     print('Nombre de propriétés parsées: ${properties.length}');
-    return properties;
+    print('Nombre de propriétés parsées: ${properties.length}');
+    return PagedPropertyResponse(items: properties, totalCount: totalCount);
   }
 
   @override

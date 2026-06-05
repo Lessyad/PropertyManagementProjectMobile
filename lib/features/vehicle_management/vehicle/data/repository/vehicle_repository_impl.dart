@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:enmaa/core/errors/failure.dart';
 
+import '../../domain/entities/paged_vehicles.dart';
 import '../../domain/entities/vehicle_details_entity.dart';
 import '../../domain/entities/vehicle_entity.dart';
 import '../../domain/repository/vehicle_repository.dart';
@@ -21,7 +22,7 @@ class VehicleRepositoryImpl implements VehicleRepository {
   });
 
   @override
-  Future<Either<Failure, List<VehicleEntity>>> getVehicles({
+  Future<Either<Failure, PagedVehicles>> getVehicles({
     int pageNumber = 1,
     int pageSize = 10,
     VehicleFilterModel? filter,
@@ -33,14 +34,21 @@ class VehicleRepositoryImpl implements VehicleRepository {
         filter: filter,
       );
 
-      // Utiliser la méthode toEntity() du modèle pour une meilleure cohérence
       final List<VehicleEntity> entities = response.items
           .map((model) => model.toEntity())
           .toList();
 
       await localDataSource.cacheVehicles(response.items);
 
-      return Right(entities);
+      return Right(PagedVehicles(
+        items: entities,
+        totalCount: response.totalCount,
+        totalPages: response.totalPages,
+        pageIndex: response.pageIndex,
+        pageSize: response.pageSize,
+        hasNextPage: response.hasNextPage,
+        hasPreviousPage: response.hasPreviousPage,
+      ));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

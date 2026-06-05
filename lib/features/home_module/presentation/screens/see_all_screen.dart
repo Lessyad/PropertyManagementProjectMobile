@@ -28,73 +28,84 @@ class SeeAllScreen extends StatefulWidget {
 
 class _SeeAllScreenState extends State<SeeAllScreen> {
   final ScrollController _scrollController = ScrollController();
-  int _currentOffset = 0;
   final int _limit = 15;
+  int _currentPage = 1;
   bool _isLoading = false;
-  bool _hasReachedMax = false;
+  bool _isChangingPage = false;
   List<PropertyEntity> _properties = [];
+  int _totalCount = 0;
+  bool _paginationVisible = false;
 
   @override
   void initState() {
     super.initState();
-
+    _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadProperties();
-    });
-
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 200 &&
-          !_isLoading &&
-          !_hasReachedMax) {
-        _loadMoreProperties();
-      }
+      _loadPage(1);
     });
   }
 
-  void _loadProperties() {
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final atBottom = _scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 60;
+    if (atBottom && !_paginationVisible && _properties.isNotEmpty) {
+      setState(() => _paginationVisible = true);
+    }
+  }
+
+  void _loadPage(int page) {
     setState(() {
       _isLoading = true;
-      _currentOffset = 0;
-      _hasReachedMax = false;
+      _currentPage = page;
       _properties = [];
     });
 
-    ///todo : change location to be dynamic
     context.read<HomeBloc>().add(
       FetchAllPropertiesByType(
         propertyType: widget.propertyType,
         location: '15',
         limit: _limit,
-        offset: _currentOffset,
+        offset: (page - 1) * _limit,
       ),
     );
   }
 
-  void _loadMoreProperties() {
-    if (_isLoading || _hasReachedMax) return;
-
+  void _goToPage(int page) {
     setState(() {
-      _isLoading = true;
-      _currentOffset += _limit;
+      _paginationVisible = false;
+      _isChangingPage = true;
+      _properties = [];
     });
-
-    ///todo : change location to be dynamic
-
-    context.read<HomeBloc>().add(
-      FetchAllPropertiesByType(
-        propertyType: widget.propertyType,
-        location: '15',
-        limit: _limit,  
-        offset: _currentOffset,
-      ),
-    );
+    _loadPage(page);
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
+  int get _totalPages => (_totalCount / _limit).ceil();
+
+  List<int?> _getVisiblePages() {
+    final total = _totalPages;
+    final current = _currentPage;
+    if (total <= 0) return [current];
+    if (total <= 7) return List.generate(total, (i) => i + 1);
+    if (current <= 4) return [1, 2, 3, 4, 5, null, total];
+    if (current >= total - 3) {
+      return [1, null, total - 4, total - 3, total - 2, total - 1, total];
+    }
+    return [1, null, current - 1, current, current + 1, null, total];
   }
 
   @override
@@ -113,28 +124,19 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
           ),
           Expanded(
             child: BlocListener<HomeBloc, HomeState>(
-              listenWhen: (previous, current) {
-                return previous.allPropertiesState != current.allPropertiesState ||
-                    previous.allProperties != current.allProperties;
-              },
+              listenWhen: (previous, current) =>
+                  previous.allPropertiesState != current.allPropertiesState ||
+                  previous.allProperties != current.allProperties,
               listener: (context, state) {
                 if (state.allPropertiesState == RequestState.loaded) {
                   setState(() {
                     _isLoading = false;
-
-                    if (_currentOffset == 0) {
-                      _properties = state.allProperties;
-                    } else {
-                      _properties = [..._properties, ...state.allProperties];
-                    }
-
-                    _hasReachedMax = state.allProperties.length < _limit;
+                    _isChangingPage = false;
+                    _properties = state.allProperties;
+                    _totalCount = state.allPropertiesTotalCount;
                   });
                 } else if (state.allPropertiesState == RequestState.error) {
-                  setState(() {
-                    _isLoading = false;
-                  });
-
+                  setState(() => _isLoading = false);
                   CustomSnackBar.show(
                     context: context,
                     message: state.errorMessage,
@@ -142,7 +144,26 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
                   );
                 }
               },
-              child: _buildContent(),
+              child: Column(
+                children: [
+                  Expanded(child: _buildContent()),
+                  // Pagination : visible après scroll jusqu'au dernier item
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    transitionBuilder: (child, animation) => SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0, 1),
+                        end: Offset.zero,
+                      ).animate(CurvedAnimation(
+                          parent: animation, curve: Curves.easeOut)),
+                      child: FadeTransition(opacity: animation, child: child),
+                    ),
+                    child: _paginationVisible && _properties.isNotEmpty
+                        ? _buildPaginationBar()
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -151,21 +172,23 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
   }
 
   Widget _buildContent() {
-    if (_isLoading && _properties.isEmpty) {
+    if (_isChangingPage || (_isLoading && _properties.isEmpty)) {
       return CardShimmerList(
         scrollDirection: Axis.vertical,
         cardHeight: context.scale(282),
         cardWidth: context.screenWidth,
         numberOfCards: 5,
       );
-    } else if (_properties.isEmpty) {
+    }
+
+    if (_properties.isEmpty) {
       return EmptyScreen(
         alertText1: 'لم تجد العقار المناسب؟ ',
-        alertText2: 'تواصل مع مكتب إنماء للحصول على أفضل الخيارات. سنساعدك في العثور على العقار المناسب لك!',
+        alertText2:
+            'تواصل مع مكتب إنماء للحصول على أفضل الخيارات. سنساعدك في العثور على العقار المناسب لك!',
         buttonText: 'تواصل معنا',
         onTap: () async {
           final Uri url = Uri.parse('https://github.com/AmrAbdElHamed26');
-
           if (await canLaunchUrl(url)) {
             await launchUrl(url, mode: LaunchMode.externalApplication);
           } else {
@@ -176,25 +199,15 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
           }
         },
       );
-
     }
 
     return RefreshIndicator(
-      onRefresh: () async {
-        _loadProperties();
-      },
+      onRefresh: () async => _goToPage(1),
       child: ListView.builder(
         controller: _scrollController,
         padding: EdgeInsets.all(context.scale(8)),
-        itemCount: _properties.length + (_hasReachedMax ? 0 : 1),
+        itemCount: _properties.length,
         itemBuilder: (context, index) {
-          if (index == _properties.length) {
-            return CardListingShimmer(
-              width: context.screenWidth,
-              height: context.scale(282),
-            );
-          }
-
           final property = _properties[index];
           return Padding(
             padding: EdgeInsets.only(bottom: context.scale(8)),
@@ -205,6 +218,139 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildPaginationBar() {
+    final hasPrev = _currentPage > 1;
+    final hasNext = _currentPage < _totalPages;
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.07),
+            blurRadius: 10,
+            offset: const Offset(0, -3),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (_totalCount > 0)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Text(
+                '$_totalCount résultat${_totalCount > 1 ? 's' : ''}',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: ColorManager.grey2,
+                ),
+              ),
+            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildNavArrow(
+                icon: Icons.chevron_left_rounded,
+                enabled: hasPrev,
+                onTap: () => _goToPage(_currentPage - 1),
+              ),
+              const SizedBox(width: 6),
+              ..._getVisiblePages().map((page) {
+                if (page == null) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: SizedBox(
+                      width: 28,
+                      child: Text(
+                        '···',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: ColorManager.grey2,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                final isActive = page == _currentPage;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 3),
+                  child: GestureDetector(
+                    onTap: isActive ? null : () => _goToPage(page),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: isActive
+                            ? ColorManager.primaryColor
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: isActive
+                              ? ColorManager.primaryColor
+                              : ColorManager.grey3,
+                          width: 1.5,
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '$page',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: isActive
+                              ? FontWeight.w700
+                              : FontWeight.w500,
+                          color:
+                              isActive ? Colors.white : ColorManager.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+              const SizedBox(width: 6),
+              _buildNavArrow(
+                icon: Icons.chevron_right_rounded,
+                enabled: hasNext,
+                onTap: () => _goToPage(_currentPage + 1),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavArrow({
+    required IconData icon,
+    required bool enabled,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: enabled ? onTap : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: enabled ? ColorManager.primaryColor : ColorManager.greyShade,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        alignment: Alignment.center,
+        child: Icon(
+          icon,
+          size: 22,
+          color: enabled ? Colors.white : ColorManager.grey2,
+        ),
       ),
     );
   }

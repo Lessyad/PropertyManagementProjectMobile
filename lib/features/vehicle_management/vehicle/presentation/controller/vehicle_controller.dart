@@ -94,13 +94,11 @@ class VehicleController extends GetxController {
           isLoading.value = false;
           isLoadingMore.value = false;
         },
-            (newVehicles) {
-          vehicles.addAll(newVehicles);
+            (paged) {
+          vehicles.addAll(paged.items);
 
-          // Vérifier si c'est la dernière page
-          hasReachedMax.value = newVehicles.length < 10;
+          hasReachedMax.value = !paged.hasNextPage;
 
-          // Incrémenter le numéro de page seulement si on n'a pas atteint la fin
           if (!hasReachedMax.value) {
             pageNumber.value++;
           }
@@ -253,7 +251,9 @@ class VehicleController extends GetxController {
     try {
       if (!loadMore) {
         isSearching.value = true;
-        searchPageNumber.value = 1;
+        searchPageNumber.value = pageNumber;
+        searchTotalPages.value = 0;
+        searchTotalCount.value = 0;
         searchResults.clear();
       }
       hasSearchError.value = false;
@@ -288,12 +288,12 @@ class VehicleController extends GetxController {
           hasSearchError.value = true;
           isSearching.value = false;
         },
-            (vehicles) {
-          // Filtrer par query si fournie
-          List<VehicleEntity> filteredVehicles;
+            (paged) {
+          // Filtrer par query locale si fournie
+          List<VehicleEntity> filteredItems;
           if (query.isNotEmpty) {
             final lowerQuery = query.toLowerCase();
-            filteredVehicles = vehicles.where((vehicle) =>
+            filteredItems = paged.items.where((vehicle) =>
             vehicle.makeName.toLowerCase().contains(lowerQuery) ||
                 vehicle.modelName.toLowerCase().contains(lowerQuery) ||
                 vehicle.licensePlate.toLowerCase().contains(lowerQuery) ||
@@ -302,22 +302,18 @@ class VehicleController extends GetxController {
                 (vehicle.transmission.isNotEmpty && vehicle.transmission.toLowerCase().contains(lowerQuery))
             ).toList();
           } else {
-            filteredVehicles = vehicles;
+            filteredItems = paged.items;
           }
-          
-          if (loadMore) {
-            searchResults.addAll(filteredVehicles);
-          } else {
-            searchResults.value = filteredVehicles;
-          }
-          
-          // Mettre à jour la pagination (si disponible dans la réponse)
-          // Note: Vous devrez peut-être adapter cela selon votre structure de réponse
-          hasMoreSearchResults.value = filteredVehicles.length >= searchPageSize.value;
-          if (!loadMore) {
-            searchPageNumber.value = pageNumber;
-          }
-          
+
+          // Toujours remplacer (navigation par pages, pas infinite scroll)
+          searchResults.value = filteredItems;
+
+          // Mettre à jour la pagination depuis les vraies données backend
+          searchPageNumber.value = pageNumber;
+          searchTotalCount.value = paged.totalCount;
+          searchTotalPages.value = paged.totalPages;
+          hasMoreSearchResults.value = paged.hasNextPage;
+
           isSearching.value = false;
         },
       );

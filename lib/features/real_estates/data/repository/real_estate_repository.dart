@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:enmaa/features/real_estates/data/data_source/remote_data/real_estate_remote_data_source.dart';
+import 'package:enmaa/features/real_estates/data/models/paged_property_response.dart';
 import 'package:enmaa/features/real_estates/data/models/property_details_model.dart';
 import 'package:enmaa/features/real_estates/domain/entities/property_details_entity.dart';
-import 'package:enmaa/features/real_estates/domain/entities/base_property_entity.dart';
 import 'package:enmaa/features/real_estates/domain/repository/base_real_estate_repository.dart';
 
 import '../../../../core/errors/failure.dart';
@@ -15,12 +15,11 @@ class RealEstateRepository extends BaseRealEstateRepository {
   RealEstateRepository({required this.baseRealEstateRemoteData});
 
   @override
-  Future<Either<Failure, List<PropertyEntity>>> getProperties({
+  Future<Either<Failure, PagedPropertyResponse>> getProperties({
     Map<String, dynamic>? filters,
   }) async {
-    return await HandleRequestService.handleApiCall<List<PropertyEntity>>(() async {
-      final result = await baseRealEstateRemoteData.getProperties(filters: filters);
-      return result;
+    return await HandleRequestService.handleApiCall<PagedPropertyResponse>(() async {
+      return await baseRealEstateRemoteData.getProperties(filters: filters);
     });
   }
 

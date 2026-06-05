@@ -71,12 +71,40 @@ class VehicleSearchResultsScreen extends StatefulWidget {
 
 class _VehicleSearchResultsScreenState extends State<VehicleSearchResultsScreen> {
   final VehicleController _vehicleController = Get.find<VehicleController>();
+  final ScrollController _scrollController = ScrollController();
+  bool _hasScrolledToBottom = false;
 
   @override
   void initState() {
     super.initState();
-    // Démarrer la recherche avec les filtres appliqués
+    _scrollController.addListener(_onScroll);
     _applyFiltersAndSearch();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final atBottom = _scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 60;
+    if (atBottom && !_hasScrolledToBottom) {
+      setState(() => _hasScrolledToBottom = true);
+    }
+  }
+
+  void _goToPage(int page) {
+    setState(() => _hasScrolledToBottom = false);
+    _vehicleController.goToSearchPage(page);
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOut,
+    );
   }
 
   void _applyFiltersAndSearch() {
@@ -689,34 +717,15 @@ class _VehicleSearchResultsScreenState extends State<VehicleSearchResultsScreen>
         children: [
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               padding: const EdgeInsets.all(16),
-              itemCount: state.searchResults.length + (state.hasMoreSearchResults.value ? 1 : 0),
+              itemCount: state.searchResults.length,
               itemBuilder: (context, index) {
-                // Afficher l'indicateur de chargement en bas si on peut charger plus
-                if (index == state.searchResults.length) {
-                  return Obx(() {
-                    if (state.isSearching.value) {
-                      return const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  });
-                }
-                
                 final vehicle = state.searchResults[index];
                 
                 // Précharger les détails des véhicules visibles pour optimiser la navigation
                 if (index < 5) { // Précharger les 5 premiers véhicules
                   _vehicleController.preloadVehicleDetails([vehicle]);
-                }
-                
-                // Charger plus de résultats quand on approche de la fin
-                if (index == state.searchResults.length - 3 && state.hasMoreSearchResults.value) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _vehicleController.loadMoreSearchResults();
-                  });
                 }
                 
                 return Padding(
@@ -767,8 +776,20 @@ class _VehicleSearchResultsScreenState extends State<VehicleSearchResultsScreen>
               },
             ),
           ),
-          // Pagination en bas
-          Obx(() => _buildPaginationControls(state)),
+          // Pagination : visible uniquement après avoir scrollé jusqu'au dernier véhicule
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (child, animation) => SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 1),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
+              child: FadeTransition(opacity: animation, child: child),
+            ),
+            child: _hasScrolledToBottom
+                ? Obx(() => _buildPaginationControls(state))
+                : const SizedBox.shrink(),
+          ),
         ],
       ),
     );
@@ -776,52 +797,155 @@ class _VehicleSearchResultsScreenState extends State<VehicleSearchResultsScreen>
   
   Widget _buildPaginationControls(VehicleController state) {
     if (state.searchResults.isEmpty) return const SizedBox.shrink();
-    
+
+    final currentPage = state.searchPageNumber.value;
+    final totalPages = state.searchTotalPages.value;
+    final totalCount = state.searchTotalCount.value;
+    final hasPrev = currentPage > 1;
+    final hasNext = state.hasMoreSearchResults.value;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, -2),
+            color: Colors.black.withValues(alpha: 0.07),
+            blurRadius: 10,
+            offset: const Offset(0, -3),
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Bouton précédent
-          IconButton(
-            onPressed: state.searchPageNumber.value > 1
-                ? () => state.goToSearchPage(state.searchPageNumber.value - 1)
-                : null,
-            icon: const Icon(Icons.chevron_left),
-            color: ColorManager.primaryColor,
-          ),
-          
-          // Informations de page
-          Text(
-            'Page ${state.searchPageNumber.value}',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: ColorManager.blackColor,
-            ),
-          ),
-          
-          // Bouton suivant
-          IconButton(
-            onPressed: state.hasMoreSearchResults.value
-                ? () => state.goToSearchPage(state.searchPageNumber.value + 1)
-                : null,
-            icon: const Icon(Icons.chevron_right),
-            color: ColorManager.primaryColor,
+          // Indicateur de résultats
+          if (totalCount > 0)
+            // Padding(
+            //   padding: const EdgeInsets.only(bottom: 10),
+            //   child: Text(
+            //     // '$totalCount résultat${totalCount > 1 ? 's' : ''}',
+            //     style: TextStyle(
+            //       fontSize: 12,
+            //       fontWeight: FontWeight.w500,
+            //       color: ColorManager.grey2,
+            //     ),
+            //   ),
+            // ),
+          // Barre de navigation
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildNavArrow(
+                icon: Icons.chevron_left_rounded,
+                enabled: hasPrev,
+                onTap: () => _goToPage(currentPage - 1),
+              ),
+              const SizedBox(width: 6),
+              // Numéros de pages avec ellipsis
+              ..._getVisiblePages(currentPage, totalPages).map((page) {
+                if (page == null) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: SizedBox(
+                      width: 28,
+                      child: Text(
+                        '···',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: ColorManager.grey2,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                final isActive = page == currentPage;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 3),
+                  child: GestureDetector(
+                    onTap: isActive ? null : () => _goToPage(page),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: isActive
+                            ? ColorManager.primaryColor
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: isActive
+                              ? ColorManager.primaryColor
+                              : ColorManager.grey3,
+                          width: 1.5,
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '$page',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: isActive
+                              ? FontWeight.w700
+                              : FontWeight.w500,
+                          color: isActive ? Colors.white : ColorManager.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+              const SizedBox(width: 6),
+              _buildNavArrow(
+                icon: Icons.chevron_right_rounded,
+                enabled: hasNext,
+                onTap: () => _goToPage(currentPage + 1),
+              ),
+            ],
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildNavArrow({
+    required IconData icon,
+    required bool enabled,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: enabled ? onTap : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: enabled ? ColorManager.primaryColor : ColorManager.greyShade,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        alignment: Alignment.center,
+        child: Icon(
+          icon,
+          size: 22,
+          color: enabled ? Colors.white : ColorManager.grey2,
+        ),
+      ),
+    );
+  }
+
+  List<int?> _getVisiblePages(int current, int total) {
+    if (total <= 0) return [current];
+    if (total <= 7) return List.generate(total, (i) => i + 1);
+
+    if (current <= 4) {
+      return [1, 2, 3, 4, 5, null, total];
+    }
+    if (current >= total - 3) {
+      return [1, null, total - 4, total - 3, total - 2, total - 1, total];
+    }
+    return [1, null, current - 1, current, current + 1, null, total];
   }
 
 }

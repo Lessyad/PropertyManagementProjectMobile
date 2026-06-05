@@ -16,10 +16,11 @@ class CodegenLoader extends AssetLoader {
 
 
 static const Map<String,dynamic> _ar = {
-    "rentalHistoryAppearance": "Your rentals will appear here",
-    "wrongCurrentPassword": "كلمة المرور الحالية التي أدخلتها غير صحيحة. يرجى التحقق منها والمحاولة مجدداً.",
-    "currentPasswordRequired": "كلمة المرور الحالية مطلوبة لتغيير كلمة المرور.",
-    "confirm_button" : "أضف",
+  "comingSoon": "قريباً",
+  "rentalHistoryAppearance": "Your rentals will appear here",
+  "wrongCurrentPassword": "كلمة المرور الحالية التي أدخلتها غير صحيحة. يرجى التحقق منها والمحاولة مجدداً.",
+  "currentPasswordRequired": "كلمة المرور الحالية مطلوبة لتغيير كلمة المرور.",
+  "confirm_button" : "أضف",
   "myAppointments" :"مواعيدي",
   "vehiclesSearchscreen": "المركبات" ,
   "somethingWentWrong": "حدث خطأ ما",
@@ -699,8 +700,12 @@ static const Map<String,dynamic> _ar = {
   "pay_now": "ادفع الآن",
   "payment_success": "تم الدفع بنجاح",
   // "success_payment_completed": "تم إتمام الدفع بنجاح"
+  "mapLabel": "الخريطة",
+  "propertyTypeAll": "الكل",
+  "mapLoadingProperties": "جاري تحميل العقارات...",
 };
 static const Map<String,dynamic> _en = {
+  "comingSoon": "Coming Soon",
   "wrongCurrentPassword": "The current password you entered is incorrect. Please verify it and try again.",
   "currentPasswordRequired": "Current password is required to change your password.",
   "confirm_button" : "add",
@@ -1387,8 +1392,12 @@ static const Map<String,dynamic> _en = {
   "pay_now": "Pay now",
   "payment_success": "Payment successful",
   // "success_payment_completed": "Payment completed successfully"
+  "mapLabel": "Map",
+  "propertyTypeAll": "All",
+  "mapLoadingProperties": "Loading properties...",
 };
 static const Map<String,dynamic> _fr = {
+  "comingSoon": "Bientôt",
   "wrongCurrentPassword": "Le mot de passe actuel que vous avez saisi est incorrect. Veuillez le vérifier et réessayer.",
   "currentPasswordRequired": "Le mot de passe actuel est requis pour modifier votre mot de passe.",
   "confirm_button" : "Ajouter",
@@ -2071,6 +2080,9 @@ static const Map<String,dynamic> _fr = {
   "pay_now": "Payer maintenant",
   "payment_success": "Paiement réussi",
   // "success_payment_completed": "Paiement effectué avec succès"
+  "mapLabel": "Carte",
+  "propertyTypeAll": "Tout",
+  "mapLoadingProperties": "Chargement des propriétés...",
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ar": _ar, "en": _en, "fr": _fr};
 

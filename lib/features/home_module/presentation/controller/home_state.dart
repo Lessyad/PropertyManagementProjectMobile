@@ -9,6 +9,7 @@ class HomeState extends Equatable {
   final Map<PropertyType, PropertyData> properties;
   final List<PropertyEntity> allProperties;
   final RequestState allPropertiesState;
+  final int allPropertiesTotalCount;
   final String selectedCityName;
   final RequestState updateUserLocationState;
   final RequestState getNotificationsState;
@@ -31,6 +32,7 @@ class HomeState extends Equatable {
     this.getNotificationsState = RequestState.initial,
     this.allProperties = const [],
     this.allPropertiesState = RequestState.initial,
+    this.allPropertiesTotalCount = 0,
     this.searchProperties = const [],
     this.searchPropertiesState = RequestState.initial,
     this.searchErrorMessage = '',
@@ -50,6 +52,7 @@ class HomeState extends Equatable {
     List<NotificationEntity>? notifications,
     List<PropertyEntity>? allProperties,
     RequestState? allPropertiesState,
+    int? allPropertiesTotalCount,
     List<PropertyEntity>? searchProperties,
     RequestState? searchPropertiesState,
     String? searchErrorMessage,
@@ -68,6 +71,7 @@ class HomeState extends Equatable {
       notifications: notifications ?? this.notifications,
       allProperties: allProperties ?? this.allProperties,
       allPropertiesState: allPropertiesState ?? this.allPropertiesState,
+      allPropertiesTotalCount: allPropertiesTotalCount ?? this.allPropertiesTotalCount,
       searchProperties: searchProperties ?? this.searchProperties,
       searchPropertiesState: searchPropertiesState ?? this.searchPropertiesState,
       searchErrorMessage: searchErrorMessage ?? this.searchErrorMessage,
@@ -89,6 +93,7 @@ class HomeState extends Equatable {
     notifications,
     allProperties,
     allPropertiesState,
+    allPropertiesTotalCount,
     searchProperties,
     searchPropertiesState,
     searchErrorMessage,
