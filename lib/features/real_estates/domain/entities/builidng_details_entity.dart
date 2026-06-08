@@ -1,6 +1,6 @@
 import 'package:enmaa/core/entites/amenity_entity.dart';
 import 'package:enmaa/core/entites/image_entity.dart';
- import 'package:enmaa/features/real_estates/domain/entities/property_details_entity.dart';
+import 'package:enmaa/features/real_estates/domain/entities/property_details_entity.dart';
 
 class BuildingDetailsEntity extends BasePropertyDetailsEntity {
   final int numberOfFloors;
@@ -23,21 +23,26 @@ class BuildingDetailsEntity extends BasePropertyDetailsEntity {
     required super.city,
     required super.state,
     required super.country,
+    super.cityId,
+    super.stateId,
+    super.countryId,
     required super.isInWishlist,
     required super.rentIsRenewable,
     required super.monthlyRentPeriod,
     required this.numberOfFloors,
     required this.usageType,
-    required this.numberOfApartmentsPerFloor, required super.officePhoneNumber, required super.isOwner,
+    required this.numberOfApartmentsPerFloor,
+    required super.officePhoneNumber,
+    required super.isOwner,
   });
 
   @override
   List<Object?> get props => [
-    ...super.props,
-    numberOfFloors,
-    usageType,
-    numberOfApartmentsPerFloor,
-  ];
+        ...super.props,
+        numberOfFloors,
+        usageType,
+        numberOfApartmentsPerFloor,
+      ];
 
   @override
   BuildingDetailsEntity copyWith({
@@ -56,6 +61,9 @@ class BuildingDetailsEntity extends BasePropertyDetailsEntity {
     String? city,
     String? state,
     String? country,
+    String? cityId,
+    String? stateId,
+    String? countryId,
     bool? isInWishlist,
     String? monthlyRentPeriod,
     bool? rentIsRenewable,
@@ -63,7 +71,7 @@ class BuildingDetailsEntity extends BasePropertyDetailsEntity {
     int? numberOfFloors,
     int? numberOfApartmentsPerFloor,
     String? usageType,
-    String?officePhoneNumber ,
+    String? officePhoneNumber,
   }) {
     return BuildingDetailsEntity(
       id: id ?? this.id,
@@ -81,13 +89,17 @@ class BuildingDetailsEntity extends BasePropertyDetailsEntity {
       city: city ?? this.city,
       state: state ?? this.state,
       country: country ?? this.country,
+      cityId: cityId ?? this.cityId,
+      stateId: stateId ?? this.stateId,
+      countryId: countryId ?? this.countryId,
       isInWishlist: isInWishlist ?? this.isInWishlist,
       monthlyRentPeriod: monthlyRentPeriod ?? this.monthlyRentPeriod,
       rentIsRenewable: rentIsRenewable ?? this.rentIsRenewable,
       numberOfFloors: numberOfFloors ?? this.numberOfFloors,
       usageType: usageType ?? this.usageType,
       isOwner: isOwner ?? this.isOwner,
-      numberOfApartmentsPerFloor: numberOfApartmentsPerFloor ?? this.numberOfApartmentsPerFloor,
+      numberOfApartmentsPerFloor:
+          numberOfApartmentsPerFloor ?? this.numberOfApartmentsPerFloor,
       officePhoneNumber: officePhoneNumber ?? this.officePhoneNumber,
     );
   }

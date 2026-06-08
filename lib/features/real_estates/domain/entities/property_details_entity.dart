@@ -18,11 +18,14 @@ abstract class BasePropertyDetailsEntity extends Equatable {
   final String city;
   final String state;
   final String country;
+  final String cityId;
+  final String stateId;
+  final String countryId;
   final bool isInWishlist;
   final String? monthlyRentPeriod;
   final bool? rentIsRenewable;
   final bool isOwner;
-  final String officePhoneNumber ;
+  final String officePhoneNumber;
 
   const BasePropertyDetailsEntity({
     required this.id,
@@ -40,6 +43,9 @@ abstract class BasePropertyDetailsEntity extends Equatable {
     required this.city,
     required this.state,
     required this.country,
+    this.cityId = '',
+    this.stateId = '',
+    this.countryId = '',
     required this.isInWishlist,
     required this.rentIsRenewable,
     required this.isOwner,
@@ -63,6 +69,9 @@ abstract class BasePropertyDetailsEntity extends Equatable {
     String? city,
     String? state,
     String? country,
+    String? cityId,
+    String? stateId,
+    String? countryId,
     bool? isInWishlist,
     String? monthlyRentPeriod,
     bool? rentIsRenewable,
@@ -72,25 +81,28 @@ abstract class BasePropertyDetailsEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-    id,
-    title,
-    operation,
-    price,
-    area,
-    propertySubType,
-    status,
-    images,
-    amenities,
-    description,
-    latitude,
-    longitude,
-    city,
-    state,
-    country,
-    isInWishlist,
-    monthlyRentPeriod,
-    rentIsRenewable,
-    officePhoneNumber,
-    isOwner
-  ];
+        id,
+        title,
+        operation,
+        price,
+        area,
+        propertySubType,
+        status,
+        images,
+        amenities,
+        description,
+        latitude,
+        longitude,
+        city,
+        state,
+        country,
+        cityId,
+        stateId,
+        countryId,
+        isInWishlist,
+        monthlyRentPeriod,
+        rentIsRenewable,
+        officePhoneNumber,
+        isOwner
+      ];
 }

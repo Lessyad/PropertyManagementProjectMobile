@@ -11,11 +11,11 @@ class NotificationModel extends NotificationEntity{
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
-      id: json['id'].toString() ??'',
-      title: json['title'] ?? '',
-      message: json['message'] ?? '',
-      isRead: json['isRead'] ?? false, // Utiliser 'isRead' au lieu de 'is_read'
-      createdAt: json['created'] ?? '',
+      id: (json['id'] ?? json['Id'] ?? '').toString(),
+      title: json['title'] ?? json['Title'] ?? '',
+      message: json['message'] ?? json['Message'] ?? '',
+      isRead: json['isRead'] ?? json['IsRead'] ?? json['is_read'] ?? false,
+      createdAt: (json['created'] ?? json['Created'] ?? '').toString(),
     );
   }
  }

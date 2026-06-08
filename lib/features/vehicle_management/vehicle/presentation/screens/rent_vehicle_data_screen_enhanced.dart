@@ -1,7 +1,12 @@
 import 'dart:io';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:enmaa/core/constants/app_assets.dart';
+import 'package:enmaa/core/constants/api_constants.dart';
+import 'package:enmaa/core/constants/local_keys.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
+import 'package:enmaa/core/services/dio_service.dart';
+import 'package:enmaa/core/services/service_locator.dart';
+import 'package:enmaa/core/services/shared_preferences_service.dart';
 import 'package:flutter/material.dart' as matrial;
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -42,7 +47,8 @@ class RentVehicleDataScreenEnhanced extends StatefulWidget {
   final int? receptionZoneId;
   final int? deliveryZoneId;
   final double? totalPrice;
-    final bool? initialSecondDriver; // État initial du secondDriver depuis RentalSummaryScreen
+  final bool?
+      initialSecondDriver; // État initial du secondDriver depuis RentalSummaryScreen
 
   const RentVehicleDataScreenEnhanced({
     super.key,
@@ -64,10 +70,12 @@ class RentVehicleDataScreenEnhanced extends StatefulWidget {
   });
 
   @override
-  State<RentVehicleDataScreenEnhanced> createState() => _RentVehicleDataScreenEnhancedState();
+  State<RentVehicleDataScreenEnhanced> createState() =>
+      _RentVehicleDataScreenEnhancedState();
 }
 
-class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnhanced> {
+class _RentVehicleDataScreenEnhancedState
+    extends State<RentVehicleDataScreenEnhanced> {
   // Instance d'ImagePicker
   final ImagePicker _picker = ImagePicker();
 
@@ -77,15 +85,21 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
   final TextEditingController _familyNameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _idNumberController = TextEditingController();
-  final TextEditingController _licenseNumberController = TextEditingController();
+  final TextEditingController _licenseNumberController =
+      TextEditingController();
 
   // Controllers pour le deuxième chauffeur
-  final TextEditingController _secondFirstNameController = TextEditingController();
-  final TextEditingController _secondLastNameController = TextEditingController();
-  final TextEditingController _secondFamilyNameController = TextEditingController();
+  final TextEditingController _secondFirstNameController =
+      TextEditingController();
+  final TextEditingController _secondLastNameController =
+      TextEditingController();
+  final TextEditingController _secondFamilyNameController =
+      TextEditingController();
   final TextEditingController _secondPhoneController = TextEditingController();
-  final TextEditingController _secondIdNumberController = TextEditingController();
-  final TextEditingController _secondLicenseNumberController = TextEditingController();
+  final TextEditingController _secondIdNumberController =
+      TextEditingController();
+  final TextEditingController _secondLicenseNumberController =
+      TextEditingController();
   final TextEditingController _secondAgeController = TextEditingController();
 
   // Variables d'état
@@ -142,20 +156,22 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
   }
 
   // Méthode helper pour copier un fichier vers un répertoire permanent
-  Future<File?> _copyImageToPermanentStorage(File sourceFile, String prefix) async {
+  Future<File?> _copyImageToPermanentStorage(
+      File sourceFile, String prefix) async {
     try {
       final directory = await getApplicationDocumentsDirectory();
       final imagesDir = Directory('${directory.path}/vehicle_deal_images');
       if (!await imagesDir.exists()) {
         await imagesDir.create(recursive: true);
       }
-      
+
       // Obtenir l'extension du fichier
       final sourcePath = sourceFile.path;
       final extension = sourcePath.substring(sourcePath.lastIndexOf('.'));
-      final fileName = '${prefix}_${DateTime.now().millisecondsSinceEpoch}$extension';
+      final fileName =
+          '${prefix}_${DateTime.now().millisecondsSinceEpoch}$extension';
       final permanentPath = '${imagesDir.path}/$fileName';
-      
+
       final permanentFile = await sourceFile.copy(permanentPath);
       print('✅ Image copiée vers: $permanentPath');
       return permanentFile;
@@ -173,7 +189,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
       if (image != null) {
         final tempFile = File(image.path);
         // Copier vers un répertoire permanent
-        final permanentFile = await _copyImageToPermanentStorage(tempFile, 'id_card');
+        final permanentFile =
+            await _copyImageToPermanentStorage(tempFile, 'id_card');
         setState(() {
           _idImage = permanentFile;
         });
@@ -200,7 +217,6 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
             margin: const EdgeInsets.all(10),
           ),
         );
-
       }
     });
   }
@@ -211,7 +227,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
       if (image != null) {
         final tempFile = File(image.path);
         // Copier vers un répertoire permanent
-        final permanentFile = await _copyImageToPermanentStorage(tempFile, 'driving_license');
+        final permanentFile =
+            await _copyImageToPermanentStorage(tempFile, 'driving_license');
         setState(() {
           _licenseImage = permanentFile;
         });
@@ -234,12 +251,9 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 2),
             behavior: SnackBarBehavior.floating, // pour un style flottant
-            margin: const EdgeInsets.all(10),    // marge autour du snackbar
+            margin: const EdgeInsets.all(10), // marge autour du snackbar
           ),
         );
-
-
-
       }
     });
   }
@@ -247,6 +261,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
   @override
   void initState() {
     super.initState();
+    _prefillMainTenantFromCurrentUser();
+    _loadCurrentUserProfile();
 
     // Ajouter des listeners pour tous les contrôleurs
     _firstNameController.addListener(_checkFormValidity);
@@ -263,6 +279,81 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
     _secondIdNumberController.addListener(_checkFormValidity);
     _secondLicenseNumberController.addListener(_checkFormValidity);
     _secondAgeController.addListener(_checkFormValidity);
+    _checkFormValidity();
+  }
+
+  void _prefillMainTenantFromCurrentUser() {
+    final sharedPrefs = SharedPreferencesService();
+    final fullName = sharedPrefs.userName.trim();
+    final nameParts = fullName
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .toList();
+
+    if (nameParts.isNotEmpty) {
+      _firstNameController.text = nameParts.first;
+    }
+    if (nameParts.length > 1) {
+      _lastNameController.text = nameParts[1];
+    }
+    if (nameParts.length > 2) {
+      _familyNameController.text = nameParts.skip(2).join(' ');
+    }
+
+    _phoneController.text = sharedPrefs.userPhone;
+    _idNumberController.text =
+        (sharedPrefs.getValue(LocalKeys.userIdNumber) ?? '').toString();
+    _birthDate =
+        _parseStoredDate(sharedPrefs.getValue(LocalKeys.userDateOfBirth));
+    _idExpirationDate =
+        _parseStoredDate(sharedPrefs.getValue(LocalKeys.userIdExpirationDate));
+  }
+
+  DateTime? _parseStoredDate(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    return DateTime.tryParse(value.toString());
+  }
+
+  Future<void> _loadCurrentUserProfile() async {
+    try {
+      final dio = ServiceLocator.getIt<DioService>();
+      final response = await dio.get(url: ApiConstants.user);
+      final data = response.data;
+      if (data is! Map<String, dynamic>) return;
+
+      final sharedPrefs = SharedPreferencesService();
+      final fullName = data['full_name']?.toString().trim() ?? '';
+      final phoneNumber = data['phone_number']?.toString().trim() ?? '';
+      final idNumber = data['id_number']?.toString().trim() ?? '';
+      final dateOfBirth = data['date_of_birth']?.toString().trim();
+      final idExpiryDate = data['id_expiry_date']?.toString().trim();
+
+      if (fullName.isNotEmpty) {
+        await sharedPrefs.setUserName(fullName);
+      }
+      if (phoneNumber.isNotEmpty) {
+        await sharedPrefs.setUserPhone(phoneNumber);
+      }
+      if (idNumber.isNotEmpty) {
+        await sharedPrefs.storeValue(LocalKeys.userIdNumber, idNumber);
+      }
+      if (dateOfBirth != null && dateOfBirth.isNotEmpty && dateOfBirth != '0') {
+        await sharedPrefs.storeValue(LocalKeys.userDateOfBirth, dateOfBirth);
+      }
+      if (idExpiryDate != null &&
+          idExpiryDate.isNotEmpty &&
+          idExpiryDate != '0') {
+        await sharedPrefs.storeValue(
+            LocalKeys.userIdExpirationDate, idExpiryDate);
+      }
+
+      if (!mounted) return;
+      setState(_prefillMainTenantFromCurrentUser);
+      _checkFormValidity();
+    } catch (_) {
+      // Keep the cached values if the profile endpoint is unavailable.
+    }
   }
 
   Future<void> _pickSecondIdImage() async {
@@ -271,7 +362,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
       if (image != null) {
         final tempFile = File(image.path);
         // Copier vers un répertoire permanent
-        final permanentFile = await _copyImageToPermanentStorage(tempFile, 'second_id_card');
+        final permanentFile =
+            await _copyImageToPermanentStorage(tempFile, 'second_id_card');
         setState(() {
           _secondIdImage = permanentFile;
         });
@@ -285,7 +377,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
       if (image != null) {
         final tempFile = File(image.path);
         // Copier vers un répertoire permanent
-        final permanentFile = await _copyImageToPermanentStorage(tempFile, 'second_driving_license');
+        final permanentFile = await _copyImageToPermanentStorage(
+            tempFile, 'second_driving_license');
         setState(() {
           _secondLicenseImage = permanentFile;
         });
@@ -316,7 +409,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
         return optionsController.secondDriverAmount;
       }
     } catch (e) {
-      print('❌ Erreur lors de la récupération du montant du deuxième chauffeur: $e');
+      print(
+          '❌ Erreur lors de la récupération du montant du deuxième chauffeur: $e');
     }
     // Valeur par défaut en cas d'erreur
     return 100.0;
@@ -354,7 +448,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
         _secondLicenseImage != null;
   }
 
-  Future<void> _showImageSourceDialog(Function(ImageSource) onSourceSelected) async {
+  Future<void> _showImageSourceDialog(
+      Function(ImageSource) onSourceSelected) async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -554,7 +649,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
     );
   }
 
-  Widget _buildDocumentTypeOption(DocumentType type, String title, IconData icon) {
+  Widget _buildDocumentTypeOption(
+      DocumentType type, String title, IconData icon) {
     final isSelected = _selectedDocumentType == type;
     return GestureDetector(
       onTap: () {
@@ -566,7 +662,9 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
       child: Container(
         padding: EdgeInsets.all(context.scale(12)),
         decoration: BoxDecoration(
-          color: isSelected ? ColorManager.primaryColor.withOpacity(0.1) : Colors.grey[100],
+          color: isSelected
+              ? ColorManager.primaryColor.withOpacity(0.1)
+              : Colors.grey[100],
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected ? ColorManager.primaryColor : Colors.grey[300]!,
@@ -584,7 +682,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
             Text(
               title,
               style: getRegularStyle(
-                color: isSelected ? ColorManager.primaryColor : Colors.grey[600]!,
+                color:
+                    isSelected ? ColorManager.primaryColor : Colors.grey[600]!,
                 fontSize: FontSize.s10,
               ),
               textAlign: TextAlign.center,
@@ -742,7 +841,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                   tr(LocaleKeys.birthDate),
                   _birthDate,
                   (date) => setState(() => _birthDate = date),
-                  maxDate: DateTime(DateTime.now().year - 18, DateTime.now().month, DateTime.now().day),
+                  maxDate: DateTime(DateTime.now().year - 18,
+                      DateTime.now().month, DateTime.now().day),
                 ),
               ),
               SizedBox(width: context.scale(16)),
@@ -751,7 +851,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                   tr(LocaleKeys.expiryDate),
                   _idExpirationDate,
                   (date) => setState(() => _idExpirationDate = date),
-                  minDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
+                  minDate: DateTime(DateTime.now().year, DateTime.now().month,
+                      DateTime.now().day),
                 ),
               ),
             ],
@@ -836,7 +937,7 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
           _buildDateField(
             tr(LocaleKeys.licenseIssueDate),
             _licenseIssueDate,
-                (date) => setState(() => _licenseIssueDate = date),
+            (date) => setState(() => _licenseIssueDate = date),
           ),
         ],
       ),
@@ -987,7 +1088,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
     );
   }
 
-  Widget _buildSecondDocumentTypeOption(DocumentType type, String title, IconData icon) {
+  Widget _buildSecondDocumentTypeOption(
+      DocumentType type, String title, IconData icon) {
     final isSelected = _secondSelectedDocumentType == type;
     return GestureDetector(
       onTap: () {
@@ -999,7 +1101,9 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
       child: Container(
         padding: EdgeInsets.all(context.scale(12)),
         decoration: BoxDecoration(
-          color: isSelected ? ColorManager.primaryColor.withOpacity(0.1) : Colors.grey[100],
+          color: isSelected
+              ? ColorManager.primaryColor.withOpacity(0.1)
+              : Colors.grey[100],
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected ? ColorManager.primaryColor : Colors.grey[300]!,
@@ -1017,7 +1121,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
             Text(
               title,
               style: getRegularStyle(
-                color: isSelected ? ColorManager.primaryColor : Colors.grey[600]!,
+                color:
+                    isSelected ? ColorManager.primaryColor : Colors.grey[600]!,
                 fontSize: FontSize.s10,
               ),
               textAlign: TextAlign.center,
@@ -1079,11 +1184,11 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
           //     fontSize: FontSize.s14,
           //   ),
           // ),
-
         ],
       ),
     );
   }
+
   Widget _buildLicenseSectionSecondDriver() {
     return Container(
       padding: EdgeInsets.all(context.scale(16)),
@@ -1249,7 +1354,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                   tr(LocaleKeys.birthDate),
                   _secondBirthDate,
                   (date) => setState(() => _secondBirthDate = date),
-                  maxDate: DateTime(DateTime.now().year - 18, DateTime.now().month, DateTime.now().day),
+                  maxDate: DateTime(DateTime.now().year - 18,
+                      DateTime.now().month, DateTime.now().day),
                 ),
               ),
               SizedBox(width: context.scale(16)),
@@ -1258,7 +1364,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                   tr(LocaleKeys.expiryDate),
                   _secondIdExpirationDate,
                   (date) => setState(() => _secondIdExpirationDate = date),
-                  minDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
+                  minDate: DateTime(DateTime.now().year, DateTime.now().month,
+                      DateTime.now().day),
                 ),
               ),
             ],
@@ -1307,7 +1414,7 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
           _buildDateField(
             tr(LocaleKeys.licenseIssueDate),
             _secondLicenseIssueDate,
-                (date) => setState(() => _secondLicenseIssueDate = date),
+            (date) => setState(() => _secondLicenseIssueDate = date),
           ),
         ],
       ),
@@ -1315,11 +1422,11 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
   }
 
   Widget _buildTextField(
-      String label,
-      String hint,
-      TextEditingController controller, {
-        TextInputType keyboardType = TextInputType.text,
-      }) {
+    String label,
+    String hint,
+    TextEditingController controller, {
+    TextInputType keyboardType = TextInputType.text,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1344,13 +1451,13 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
   }
 
   Widget _buildValidatedTextField(
-      String label,
-      String hint,
-      TextEditingController controller, {
-        TextInputType keyboardType = TextInputType.text,
-        String? Function(String?)? validator,
-        int? maxLength,
-      }) {
+    String label,
+    String hint,
+    TextEditingController controller, {
+    TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
+    int? maxLength,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1426,8 +1533,6 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
     );
   }
 
-
-
   Widget _buildDateField(
     String label,
     DateTime? selectedDate,
@@ -1455,8 +1560,10 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                 final int startYear = minDate?.year ?? 1920;
                 final int endYear = maxDate?.year ?? 2040;
                 DateTime rawDisplay = selectedDate ?? maxDate ?? DateTime.now();
-                if (rawDisplay.year < startYear) rawDisplay = DateTime(startYear, rawDisplay.month, 1);
-                if (rawDisplay.year > endYear) rawDisplay = DateTime(endYear, rawDisplay.month, 1);
+                if (rawDisplay.year < startYear)
+                  rawDisplay = DateTime(startYear, rawDisplay.month, 1);
+                if (rawDisplay.year > endYear)
+                  rawDisplay = DateTime(endYear, rawDisplay.month, 1);
                 DateTime displayDate = rawDisplay;
 
                 return StatefulBuilder(
@@ -1471,7 +1578,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                         height: MediaQuery.of(context).size.height * 0.47,
                         decoration: BoxDecoration(
                           color: ColorManager.whiteColor,
-                          borderRadius: BorderRadius.circular(context.scale(12)),
+                          borderRadius:
+                              BorderRadius.circular(context.scale(12)),
                           boxShadow: [
                             BoxShadow(
                               color: ColorManager.blackColor.withOpacity(0.1),
@@ -1497,10 +1605,14 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                                 Expanded(
                                   child: Container(
                                     height: context.scale(36),
-                                    padding: EdgeInsets.symmetric(horizontal: context.scale(8)),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: context.scale(8)),
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: ColorManager.greyShade, width: 0.5),
-                                      borderRadius: BorderRadius.circular(context.scale(8)),
+                                      border: Border.all(
+                                          color: ColorManager.greyShade,
+                                          width: 0.5),
+                                      borderRadius: BorderRadius.circular(
+                                          context.scale(8)),
                                     ),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton<int>(
@@ -1511,7 +1623,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                                           color: ColorManager.blackColor,
                                           fontSize: FontSize.s12,
                                         ),
-                                        items: List.generate(endYear - startYear + 1, (i) {
+                                        items: List.generate(
+                                            endYear - startYear + 1, (i) {
                                           final year = startYear + i;
                                           return DropdownMenuItem(
                                             value: year,
@@ -1521,7 +1634,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                                         onChanged: (year) {
                                           if (year != null) {
                                             setDialogState(() {
-                                              displayDate = DateTime(year, displayDate.month, 1);
+                                              displayDate = DateTime(
+                                                  year, displayDate.month, 1);
                                             });
                                           }
                                         },
@@ -1533,10 +1647,14 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                                 Expanded(
                                   child: Container(
                                     height: context.scale(36),
-                                    padding: EdgeInsets.symmetric(horizontal: context.scale(8)),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: context.scale(8)),
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: ColorManager.greyShade, width: 0.5),
-                                      borderRadius: BorderRadius.circular(context.scale(8)),
+                                      border: Border.all(
+                                          color: ColorManager.greyShade,
+                                          width: 0.5),
+                                      borderRadius: BorderRadius.circular(
+                                          context.scale(8)),
                                     ),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton<int>(
@@ -1551,14 +1669,18 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                                           return DropdownMenuItem(
                                             value: i + 1,
                                             child: Text(
-                                              DateFormat('MMMM', context.locale.toString()).format(DateTime(2000, i + 1)),
+                                              DateFormat('MMMM',
+                                                      context.locale.toString())
+                                                  .format(
+                                                      DateTime(2000, i + 1)),
                                             ),
                                           );
                                         }),
                                         onChanged: (month) {
                                           if (month != null) {
                                             setDialogState(() {
-                                              displayDate = DateTime(displayDate.year, month, 1);
+                                              displayDate = DateTime(
+                                                  displayDate.year, month, 1);
                                             });
                                           }
                                         },
@@ -1579,7 +1701,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                                 maxDate: maxDate,
                                 onSelectionChanged: (calendarSelectionDetails) {
                                   if (calendarSelectionDetails.date != null) {
-                                    Navigator.of(dialogContext).pop(calendarSelectionDetails.date);
+                                    Navigator.of(dialogContext)
+                                        .pop(calendarSelectionDetails.date);
                                   }
                                 },
                               ),
@@ -1625,13 +1748,13 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
                           : tr(LocaleKeys.chooseDate),
                       style: selectedDate == null
                           ? getRegularStyle(
-                        color: ColorManager.grey2,
-                        fontSize: FontSize.s12,
-                      )
+                              color: ColorManager.grey2,
+                              fontSize: FontSize.s12,
+                            )
                           : getSemiBoldStyle(
-                        color: ColorManager.primaryColor,
-                        fontSize: FontSize.s12,
-                      ),
+                              color: ColorManager.primaryColor,
+                              fontSize: FontSize.s12,
+                            ),
                     ),
                   ),
                   Icon(
@@ -1663,111 +1786,114 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
           color: Colors.grey[100],
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: image != null ? ColorManager.primaryColor : Colors.grey[300]!,
+            color:
+                image != null ? ColorManager.primaryColor : Colors.grey[300]!,
             style: BorderStyle.solid,
             width: 2,
           ),
         ),
         child: image != null
             ? Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.file(
-                image,
-                width: double.infinity,
-                height: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-            // Bouton de suppression
-            Positioned(
-              top: 8,
-              right: 8,
-              child: GestureDetector(
-                onTap: onRemove,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 3,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                ),
-              ),
-            ),
-            // Indicateur de succès
-            Positioned(
-              bottom: 8,
-              right: 8,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 3,
-                      offset: const Offset(0, 1),
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.file(
+                      image,
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
                     ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 16,
-                ),
-              ),
-            ),
-          ],
-        )
+                  ),
+                  // Bouton de suppression
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: GestureDetector(
+                      onTap: onRemove,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 3,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Indicateur de succès
+                  Positioned(
+                    bottom: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 3,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.check,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              )
             : Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.add_photo_alternate,
-              size: 40,
-              color: Colors.grey[600],
-            ),
-            SizedBox(height: context.scale(8)),
-            Text(
-              hintText,
-              style: getRegularStyle(
-                color: Colors.grey[600]!,
-                fontSize: FontSize.s12,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_photo_alternate,
+                    size: 40,
+                    color: Colors.grey[600],
+                  ),
+                  SizedBox(height: context.scale(8)),
+                  Text(
+                    hintText,
+                    style: getRegularStyle(
+                      color: Colors.grey[600]!,
+                      fontSize: FontSize.s12,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: context.scale(4)),
+                  Text(
+                    '${tr(LocaleKeys.camera)} ${tr(LocaleKeys.or)} ${tr(LocaleKeys.gallery)}',
+                    style: getRegularStyle(
+                      color: ColorManager.primaryColor,
+                      fontSize: FontSize.s10,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: context.scale(4)),
-            Text(
-              '${tr(LocaleKeys.camera)} ${tr(LocaleKeys.or)} ${tr(LocaleKeys.gallery)}',
-              style: getRegularStyle(
-                color: ColorManager.primaryColor,
-                fontSize: FontSize.s10,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
       ),
     );
   }
 
   Widget _buildFooter() {
     double extraCost = 0;
-    if (_hasSecondDriver) extraCost += _getSecondDriverAmount(); // Frais deuxième chauffeur dynamique
+    if (_hasSecondDriver)
+      extraCost +=
+          _getSecondDriverAmount(); // Frais deuxième chauffeur dynamique
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -1811,12 +1937,9 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
             child: ElevatedButton(
               onPressed: _isFormValid ? _submitForm : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: _isFormValid
-                    ? ColorManager.primaryColor
-                    : Colors.grey[300],
-                foregroundColor: _isFormValid
-                    ? Colors.white
-                    : Colors.grey[600],
+                backgroundColor:
+                    _isFormValid ? ColorManager.primaryColor : Colors.grey[300],
+                foregroundColor: _isFormValid ? Colors.white : Colors.grey[600],
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -1865,11 +1988,11 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
       // IMPORTANT: le total est déjà calculé dans `RentalSummaryScreen` (jours+heures + options)
       // On le réutilise ici pour garantir la cohérence (contrat + paiement)
       double totalPrice = widget.totalPrice ?? 0.0;
-      
+
       // Ajuster le total en fonction de l'état actuel du deuxième chauffeur
       final secondDriverAmount = _getSecondDriverAmount();
       final wasSecondDriverIncluded = widget.initialSecondDriver ?? false;
-      
+
       // Si le secondDriver était inclus dans le total initial mais n'est plus sélectionné, le soustraire
       if (wasSecondDriverIncluded && !_hasSecondDriver) {
         totalPrice -= secondDriverAmount;
@@ -1895,7 +2018,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
         drivingLicenseNumber: _licenseNumberController.text,
         drivingLicenseIssueDate: _licenseIssueDate!,
         vehicleReceptionPlace: widget.receptionLocation,
-        vehicleReceptionLat: "18.0731", // TODO: Récupérer les coordonnées réelles
+        vehicleReceptionLat:
+            "18.0731", // TODO: Récupérer les coordonnées réelles
         vehicleReceptionLng: "-15.9582",
         vehicleReturnPlace: widget.deliveryLocation,
         vehicleReturnLat: "18.0731", // TODO: Récupérer les coordonnées réelles
@@ -1992,7 +2116,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
   int _getPickupAreaId() {
     // Utiliser l'ID de la zone sélectionnée par l'utilisateur
     final areaId = widget.receptionZoneId ?? 1; // Fallback vers ID par défaut
-    print('📍 Récupération de l\'ID de la zone de récupération: $areaId (depuis le formulaire de recherche)');
+    print(
+        '📍 Récupération de l\'ID de la zone de récupération: $areaId (depuis le formulaire de recherche)');
     return areaId;
   }
 
@@ -2000,7 +2125,8 @@ class _RentVehicleDataScreenEnhancedState extends State<RentVehicleDataScreenEnh
   int _getReturnAreaId() {
     // Utiliser l'ID de la zone sélectionnée par l'utilisateur
     final areaId = widget.deliveryZoneId ?? 1; // Fallback vers ID par défaut
-    print('📍 Récupération de l\'ID de la zone de retour: $areaId (depuis le formulaire de recherche)');
+    print(
+        '📍 Récupération de l\'ID de la zone de retour: $areaId (depuis le formulaire de recherche)');
     return areaId;
   }
 }

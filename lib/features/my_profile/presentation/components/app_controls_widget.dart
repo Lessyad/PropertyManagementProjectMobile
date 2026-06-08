@@ -22,6 +22,7 @@ import '../../../../core/services/service_locator.dart';
 import '../../../home_module/home_imports.dart';
 import 'package:flutter/material.dart';
 import 'language_bottom_sheet_component.dart';
+import 'remove_account_widget.dart';
 
 class AppControlsWidget extends StatefulWidget {
   const AppControlsWidget({super.key});
@@ -32,6 +33,7 @@ class AppControlsWidget extends StatefulWidget {
 
 class _AppControlsWidgetState extends State<AppControlsWidget> {
   bool isDarkModeEnabled = false;
+  bool areSettingsExpanded = false;
   bool areNotificationsEnabled =
       SharedPreferencesService().getValue('notifications_enabled') ?? true;
 
@@ -39,97 +41,107 @@ class _AppControlsWidgetState extends State<AppControlsWidget> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: context.scale(280),
       decoration: BoxDecoration(
         color: ColorManager.whiteColor,
         borderRadius: BorderRadius.circular(20),
       ),
       padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildItem(
-                  iconPath: AppAssets.localizationIcon,
-                  text: LocaleKeys.appControlsLanguage.tr(),
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      backgroundColor: ColorManager.greyShade,
-                      isScrollControlled: true,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(25),
-                        ),
-                      ),
-                      builder: (__) {
-                        return CustomBottomSheet(
-                          widget: LanguageBottomSheetComponent(),
-                          padding: EdgeInsets.zero,
-                          iconPath: AppAssets.localizationIcon,
-                          headerText: LocaleKeys.appControlsLanguage.tr(),
-                        );
-                      },
+      child: AnimatedSize(
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeInOut,
+        child: Column(
+          children: [
+            _buildItem(
+              iconPath: AppAssets.localizationIcon,
+              text: LocaleKeys.appControlsLanguage.tr(),
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  backgroundColor: ColorManager.greyShade,
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(25),
+                    ),
+                  ),
+                  builder: (__) {
+                    return CustomBottomSheet(
+                      widget: LanguageBottomSheetComponent(),
+                      padding: EdgeInsets.zero,
+                      iconPath: AppAssets.localizationIcon,
+                      headerText: LocaleKeys.appControlsLanguage.tr(),
                     );
                   },
-                ),
-                _buildItem(
-                  iconPath: AppAssets.keyIcon,
-                  text: LocaleKeys.changePassword.tr(),
-                  onTap: () async {
-                    if (AuthService.authStateNotifier.value) {
-                      Navigator.pushNamed(context, RoutersNames.changePasswordScreen);
-                    } else {
-                      LoginBottomSheet.show();
-                    }
-                  },
-                ),
-                _buildItem(
-                  iconPath: AppAssets.privacyIcon,
-                  text: LocaleKeys.appControlsTerms.tr(),
-                  onTap: () async {
-                    final Uri url = Uri.parse('https://www.musabholding.com/');
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url, mode: LaunchMode.externalApplication);
-                    } else {
-                      CustomSnackBar.show(
-                        message: LocaleKeys.appControlsLinkError.tr(),
-                        type: SnackBarType.error,
-                      );
-                    }
-                  },
-                ),
-                // _buildSwitchItem(
-                //   iconPath: AppAssets.themeIcon,
-                //   text: LocaleKeys.appControlsDarkMode.tr(),
-                //   value: isDarkModeEnabled,
-                //   onChanged: (value) {
-                //     // setState(() {
-                //     //   isDarkModeEnabled = value;
-                //     // });
-                //   },
-                // ),
-                _buildSwitchItem(
-                  iconPath: AppAssets.notificationIcon,
-                  text: LocaleKeys.appControlsNotifications.tr(),
-                  value: areNotificationsEnabled,
-                  onChanged: (value) {
-                    if (!AuthService.authStateNotifier.value) {
-                      LoginBottomSheet.show();
-                      return;
-                    }
-                    setState(() {
-                      areNotificationsEnabled = value;
-                    });
-                    _updateNotificationAvailability(value);
-                  },
-                ),
-              ],
+                );
+              },
             ),
-          ),
-        ],
+            _buildItem(
+              iconPath: AppAssets.privacyIcon,
+              text: LocaleKeys.appControlsTerms.tr(),
+              onTap: () async {
+                final Uri url = Uri.parse('https://www.musabholding.com/');
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                } else {
+                  CustomSnackBar.show(
+                    message: LocaleKeys.appControlsLinkError.tr(),
+                    type: SnackBarType.error,
+                  );
+                }
+              },
+            ),
+            _buildItem(
+              iconPath: AppAssets.themeIcon,
+              leading: Icon(
+                Icons.settings_outlined,
+                size: 20,
+                color: ColorManager.grey,
+              ),
+              text: _settingsLabel(context),
+              onTap: () {
+                setState(() {
+                  areSettingsExpanded = !areSettingsExpanded;
+                });
+              },
+              trailing: AnimatedRotation(
+                turns: areSettingsExpanded ? 0.25 : 0,
+                duration: const Duration(milliseconds: 180),
+                child: const Icon(Icons.arrow_forward_ios),
+              ),
+            ),
+            if (areSettingsExpanded) ...[
+              const Divider(height: 12),
+              _buildItem(
+                iconPath: AppAssets.keyIcon,
+                text: LocaleKeys.changePassword.tr(),
+                onTap: () async {
+                  if (AuthService.authStateNotifier.value) {
+                    Navigator.pushNamed(
+                        context, RoutersNames.changePasswordScreen);
+                  } else {
+                    LoginBottomSheet.show();
+                  }
+                },
+              ),
+              _buildSwitchItem(
+                iconPath: AppAssets.notificationIcon,
+                text: LocaleKeys.appControlsNotifications.tr(),
+                value: areNotificationsEnabled,
+                onChanged: (value) {
+                  if (!AuthService.authStateNotifier.value) {
+                    LoginBottomSheet.show();
+                    return;
+                  }
+                  setState(() {
+                    areNotificationsEnabled = value;
+                  });
+                  _updateNotificationAvailability(value);
+                },
+              ),
+              _buildDeleteAccountItem(),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -138,6 +150,9 @@ class _AppControlsWidgetState extends State<AppControlsWidget> {
     required String iconPath,
     required String text,
     required VoidCallback onTap,
+    Widget? leading,
+    Widget? trailing,
+    Color? textColor,
   }) {
     return SizedBox(
       height: context.scale(48),
@@ -145,27 +160,39 @@ class _AppControlsWidgetState extends State<AppControlsWidget> {
         onTap: onTap,
         child: Row(
           children: [
-            SvgImageComponent(
-              width: 20,
-              height: 20,
-              iconPath: iconPath,
-              color: ColorManager.grey,
-            ),
+            leading ??
+                SvgImageComponent(
+                  width: 20,
+                  height: 20,
+                  iconPath: iconPath,
+                  color: ColorManager.grey,
+                ),
             SizedBox(width: context.scale(8)),
             Expanded(
               child: Text(
                 text,
                 style: getBoldStyle(
-                  color: ColorManager.blackColor,
+                  color: textColor ?? ColorManager.blackColor,
                   fontSize: FontSize.s16,
                 ),
               ),
             ),
-            const Icon(Icons.arrow_forward_ios),
+            trailing ?? const Icon(Icons.arrow_forward_ios),
           ],
         ),
       ),
     );
+  }
+
+  String _settingsLabel(BuildContext context) {
+    switch (context.locale.languageCode) {
+      case 'fr':
+        return 'Paramètres';
+      case 'ar':
+        return 'الإعدادات';
+      default:
+        return 'Settings';
+    }
   }
 
   Widget _buildSwitchItem({
@@ -203,10 +230,78 @@ class _AppControlsWidgetState extends State<AppControlsWidget> {
     );
   }
 
+  Widget _buildDeleteAccountItem() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: AuthService.authStateNotifier,
+      builder: (context, isLoggedIn, _) {
+        if (!isLoggedIn) return const SizedBox.shrink();
+
+        return _buildItem(
+          iconPath: AppAssets.trashIcon,
+          text: LocaleKeys.removeAccountTitle.tr(),
+          textColor: ColorManager.redColor,
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              backgroundColor: ColorManager.greyShade,
+              isScrollControlled: true,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(25),
+                ),
+              ),
+              builder: (__) {
+                return CustomBottomSheet(
+                  widget: DeleteAccountComponent(
+                    onDeleteConfirmed: () => _deleteAccount(context),
+                  ),
+                  headerText: '',
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteAccount(BuildContext context) async {
+    final dio = ServiceLocator.getIt<DioService>();
+
+    final result = await HandleRequestService.handleApiCall<void>(
+      () async {
+        await dio.delete(
+          url: ApiConstants.user,
+        );
+      },
+    );
+
+    if (!mounted) return;
+
+    result.fold(
+      (failure) {
+        CustomSnackBar.show(
+          message: failure.message,
+          type: SnackBarType.error,
+        );
+      },
+      (_) {
+        SharedPreferencesService().clearCachedData();
+        CustomSnackBar.show(
+          message: LocaleKeys.removeAccountSuccessMessage.tr(),
+          type: SnackBarType.success,
+        );
+        Navigator.pushReplacementNamed(
+            context, RoutersNames.authenticationFlow);
+      },
+    );
+  }
+
   Future<void> _updateNotificationAvailability(bool newValue) async {
     final bool previousValue = !newValue;
 
-    await SharedPreferencesService().storeValue('notifications_enabled', newValue);
+    await SharedPreferencesService()
+        .storeValue('notifications_enabled', newValue);
 
     final dio = ServiceLocator.getIt<DioService>();
 
@@ -225,7 +320,8 @@ class _AppControlsWidgetState extends State<AppControlsWidget> {
     result.fold(
       (failure) async {
         // Revert to the previous state on API error
-        await SharedPreferencesService().storeValue('notifications_enabled', previousValue);
+        await SharedPreferencesService()
+            .storeValue('notifications_enabled', previousValue);
         setState(() => areNotificationsEnabled = previousValue);
         CustomSnackBar.show(
           message: failure.message,

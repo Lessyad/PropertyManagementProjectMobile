@@ -32,8 +32,12 @@ class AddNewRealEstateLocationScreen extends StatelessWidget {
         var mapServicesCubit = MapServicesCubit(
           ServiceLocator.getIt(),
         );
-        if(addNewRealEstateCubit.state.propertyDetailsEntity != null ){
-          var propertyDetails = addNewRealEstateCubit.state.propertyDetailsEntity!;
+        final selectedLocation = addNewRealEstateCubit.state.selectedLocation;
+        if (selectedLocation != null) {
+          mapServicesCubit.updateSelectedLocation(selectedLocation);
+        } else if (addNewRealEstateCubit.state.propertyDetailsEntity != null) {
+          var propertyDetails =
+              addNewRealEstateCubit.state.propertyDetailsEntity!;
           final latLng = LatLng(
             double.parse(propertyDetails.latitude.toString()),
             double.parse(propertyDetails.longitude.toString()),
@@ -43,73 +47,85 @@ class AddNewRealEstateLocationScreen extends StatelessWidget {
 
         return mapServicesCubit;
       },
-      child: BlocBuilder<MapServicesCubit, MapServicesState>(
-        builder: (context, state) {
-          return Stack(
-            children: [
+      child: BlocListener<AddNewRealEstateCubit, AddNewRealEstateState>(
+        listenWhen: (previous, current) =>
+            previous.selectedLocation != current.selectedLocation &&
+            current.selectedLocation != null,
+        listener: (context, state) {
+          final selectedLocation = state.selectedLocation;
+          if (selectedLocation != null) {
+            context.read<MapServicesCubit>().updateSelectedLocation(
+                  selectedLocation,
+                );
+          }
+        },
+        child: BlocBuilder<MapServicesCubit, MapServicesState>(
+          builder: (context, state) {
+            return Stack(
+              children: [
+                BlocBuilder<SelectLocationServiceCubit,
+                    SelectLocationServiceState>(
+                  buildWhen: (previous, current) =>
+                      previous.getCountriesState != current.getCountriesState ||
+                      previous.getStatesState != current.getStatesState ||
+                      previous.getCitiesState != current.getCitiesState,
+                  builder: (context, state) {
+                    return Stack(
+                      children: [
+                        SingleChildScrollView(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Form(
+                            key: addNewRealEstateCubit.locationForm,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                NumberedTextHeaderComponent(
+                                  number: '3',
+                                  text: LocaleKeys.locationAndFeatures.tr(),
+                                ),
+                                SizedBox(height: context.scale(20)),
 
+                                // Country Selector
+                                const CountrySelectorComponent(),
 
-              BlocBuilder<SelectLocationServiceCubit, SelectLocationServiceState>(
-                buildWhen: (previous, current) =>
-                previous.getCountriesState != current.getCountriesState ||
-                    previous.getStatesState != current.getStatesState ||
-                    previous.getCitiesState != current.getCitiesState,
-                builder: (context, state) {
-                  return Stack(
-                    children: [
-                      SingleChildScrollView(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Form(
-                          key: addNewRealEstateCubit.locationForm,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              NumberedTextHeaderComponent(
-                                number: '3',
-                                text: LocaleKeys.locationAndFeatures.tr(),
-                              ),
-                              SizedBox(height: context.scale(20)),
+                                // State and City Selector
+                                const StateCitySelectorComponent(),
 
-                              // Country Selector
-                              const CountrySelectorComponent(),
+                                // Map Location
+                                SearchableMapComponent(
+                                  onLocationSelected: (LatLng location) {
+                                    addNewRealEstateCubit
+                                        .changeSelectedLocation(location);
+                                  },
+                                ),
 
-                              // State and City Selector
-                              const StateCitySelectorComponent(),
+                                SizedBox(height: context.scale(20)),
 
-                              // Map Location
-                              SearchableMapComponent(
-                                onLocationSelected: (LatLng location) {
-                                  addNewRealEstateCubit.changeSelectedLocation(location);
-                                },
-                              ),
+                                // Amenities
+                                FormWidgetComponent(
+                                  label: LocaleKeys.nearbyServicesAndFacilities
+                                      .tr(),
+                                  content: SelectAmenities(),
+                                ),
 
-                              SizedBox(height: context.scale(20)),
-
-                              // Amenities
-                              FormWidgetComponent(
-                                label: LocaleKeys.nearbyServicesAndFacilities.tr(),
-                                content: SelectAmenities(),
-                              ),
-
-                              // Payment Options
-                              //const PaymentOptionsComponent(),
-                            ],
+                                // Payment Options
+                                //const PaymentOptionsComponent(),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      if (state.getCountriesState.isLoading ||
-                          state.getStatesState.isLoading ||
-                          state.getCitiesState.isLoading)
-                        const LoadingOverlayComponent(opacity: 0),
-                    ],
-                  );
-                },
-              ),
-
-
-            ],
-          );
-        },
+                        if (state.getCountriesState.isLoading ||
+                            state.getStatesState.isLoading ||
+                            state.getCitiesState.isLoading)
+                          const LoadingOverlayComponent(opacity: 0),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

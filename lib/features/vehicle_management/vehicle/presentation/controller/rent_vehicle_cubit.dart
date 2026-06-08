@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:enmaa/core/constants/local_keys.dart';
 import 'package:enmaa/core/utils/enums.dart';
 import 'package:enmaa/core/services/image_picker_service.dart';
 import 'package:enmaa/core/services/shared_preferences_service.dart';
@@ -16,24 +17,30 @@ class RentVehicleCubit extends Cubit<RentVehicleState> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController idNumberController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
-  final TextEditingController vehicleReceptionLatController = TextEditingController();
-  final TextEditingController vehicleReceptionPlaceController = TextEditingController();
-  final TextEditingController vehicleReturnLatController = TextEditingController();
-  final TextEditingController vehicleReturnPlaceController = TextEditingController();
+  final TextEditingController vehicleReceptionLatController =
+      TextEditingController();
+  final TextEditingController vehicleReceptionPlaceController =
+      TextEditingController();
+  final TextEditingController vehicleReturnLatController =
+      TextEditingController();
+  final TextEditingController vehicleReturnPlaceController =
+      TextEditingController();
 
   // Use case pour créer le deal
-  final CreateVehicleDealUseCase _createVehicleDealUseCase = CreateVehicleDealUseCase();
+  final CreateVehicleDealUseCase _createVehicleDealUseCase =
+      CreateVehicleDealUseCase();
 
   RentVehicleCubit() : super(RentVehicleState()) {
     // Initialiser avec les données utilisateur existantes
     nameController.text = SharedPreferencesService().userName ?? '';
     phoneNumberController.text = SharedPreferencesService().userPhone ?? '';
-    idNumberController.text = SharedPreferencesService().getValue('userIdNumber') ?? '';
-    
+    idNumberController.text =
+        SharedPreferencesService().getValue(LocalKeys.userIdNumber) ?? '';
+
     emit(state.copyWith(
       userName: SharedPreferencesService().userName ?? '',
       phoneNumber: SharedPreferencesService().userPhone ?? '',
-      userID: SharedPreferencesService().getValue('userIdNumber') ?? '',
+      userID: SharedPreferencesService().getValue(LocalKeys.userIdNumber) ?? '',
     ));
   }
 
@@ -132,7 +139,8 @@ class RentVehicleCubit extends Cubit<RentVehicleState> {
           return;
         }
 
-        final processedFiles = await imagePickerHelper.processImagesWithResiliency(xFiles);
+        final processedFiles =
+            await imagePickerHelper.processImagesWithResiliency(xFiles);
         emit(state.copyWith(
           selectIDImageState: RequestState.loaded,
           validateIDImage: true,
@@ -161,11 +169,13 @@ class RentVehicleCubit extends Cubit<RentVehicleState> {
           return;
         }
 
-        final processedFiles = await imagePickerHelper.processImagesWithResiliency(xFiles);
+        final processedFiles =
+            await imagePickerHelper.processImagesWithResiliency(xFiles);
         emit(state.copyWith(
           selectDriveLicenseImageState: RequestState.loaded,
           validateDriveLicenseImage: true,
-          driveLicenseImage: processedFiles.isNotEmpty ? processedFiles.first : null,
+          driveLicenseImage:
+              processedFiles.isNotEmpty ? processedFiles.first : null,
         ));
       },
     );
@@ -209,7 +219,6 @@ class RentVehicleCubit extends Cubit<RentVehicleState> {
     }
     emit(state.copyWith(paymentState: RequestState.loading));
 
-
     try {
       print('📦 Creating DTO...');
       // VÉRIFIEZ que les données sont présentes
@@ -224,7 +233,6 @@ class RentVehicleCubit extends Cubit<RentVehicleState> {
       print('Driver Long: ${state.vehicleReturnLng}');
       print('Driver recpetion lat ${state.vehicleReceptionLat}');
       print('Driver recpetion lng : ${state.vehicleReceptionLng}');
-
 
       if (state.idImage == null) {
         print('❌ ID Image is NULL!');
@@ -252,12 +260,15 @@ class RentVehicleCubit extends Cubit<RentVehicleState> {
         driveLicenseImage: state.driveLicenseImage?.path ?? '',
         numberOfRentalDays: _calculateRentalDays(),
         drivingLicenseNumber: state.drivingLicenseNumber,
-        drivingLicenseExpiry: state.drivingLicenseExpiry?.toIso8601String() ?? '',
+        drivingLicenseExpiry:
+            state.drivingLicenseExpiry?.toIso8601String() ?? '',
         vehicleReceptionPlace: state.vehicleReceptionPlace,
         vehicleReturnPlace: state.vehicleReturnPlace,
-        vehicleReceptionLat: double.tryParse(state.vehicleReceptionLat), // ← AJOUTEZ
-        vehicleReceptionLng: double.tryParse(state.vehicleReceptionLng), // ← AJOUTEZ
-        vehicleReturnLat: double.tryParse(state.vehicleReturnLat),       // ← AJOUTEZ
+        vehicleReceptionLat:
+            double.tryParse(state.vehicleReceptionLat), // ← AJOUTEZ
+        vehicleReceptionLng:
+            double.tryParse(state.vehicleReceptionLng), // ← AJOUTEZ
+        vehicleReturnLat: double.tryParse(state.vehicleReturnLat), // ← AJOUTEZ
         vehicleReturnLng: double.tryParse(state.vehicleReturnLng),
         totalAmount: totalAmount,
       );
@@ -269,7 +280,6 @@ class RentVehicleCubit extends Cubit<RentVehicleState> {
 
       // TODO: Naviguer vers l'écran de succès ou retourner au menu principal
       // Le résultat de l'API est disponible dans 'result'
-
     } catch (e) {
       emit(state.copyWith(paymentState: RequestState.error));
       // TODO: Gérer l'erreur et afficher un message à l'utilisateur

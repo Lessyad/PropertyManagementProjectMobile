@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:enmaa/core/models/image_model.dart';
 import 'package:enmaa/features/home_module/data/models/app_service_model.dart';
-import 'package:enmaa/features/home_module/data/models/banner_model.dart';
 import 'package:enmaa/features/home_module/data/models/notification_model.dart';
 
 import '../../../../../core/constants/api_constants.dart';
@@ -51,7 +50,7 @@ class HomeRemoteDataSource extends BaseHomeRemoteData {
 
   @override
   Future<void> updateUserLocation(String cityID) async{
-    final response = await dioService.patch(
+    await dioService.patch(
       url: ApiConstants.user,
       data: {
         'city_id': cityID,
@@ -67,7 +66,15 @@ class HomeRemoteDataSource extends BaseHomeRemoteData {
       url: ApiConstants.notifications,
     );
 
-    List<dynamic> jsonResponse = response.data['results'] ?? [];
+    final dynamic data = response.data;
+    List<dynamic> jsonResponse;
+    if (data is List) {
+      jsonResponse = data;
+    } else if (data is Map) {
+      jsonResponse = (data['results'] ?? data['Results'] ?? data['data'] ?? []) as List<dynamic>;
+    } else {
+      jsonResponse = [];
+    }
 
     List<NotificationModel> notifications = jsonResponse.map((notification) {
       return NotificationModel.fromJson(notification);

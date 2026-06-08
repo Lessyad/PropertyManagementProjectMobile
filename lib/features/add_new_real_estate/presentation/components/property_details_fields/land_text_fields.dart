@@ -5,6 +5,7 @@ import '../../../../../core/components/generic_form_fields.dart';
 import '../../../../../core/components/property_form_controller.dart';
 import '../../../../../core/components/reusable_type_selector_component.dart';
 import '../../../../../core/constants/app_assets.dart';
+import '../../../../../core/constants/local_keys.dart';
 import '../../../../../core/translation/locale_keys.dart';
 import '../../../../../core/utils/enums.dart';
 import '../../../../home_module/home_imports.dart';
@@ -26,7 +27,7 @@ class LandTextFields implements PropertyFields {
           hintText: LocaleKeys.enterAreaInSquareMeters.tr(), // ← Internationalisé
           keyboardType: TextInputType.number,
           iconPath: AppAssets.areaIcon,
-          controller: controller.getController(LocaleKeys.landAreaController), // ← Utiliser LocaleKeys
+          controller: controller.getController(LocalKeys.landAreaController), // ← Utiliser LocalKeys
           validator: (value) => FormValidator.validatePositiveNumber(
               value,
               fieldName: LocaleKeys.area.tr() // ← Internationalisé

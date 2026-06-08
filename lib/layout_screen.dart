@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -9,8 +8,6 @@ import 'package:enmaa/features/my_booking/my_booking_DI.dart';
 import 'package:enmaa/features/my_booking/presentation/controller/my_booking_cubit.dart';
 import 'package:enmaa/features/my_booking/presentation/screens/my_booking_screen.dart';
 import 'package:enmaa/features/my_profile/presentation/screens/my_profile_screen.dart';
-import 'package:enmaa/features/real_estates/presentation/controller/real_estate_cubit.dart';
-import 'package:enmaa/features/real_estates/real_estates_DI.dart';
 import 'package:enmaa/features/wallet/wallet_DI.dart';
 import 'package:enmaa/features/wallet/domain/use_cases/withdraw_request_use_case.dart';
 import 'package:enmaa/features/wallet/domain/use_cases/get_wallet_data_use_case.dart';
@@ -24,6 +21,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'configuration/managers/color_manager.dart';
 import 'core/components/floating_nav_bar.dart';
 import 'core/components/need_to_login_component.dart';
+import 'core/services/fcm_token_update_service.dart';
 import 'core/services/firebase_messaging_service.dart';
 import 'core/services/service_locator.dart';
 import 'core/services/shared_preferences_service.dart';
@@ -72,9 +70,8 @@ class _LayoutScreenState extends State<LayoutScreen> {
       return ;
     }
 
-    if (SharedPreferencesService().getValue( 'firebaseToken') == null) {
-      await FireBaseMessaging().getToken();
-    }
+    await FireBaseMessaging().getToken();
+    await FcmTokenUpdateService().updateFcmTokenAfterAuthentication();
   }
   Widget _buildScreen(int index) {
     switch (index) {

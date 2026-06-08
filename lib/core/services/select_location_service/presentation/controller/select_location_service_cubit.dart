@@ -1,4 +1,3 @@
-import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:enmaa/core/services/select_location_service/domain/use_cases/get_cities_use_case.dart';
 import 'package:enmaa/core/services/select_location_service/domain/use_cases/get_countries_use_case.dart';
@@ -6,6 +5,7 @@ import 'package:enmaa/core/services/select_location_service/domain/use_cases/get
 import 'package:enmaa/core/services/select_location_service/select_location_DI.dart';
 import 'package:enmaa/core/utils/enums.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import '../../../../errors/failure.dart';
 import '../../domain/entities/country_entity.dart';
@@ -83,27 +83,129 @@ class SelectLocationServiceCubit extends Cubit<SelectLocationServiceState> {
     required String cityName,
   }) async {
     await getCountries();
+    if (state.countries.isEmpty) return;
 
-    final country = state.countries.firstWhere(
-      (c) => c.name == countryName,
-    );
+    final country = _findByName(state.countries, countryName);
+    if (country == null) return;
 
-    changeSelectedCountry(country.name);
+    emit(state.copyWith(
+      selectedCountry: country,
+      selectedState: null,
+      selectedCity: null,
+      states: [],
+      cities: [],
+      clearSelectedState: true,
+      clearSelectedCity: true,
+    ));
+    await getStates(country.id);
 
     if (stateName.isNotEmpty) {
-      final stateEntity = state.states.firstWhere(
-        (s) => s.name == stateName,
-      );
-      changeSelectedState(stateEntity.name);
+      final stateEntity = _findByName(state.states, stateName);
+      if (stateEntity == null) return;
+
+      emit(state.copyWith(
+        selectedState: stateEntity,
+        selectedCity: null,
+        cities: [],
+        clearSelectedCity: true,
+      ));
+      await getCities(stateEntity.id);
 
       if (cityName.isNotEmpty) {
-        final city = state.cities.firstWhere(
-          (c) => c.name == cityName,
-        );
+        final city = _findByName(state.cities, cityName);
+        if (city == null) return;
 
-        changeSelectedCity(city.name);
+        emit(state.copyWith(selectedCity: city));
       }
     }
+  }
+
+  Future<void> restorePropertyLocation({
+    String countryId = '',
+    String stateId = '',
+    String cityId = '',
+    String countryName = '',
+    String stateName = '',
+    String cityName = '',
+  }) async {
+    await getCountries();
+    if (state.countries.isEmpty) return;
+
+    CountryEntity? country = countryId.isNotEmpty
+        ? _findById(state.countries, countryId)
+        : _findByName(state.countries, countryName);
+    StateEntity? stateEntity;
+
+    if (country != null) {
+      emit(state.copyWith(
+        selectedCountry: country,
+        selectedState: null,
+        selectedCity: null,
+        states: [],
+        cities: [],
+        clearSelectedState: true,
+        clearSelectedCity: true,
+      ));
+      await getStates(country.id);
+      stateEntity = stateId.isNotEmpty
+          ? _findById(state.states, stateId)
+          : _findByName(state.states, stateName);
+    } else if (stateId.isNotEmpty || stateName.isNotEmpty) {
+      for (final candidateCountry in state.countries) {
+        await getStates(candidateCountry.id);
+        final candidateState = stateId.isNotEmpty
+            ? _findById(state.states, stateId)
+            : _findByName(state.states, stateName);
+
+        if (candidateState != null) {
+          country = candidateCountry;
+          stateEntity = candidateState;
+          break;
+        }
+      }
+    }
+
+    if (country == null) return;
+
+    emit(state.copyWith(
+      selectedCountry: country,
+      selectedState: stateEntity,
+      selectedCity: null,
+      clearSelectedCity: true,
+    ));
+
+    if (stateEntity == null) return;
+
+    await getCities(stateEntity.id);
+
+    final city = cityId.isNotEmpty
+        ? _findById(state.cities, cityId)
+        : _findByName(state.cities, cityName);
+    if (city == null) return;
+
+    emit(state.copyWith(selectedCity: city));
+  }
+
+  T? _findByName<T extends dynamic>(List<T> items, String name) {
+    final normalizedName = _normalizeLocationName(name);
+    for (final item in items) {
+      final itemName =
+          _normalizeLocationName((item as dynamic).name.toString());
+      if (itemName == normalizedName) return item;
+    }
+    return null;
+  }
+
+  T? _findById<T extends dynamic>(List<T> items, String id) {
+    final normalizedId = id.trim();
+    for (final item in items) {
+      if ((item as dynamic).id.toString().trim() == normalizedId) return item;
+    }
+    return null;
+  }
+
+  String _normalizeLocationName(String value) {
+    return value.trim().toLowerCase();
   }
 
   /// **Get Countries**
