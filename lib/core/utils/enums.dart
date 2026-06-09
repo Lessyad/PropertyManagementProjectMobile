@@ -53,6 +53,7 @@ enum LandLicenseStatus {
 enum PaymentMethod {
   cash,
   wallet,
+  bankily,
 }
 
 enum RequestStatus {

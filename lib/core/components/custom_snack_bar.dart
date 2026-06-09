@@ -15,6 +15,8 @@ class CustomSnackBar {
     SnackBarType type = SnackBarType.error,
     Duration duration = const Duration(seconds: 3),
   }) {
+    final Duration effectiveDuration =
+        type == SnackBarType.error ? const Duration(seconds: 5) : duration;
     final Color iconColor = type == SnackBarType.success
         ? ColorManager.primaryColor
         : ColorManager.redColor;
@@ -46,14 +48,14 @@ class CustomSnackBar {
                   color: ColorManager.primaryColor,
                   fontSize: FontSize.s12,
                 ),
-                maxLines: 2,
+                maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
       ),
-      duration: duration,
+      duration: effectiveDuration,
     );
 
     final scaffoldMessenger = context != null

@@ -8,6 +8,8 @@ extension PaymentMethodsExtension on PaymentMethod {
         return 'نقدي';
       case PaymentMethod.wallet:
         return 'محفظة';
+      case PaymentMethod.bankily:
+        return 'بانكيلي';
     }
   }
 
@@ -18,9 +20,12 @@ extension PaymentMethodsExtension on PaymentMethod {
         return 'Cash';
       case PaymentMethod.wallet:
         return 'Wallet';
+      case PaymentMethod.bankily:
+        return 'Bankily';
     }
   }
 
   bool get isCash => this == PaymentMethod.cash;
   bool get isWallet => this == PaymentMethod.wallet;
+  bool get isBankily => this == PaymentMethod.bankily;
 }

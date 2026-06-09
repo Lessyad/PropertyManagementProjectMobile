@@ -1,10 +1,13 @@
 class ApiConstants {
   ApiConstants._();
 
+  static const String appConfigsPublic = "${baseUrl}admin/app-configs/public/";
 
 
-  // static const String baseUrl = "https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/";
-  static const String baseUrl = "http://192.168.100.75:5000/api/";
+
+
+  static const String baseUrl = "https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/";
+//   static const String baseUrl ="http://192.168.100.13:5000/api/" ;
   static const String properties= "${baseUrl}properties/";
   static const String banners= "${baseUrl}banners/";
   static const String notifications= "${baseUrl}notifications/";

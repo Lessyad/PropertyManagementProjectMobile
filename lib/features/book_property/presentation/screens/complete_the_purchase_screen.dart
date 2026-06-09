@@ -10,6 +10,7 @@ import '../../../../configuration/managers/value_manager.dart';
 import '../../../../core/components/reusable_type_selector_component.dart';
 import '../../../../core/components/svg_image_component.dart';
 import '../../../../core/components/warning_message_component.dart';
+import '../../../../core/components/bankily_merchant_code_box.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/translation/locale_keys.dart';
 import '../../../../core/components/generic_form_fields.dart';
@@ -141,6 +142,8 @@ class CompleteThePurchaseScreen extends StatelessWidget {
                       return null;
                     },
                   ),
+                  SizedBox(height: context.scale(12)),
+                  const BankilyMerchantCodeBox(),
                 ],
                 SizedBox(height: context.scale(20)),
                 WarningMessageComponent(

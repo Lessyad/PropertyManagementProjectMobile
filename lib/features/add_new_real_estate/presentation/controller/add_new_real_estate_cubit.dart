@@ -76,6 +76,7 @@ class AddNewRealEstateCubit extends Cubit<AddNewRealEstateState> {
   final TextEditingController priceController = TextEditingController();
   final TextEditingController rentController = TextEditingController();
   final TextEditingController rentDurationController = TextEditingController();
+  final TextEditingController bankilyCommercialCodeController = TextEditingController();
 
   final AddNewApartmentUseCase _addNewApartmentUseCase;
   final AddVillaUseCase _addVillaUseCase;
@@ -176,6 +177,10 @@ class AddNewRealEstateCubit extends Cubit<AddNewRealEstateState> {
 
   void changePaymentMethod(PaymentMethod paymentMethod) {
     emit(state.copyWith(currentPaymentMethod: paymentMethod));
+  }
+
+  void changeBankilyCommercialCode(String code) {
+    emit(state.copyWith(bankilyCommercialCode: code));
   }
 
   Future<void> fetchPropertyDetailsAndPopulateIt(String propertyID) async {
@@ -774,6 +779,7 @@ class AddNewRealEstateCubit extends Cubit<AddNewRealEstateState> {
     priceController.dispose();
     rentController.dispose();
     rentDurationController.dispose();
+    bankilyCommercialCodeController.dispose();
     return super.close();
   }
 }
