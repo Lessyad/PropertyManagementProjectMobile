@@ -81,7 +81,7 @@ class UserPropertiesListBuilderComponent extends StatelessWidget {
 
           return ListView.builder(
             controller: scrollController,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
             physics: const AlwaysScrollableScrollPhysics(),
             itemCount: properties.length +
                 (state.hasMoreProperties(status.toJson()) ? 1 : 0),

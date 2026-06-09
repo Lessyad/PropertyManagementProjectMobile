@@ -4,13 +4,11 @@ import 'package:enmaa/core/extensions/context_extension.dart';
 import '../../../../configuration/managers/color_manager.dart';
 import '../../../../core/components/app_bar_component.dart';
 import '../../../../core/translation/locale_keys.dart';
-import '../../../../core/services/auth_service.dart';
 import '../../../home_module/home_imports.dart';
 import '../components/app_controls_widget.dart';
 import '../components/log_out_and_contact_us_widget.dart';
 import '../components/manage_my_properties_widget.dart';
 import '../components/name_and_phone_widget.dart';
-import '../components/remove_account_widget.dart';
 import '../components/user_screens_widget.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -24,37 +22,25 @@ class ProfileScreen extends StatelessWidget {
       backgroundColor: ColorManager.greyShade,
       body: Column(
         children: [
-            AppBarComponent(
+          AppBarComponent(
             appBarTextMessage: LocaleKeys.myProfile.tr(),
             showNotificationIcon: false,
             showLocationIcon: false,
             centerText: true,
           ),
-
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16 , vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: SingleChildScrollView(
                 child: Column(
                   spacing: context.scale(12),
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    NameAndPhoneWidget() ,
-
+                    NameAndPhoneWidget(),
                     ManageMyPropertiesWidget(),
-
                     UserScreensWidget(),
-
                     AppControlsWidget(),
-
                     LogOutAndContactUsWidget(),
-
-                    ValueListenableBuilder<bool>(
-                      valueListenable: AuthService.authStateNotifier,
-                      builder: (context, isLoggedIn, _) {
-                        return isLoggedIn ? RemoveAccountWidget() : const SizedBox.shrink();
-                      },
-                    ),
                   ],
                 ),
               ),

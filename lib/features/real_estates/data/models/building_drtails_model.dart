@@ -20,18 +20,22 @@ class BuildingDetailsModel extends BuildingDetailsEntity {
     required super.city,
     required super.state,
     required super.country,
+    super.cityId,
+    super.stateId,
+    super.countryId,
     required super.isInWishlist,
     required super.numberOfFloors,
-    required super.usageType, required super.rentIsRenewable, required super.monthlyRentPeriod, required super.numberOfApartmentsPerFloor, required super.officePhoneNumber, required super.isOwner,
+    required super.usageType,
+    required super.rentIsRenewable,
+    required super.monthlyRentPeriod,
+    required super.numberOfApartmentsPerFloor,
+    required super.officePhoneNumber,
+    required super.isOwner,
   });
 
   factory BuildingDetailsModel.fromJson(Map<String, dynamic> json) {
     final propertyType = json['type'];
     final propertyData = json[propertyType];
-
-    final cityData = propertyData['city'];
-    final stateData = cityData['state'];
-    final countryData = stateData['country'];
 
     return BuildingDetailsModel(
       id: propertyData['id'],
@@ -39,7 +43,8 @@ class BuildingDetailsModel extends BuildingDetailsEntity {
       operation: propertyData['operation'],
       price: propertyData['price']?.toString() ?? '0.00',
       area: (propertyData['area'] as num?)?.toDouble() ?? 0.0,
-      propertySubType: propertyData['property_sub_type']?['name']?.toString() ?? '',
+      propertySubType:
+          propertyData['property_sub_type']?['name']?.toString() ?? '',
       status: propertyData['status'],
       images: (propertyData['image'] as List)
           .map((image) => ImageModel.fromJson(image))
@@ -55,18 +60,26 @@ class BuildingDetailsModel extends BuildingDetailsEntity {
       // country: countryData['name'].toString(),
       city: propertyData['city']?['name']?.toString() ?? '',
       state: propertyData['city']?['state']?['name']?.toString() ?? '',
-      country: propertyData['city']?['state']?['country']?['name']?.toString() ?? '',
+      country:
+          propertyData['city']?['state']?['country']?['name']?.toString() ?? '',
+      cityId: propertyData['city']?['id']?.toString() ?? '',
+      stateId: propertyData['city']?['state']?['id']?.toString() ?? '',
+      countryId:
+          propertyData['city']?['state']?['country']?['id']?.toString() ?? '',
       isInWishlist: json['is_in_wishlist'] ?? false,
       numberOfFloors: propertyData['number_of_floors'] ?? 0,
       usageType: propertyData['usage_type'] ?? '',
-      rentIsRenewable: propertyData['is_renewable'] ?? false, 
-      monthlyRentPeriod: propertyData['monthlyRentPeriod']?.toString() ?? propertyData['monthly_rent_period']?.toString() ?? '',
-        numberOfApartmentsPerFloor: int.tryParse(propertyData['number_of_apartments']?.toString() ?? '') ?? 0,
+      rentIsRenewable: propertyData['is_renewable'] ?? false,
+      monthlyRentPeriod: propertyData['monthlyRentPeriod']?.toString() ??
+          propertyData['monthly_rent_period']?.toString() ??
+          '',
+      numberOfApartmentsPerFloor: int.tryParse(
+              propertyData['number_of_apartments']?.toString() ?? '') ??
+          0,
       // propertyData['number_of_apartments'] ?? '',
-      officePhoneNumber: propertyData['partner_info']?['phone_number'].toString() ?? '',
+      officePhoneNumber:
+          propertyData['partner_info']?['phone_number'].toString() ?? '',
       isOwner: propertyData['is_owner'] ?? false,
-
-
     );
   }
 }

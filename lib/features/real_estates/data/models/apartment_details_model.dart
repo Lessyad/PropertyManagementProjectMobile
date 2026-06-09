@@ -19,21 +19,24 @@ class ApartmentDetailsModel extends ApartmentDetailsEntity {
     required super.city,
     required super.state,
     required super.country,
+    super.cityId,
+    super.stateId,
+    super.countryId,
     required super.isInWishlist,
     required super.floor,
     required super.rooms,
     required super.bathrooms,
     required super.isFurnished,
-    required super.usageType, required super.rentIsRenewable, required super.monthlyRentPeriod, required super.officePhoneNumber, required super.isOwner,
+    required super.usageType,
+    required super.rentIsRenewable,
+    required super.monthlyRentPeriod,
+    required super.officePhoneNumber,
+    required super.isOwner,
   });
 
   factory ApartmentDetailsModel.fromJson(Map<String, dynamic> json) {
     final propertyType = json['type'];
     final propertyData = json[propertyType];
-
-    final cityData = propertyData['city'];
-    final stateData = cityData['state'];
-    final countryData = stateData['country'];
 
     return ApartmentDetailsModel(
       id: propertyData['id'],
@@ -57,16 +60,24 @@ class ApartmentDetailsModel extends ApartmentDetailsEntity {
       // country: countryData['name'].toString(),
       city: propertyData['city']?['name']?.toString() ?? '',
       state: propertyData['city']?['state']?['name']?.toString() ?? '',
-      country: propertyData['city']?['state']?['country']?['name']?.toString() ?? '',
+      country:
+          propertyData['city']?['state']?['country']?['name']?.toString() ?? '',
+      cityId: propertyData['city']?['id']?.toString() ?? '',
+      stateId: propertyData['city']?['state']?['id']?.toString() ?? '',
+      countryId:
+          propertyData['city']?['state']?['country']?['id']?.toString() ?? '',
       isInWishlist: json['is_in_wishlist'] ?? false,
       floor: propertyData['floor'] ?? 0,
       rooms: propertyData['rooms'] ?? 0,
       bathrooms: propertyData['bathrooms'] ?? 0,
       isFurnished: propertyData['is_furnitured'] ?? false,
       usageType: propertyData['usage_type'] ?? '',
-      rentIsRenewable: propertyData['is_renewable'] ?? '', 
-      monthlyRentPeriod: propertyData['monthlyRentPeriod']?.toString() ?? propertyData['monthly_rent_period']?.toString() ?? '',
-      officePhoneNumber: propertyData['partner_info']?['phone_number'].toString() ?? '',
+      rentIsRenewable: propertyData['is_renewable'] ?? '',
+      monthlyRentPeriod: propertyData['monthlyRentPeriod']?.toString() ??
+          propertyData['monthly_rent_period']?.toString() ??
+          '',
+      officePhoneNumber:
+          propertyData['partner_info']?['phone_number'].toString() ?? '',
       isOwner: propertyData['is_owner'] ?? false,
     );
   }

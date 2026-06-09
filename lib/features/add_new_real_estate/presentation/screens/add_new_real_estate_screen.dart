@@ -1,10 +1,12 @@
 import 'package:enmaa/configuration/managers/font_manager.dart';
 import 'package:enmaa/configuration/managers/style_manager.dart';
 import 'package:enmaa/core/components/custom_snack_bar.dart';
+import 'package:enmaa/core/constants/local_keys.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
 import 'package:enmaa/core/extensions/property_type_extension.dart';
 import 'package:enmaa/core/extensions/request_states_extension.dart';
 import 'package:enmaa/core/services/service_locator.dart';
+import 'package:enmaa/core/services/shared_preferences_service.dart';
 import 'package:enmaa/core/utils/enums.dart';
 import 'package:enmaa/features/add_new_real_estate/add_new_real_estate_DI.dart';
 import 'package:enmaa/features/add_new_real_estate/presentation/controller/add_new_real_estate_cubit.dart';
@@ -27,12 +29,13 @@ class AddNewRealEstateScreen extends StatefulWidget {
   final String? propertyID;
 
   @override
-  _AddNewRealEstateScreenState createState() => _AddNewRealEstateScreenState();
+  State<AddNewRealEstateScreen> createState() => _AddNewRealEstateScreenState();
 }
 
 class _AddNewRealEstateScreenState extends State<AddNewRealEstateScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  bool _didRestorePropertyLocation = false;
 
   @override
   void dispose() {
@@ -73,7 +76,44 @@ class _AddNewRealEstateScreenState extends State<AddNewRealEstateScreen> {
         ),
         BlocProvider(
           create: (context) {
-            return SelectLocationServiceCubit.getOrCreate()..getCountries();
+            final cubit = SelectLocationServiceCubit.getOrCreate();
+            if (widget.propertyID == null) {
+              cubit.removeSelectedData();
+              cubit.getCountries().then((_) {
+                final prefs = SharedPreferencesService();
+                final countryId =
+                    prefs.getValue(LocalKeys.userCountryID)?.toString() ?? '';
+                final stateId =
+                    prefs.getValue(LocalKeys.userStateID)?.toString() ?? '';
+                final cityId =
+                    prefs.getValue(LocalKeys.userCityID)?.toString() ?? '';
+                final countryName =
+                    prefs.getValue(LocalKeys.userCountry)?.toString() ?? '';
+                final stateName =
+                    prefs.getValue(LocalKeys.userState)?.toString() ?? '';
+                final cityName =
+                    prefs.getValue(LocalKeys.userCity)?.toString() ?? '';
+
+                if (countryId.isNotEmpty ||
+                    stateId.isNotEmpty ||
+                    cityId.isNotEmpty ||
+                    countryName.isNotEmpty ||
+                    stateName.isNotEmpty ||
+                    cityName.isNotEmpty) {
+                  cubit.restorePropertyLocation(
+                    countryId: countryId,
+                    stateId: stateId,
+                    cityId: cityId,
+                    countryName: countryName,
+                    stateName: stateName,
+                    cityName: cityName,
+                  );
+                }
+              });
+            } else {
+              cubit.getCountries();
+            }
+            return cubit;
           },
         ),
       ],
@@ -82,7 +122,8 @@ class _AddNewRealEstateScreenState extends State<AddNewRealEstateScreen> {
         body: BlocListener<AddNewRealEstateCubit, AddNewRealEstateState>(
           listener: (context, state) {
             // Handle success for add
-            if (state.addNewApartmentState.isLoaded && !state.addNewApartmentState.isLoading) {
+            if (state.addNewApartmentState.isLoaded &&
+                !state.addNewApartmentState.isLoading) {
               CustomSnackBar.show(
                 context: context,
                 message: LocaleKeys.propertyAddedSuccessfully.tr(),
@@ -93,9 +134,9 @@ class _AddNewRealEstateScreenState extends State<AddNewRealEstateScreen> {
 
             // Handle success for update
             if ((state.updateApartmentState.isLoaded ||
-                state.updateVillaState.isLoaded ||
-                state.updateBuildingState.isLoaded ||
-                state.updateLandState.isLoaded) &&
+                    state.updateVillaState.isLoaded ||
+                    state.updateBuildingState.isLoaded ||
+                    state.updateLandState.isLoaded) &&
                 !(state.updateApartmentState.isLoading ||
                     state.updateVillaState.isLoading ||
                     state.updateBuildingState.isLoading ||
@@ -108,15 +149,21 @@ class _AddNewRealEstateScreenState extends State<AddNewRealEstateScreen> {
               Navigator.pop(context);
             }
 
-            if (state.getPropertyDetailsState.isLoaded && widget.propertyID != null) {
+            if (state.getPropertyDetailsState.isLoaded &&
+                widget.propertyID != null &&
+                !_didRestorePropertyLocation) {
+              _didRestorePropertyLocation = true;
               final locationCubit = context.read<SelectLocationServiceCubit>();
               final propertyDetails = state.propertyDetailsEntity;
               if (propertyDetails != null) {
                 WidgetsBinding.instance.addPostFrameCallback((_) async {
-                  await locationCubit.setPropertyLocation(
-                    countryName: propertyDetails.country ?? '',
-                    stateName: propertyDetails.state ?? '',
-                    cityName: propertyDetails.city ?? '',
+                  await locationCubit.restorePropertyLocation(
+                    countryId: propertyDetails.countryId,
+                    stateId: propertyDetails.stateId,
+                    cityId: propertyDetails.cityId,
+                    countryName: propertyDetails.country,
+                    stateName: propertyDetails.state,
+                    cityName: propertyDetails.city,
                   );
                 });
               }
@@ -124,18 +171,23 @@ class _AddNewRealEstateScreenState extends State<AddNewRealEstateScreen> {
           },
           child: BlocBuilder<AddNewRealEstateCubit, AddNewRealEstateState>(
             buildWhen: (previous, current) {
-              return previous.addNewApartmentState != current.addNewApartmentState ||
-                  previous.updateApartmentState != current.updateApartmentState ||
+              return previous.addNewApartmentState !=
+                      current.addNewApartmentState ||
+                  previous.updateApartmentState !=
+                      current.updateApartmentState ||
                   previous.updateVillaState != current.updateVillaState ||
                   previous.updateBuildingState != current.updateBuildingState ||
                   previous.updateLandState != current.updateLandState ||
-                  previous.getPropertyDetailsState != current.getPropertyDetailsState;
+                  previous.getPropertyDetailsState !=
+                      current.getPropertyDetailsState;
             },
             builder: (context, state) {
               return Column(
                 children: [
                   AppBarComponent(
-                    appBarTextMessage: widget.propertyID != null ? LocaleKeys.editProperty.tr() : LocaleKeys.addProperty.tr(),
+                    appBarTextMessage: widget.propertyID != null
+                        ? LocaleKeys.editProperty.tr()
+                        : LocaleKeys.addProperty.tr(),
                     showNotificationIcon: false,
                     showLocationIcon: false,
                     showBackIcon: true,
@@ -212,10 +264,12 @@ class _AddNewRealEstateScreenState extends State<AddNewRealEstateScreen> {
                   index == 0
                       ? LocaleKeys.basicInformation.tr()
                       : index == 1
-                      ? LocaleKeys.priceAndDescription.tr()
-                      : LocaleKeys.locationAndFeatures.tr(),
+                          ? LocaleKeys.priceAndDescription.tr()
+                          : LocaleKeys.locationAndFeatures.tr(),
                   style: getBoldStyle(
-                    color: isActive ? ColorManager.primaryColor : ColorManager.blackColor,
+                    color: isActive
+                        ? ColorManager.primaryColor
+                        : ColorManager.blackColor,
                     fontSize: FontSize.s11,
                   ),
                   textAlign: TextAlign.center,
@@ -228,7 +282,9 @@ class _AddNewRealEstateScreenState extends State<AddNewRealEstateScreen> {
                   width: double.infinity,
                   height: context.scale(4),
                   decoration: BoxDecoration(
-                    color: isActive ? ColorManager.primaryColor : const Color(0xFFD9D9D9),
+                    color: isActive
+                        ? ColorManager.primaryColor
+                        : const Color(0xFFD9D9D9),
                     borderRadius: BorderRadius.circular(2.0),
                   ),
                 ),

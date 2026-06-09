@@ -1,6 +1,5 @@
 import 'package:enmaa/core/components/need_to_login_component.dart';
 import 'package:enmaa/core/extensions/booking_status_extension.dart';
-import 'package:enmaa/core/extensions/context_extension.dart';
 import 'package:enmaa/features/my_profile/modules/user_properties_module/presentation/controller/user_properties_cubit.dart';
 import 'package:enmaa/main.dart';
 import 'package:flutter/material.dart';
@@ -11,12 +10,7 @@ import 'package:enmaa/core/translation/locale_keys.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../../../configuration/managers/color_manager.dart';
-import '../../../../../../configuration/managers/font_manager.dart';
-import '../../../../../../configuration/managers/style_manager.dart';
 import '../../../../../../configuration/routers/route_names.dart';
-import '../../../../../../core/components/button_app_component.dart';
-import '../../../../../../core/components/svg_image_component.dart';
-import '../../../../../../core/constants/app_assets.dart';
 import '../components/property_list_builder_component.dart';
 import '../components/user_properties_tab_bar.dart';
 
@@ -61,16 +55,10 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen>
     if (_tabController.indexIsChanging) return;
 
     final status = _tabStatuses[_tabController.index].toJson();
-    if (!context
-        .read<UserPropertiesCubit>()
-        .state
-        .loadedStates
-        .containsKey(status)) {
-      context.read<UserPropertiesCubit>().getMyProperties(
-            status: status,
-            isRefresh: true,
-          );
-    }
+    context.read<UserPropertiesCubit>().getMyProperties(
+          status: status,
+          isRefresh: true,
+        );
     setState(() {});
   }
 
@@ -88,6 +76,15 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen>
     }
   }
 
+  void _openAddProperty() {
+    if (isAuth) {
+      Navigator.of(context, rootNavigator: true)
+          .pushNamed(RoutersNames.addNewRealEstateScreen);
+    } else {
+      LoginBottomSheet.show();
+    }
+  }
+
   @override
   void dispose() {
     _tabController.removeListener(_handleTabChange);
@@ -102,6 +99,15 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton(
+        onPressed: _openAddProperty,
+        backgroundColor: ColorManager.primaryColor,
+        foregroundColor: ColorManager.whiteColor,
+        elevation: 8,
+        shape: const CircleBorder(),
+        child: const Icon(Icons.add, size: 30),
+      ),
       body: Column(
         children: [
           AppBarComponent(
@@ -111,53 +117,12 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen>
             centerText: true,
             showBackIcon: true,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: UserPropertiesTabBar(
-                  tabController: _tabController,
-                  tabStatuses: _tabStatuses,
-                  onTabChanged: (index) {
-                    _tabController.animateTo(index);
-                  },
-                ),
-              ),
-              SizedBox(width: 8),
-              ButtonAppComponent(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                width: context.scale(117),
-                onTap: () {
-                  if (isAuth) {
-                    Navigator.of(context, rootNavigator: true)
-                        .pushNamed(RoutersNames.addNewRealEstateScreen);
-                  } else {
-                    LoginBottomSheet.show();
-                  }
-                },
-                buttonContent: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgImageComponent(
-                      iconPath: AppAssets.plusIcon,
-                      width: 16,
-                      height: 16,
-                    ),
-                    SizedBox(width: 4),
-                    Flexible(
-                      child: Text(
-                        LocaleKeys.addYourProperty.tr(),
-                        style: getBoldStyle(
-                            color: ColorManager.whiteColor,
-                            fontSize: FontSize.s12),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          UserPropertiesTabBar(
+            tabController: _tabController,
+            tabStatuses: _tabStatuses,
+            onTabChanged: (index) {
+              _tabController.animateTo(index);
+            },
           ),
           Expanded(
             child: TabBarView(

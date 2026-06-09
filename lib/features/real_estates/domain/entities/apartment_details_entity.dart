@@ -25,6 +25,9 @@ class ApartmentDetailsEntity extends BasePropertyDetailsEntity {
     required super.city,
     required super.state,
     required super.country,
+    super.cityId,
+    super.stateId,
+    super.countryId,
     required super.isInWishlist,
     required super.rentIsRenewable,
     required super.monthlyRentPeriod,
@@ -32,18 +35,20 @@ class ApartmentDetailsEntity extends BasePropertyDetailsEntity {
     required this.rooms,
     required this.bathrooms,
     required this.isFurnished,
-    required this.usageType, required super.officePhoneNumber, required super.isOwner,
+    required this.usageType,
+    required super.officePhoneNumber,
+    required super.isOwner,
   });
 
   @override
   List<Object?> get props => [
-    ...super.props,
-    floor,
-    rooms,
-    bathrooms,
-    isFurnished,
-    usageType,
-  ];
+        ...super.props,
+        floor,
+        rooms,
+        bathrooms,
+        isFurnished,
+        usageType,
+      ];
 
   @override
   ApartmentDetailsEntity copyWith({
@@ -62,6 +67,9 @@ class ApartmentDetailsEntity extends BasePropertyDetailsEntity {
     String? city,
     String? state,
     String? country,
+    String? cityId,
+    String? stateId,
+    String? countryId,
     bool? isInWishlist,
     String? monthlyRentPeriod,
     bool? rentIsRenewable,
@@ -71,7 +79,7 @@ class ApartmentDetailsEntity extends BasePropertyDetailsEntity {
     bool? isFurnished,
     bool? isOwner,
     String? usageType,
-    String ? officePhoneNumber,
+    String? officePhoneNumber,
   }) {
     return ApartmentDetailsEntity(
       id: id ?? this.id,
@@ -89,6 +97,9 @@ class ApartmentDetailsEntity extends BasePropertyDetailsEntity {
       city: city ?? this.city,
       state: state ?? this.state,
       country: country ?? this.country,
+      cityId: cityId ?? this.cityId,
+      stateId: stateId ?? this.stateId,
+      countryId: countryId ?? this.countryId,
       isInWishlist: isInWishlist ?? this.isInWishlist,
       monthlyRentPeriod: monthlyRentPeriod ?? this.monthlyRentPeriod,
       rentIsRenewable: rentIsRenewable ?? this.rentIsRenewable,

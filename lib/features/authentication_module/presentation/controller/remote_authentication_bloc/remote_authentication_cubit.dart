@@ -108,6 +108,7 @@ class RemoteAuthenticationCubit extends Cubit<RemoteAuthenticationState> {
         SharedPreferencesService().storeValue(LocalKeys.countryCodeNumber, state.currentCountryCode);
         emit(state.copyWith(
             signUpRequestState: RequestState.loaded, loginToken: token)) ;
+        _updateFcmTokenAfterLogin();
       },
     );
   }

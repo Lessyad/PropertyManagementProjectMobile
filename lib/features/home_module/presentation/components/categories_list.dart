@@ -1,15 +1,7 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:enmaa/configuration/managers/color_manager.dart';
-import 'package:enmaa/configuration/managers/style_manager.dart';
-import 'package:enmaa/core/components/button_app_component.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
 import 'package:enmaa/core/extensions/request_states_extension.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../configuration/routers/route_names.dart';
-import '../../../../core/components/svg_image_component.dart';
-import '../../../../core/constants/app_assets.dart';
 import '../../../../core/translation/locale_keys.dart';
-import '../../domain/entities/app_service_entity.dart';
 import '../../home_imports.dart';
 import '../controller/home_bloc.dart';
 import 'banners_shimmer_widget.dart';
@@ -38,8 +30,11 @@ class ServicesList extends StatelessWidget  {
                   itemCount: state.appServices.length,
                   itemBuilder: (context, index) {
                     final category = state.appServices[index];
+                    final isEnabled = category.text != LocaleKeys.halls &&
+                        category.text != LocaleKeys.hotels;
                     return ServiceComponent(
                       category: category,
+                      isEnabled: isEnabled,
                       onTap: () {
                         onServicePressed(category.text);
                       },

@@ -43,9 +43,9 @@ class UserPropertiesTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Container(
-        height: context.scale(48),
+        height: context.scale(44),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(22),
@@ -63,12 +63,12 @@ class UserPropertiesTabBar extends StatelessWidget {
           unselectedLabelColor: ColorManager.blackColor,
           labelStyle: const TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 14,
+            fontSize: 12,
             overflow: TextOverflow.ellipsis,
           ),
           unselectedLabelStyle: const TextStyle(
             fontWeight: FontWeight.normal,
-            fontSize: 14,
+            fontSize: 12,
             overflow: TextOverflow.ellipsis,
           ),
           onTap: onTabChanged,
@@ -76,8 +76,8 @@ class UserPropertiesTabBar extends StatelessWidget {
             return Tab(
               child: Container(
                 width: context.scale(86),
-                height: context.scale(36),
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                height: context.scale(32),
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -85,21 +85,21 @@ class UserPropertiesTabBar extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SvgImageComponent(
-                      width: 16,
-                      height: 16,
+                      width: 12,
+                      height: 12,
                       iconPath: _getIconForStatus(status),
                       color: tabController.index == tabStatuses.indexOf(status)
                           ? ColorManager.whiteColor
                           : ColorManager.blackColor,
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: 4),
 
                     Expanded(
                       child: Text(
                         status.getName,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           color: tabController.index == tabStatuses.indexOf(status)
                               ? ColorManager.whiteColor
                               : ColorManager.blackColor,

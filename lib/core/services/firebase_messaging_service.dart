@@ -10,7 +10,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:open_file/open_file.dart';
 import '../../main.dart';
 import '../constants/api_constants.dart';
-import '../errors/failure.dart';
 import 'dio_service.dart';
 import 'handle_api_request_service.dart';
 
@@ -66,10 +65,15 @@ class FireBaseMessaging extends BaseFireBaseMessaging {
 
         if (response.statusCode == 200) {
           print('firebase messaging token is : $token');
-          await SharedPreferencesService().storeValue('firebaseToken', token);
         }
       },
     );
+
+    result.fold(
+      (failure) => print('Legacy notification device registration failed: ${failure.message}'),
+      (_) => print('Legacy notification device registration succeeded'),
+    );
+    await SharedPreferencesService().storeValue('firebaseToken', token);
   }
 
   @override
