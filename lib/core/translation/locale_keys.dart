@@ -377,6 +377,15 @@ abstract class LocaleKeys {
   static const String wallet = 'wallet';
   static const String bankily = 'bankily';
   static const String passCode = 'passCode';
+  static const String bankilyMerchantCodeLabel = 'bankily_merchant_code_label';
+  static const String codeCommercial = 'code_commercial';
+  static const String enterCodeCommercial = 'enter_code_commercial';
+  static const String bankilyErrorPhoneNotRegistered = 'bankily_error_phone_not_registered';
+  static const String bankilyErrorInvalidPasscode = 'bankily_error_invalid_passcode';
+  static const String bankilyErrorInsufficientBalance = 'bankily_error_insufficient_balance';
+  static const String bankilyErrorOperationExists = 'bankily_error_operation_exists';
+  static const String bankilyErrorPaymentFailed = 'bankily_error_payment_failed';
+  static const String bankilyPaymentError = 'bankily_payment_error';
   static const String paymentWarning = 'paymentWarning';
   static const String securityWarning = 'securityWarning';
   static const String paymentConfirmationInProgress =

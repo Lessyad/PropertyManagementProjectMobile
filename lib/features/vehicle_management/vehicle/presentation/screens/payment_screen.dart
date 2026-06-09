@@ -7,6 +7,7 @@ import '../../../../../configuration/managers/style_manager.dart';
 import '../../../../../core/translation/locale_keys.dart';
 import '../../../../../core/services/currency_service.dart';
 import '../../../../../core/services/error_handler_service.dart';
+import '../../../../../core/components/bankily_merchant_code_box.dart';
 import '../../../../../core/components/currency_display_widget.dart';
 import '../../domain/entities/vehicle_entity.dart';
 import '../controller/vehicle_deal_multipart_controller.dart';
@@ -521,31 +522,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
           const SizedBox(height: 16),
 
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: ColorManager.primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              children: [
-                Icon(
-                  Icons.phone_android,
-                  size: 32,
-                  color: ColorManager.primaryColor,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Paiement sécurisé Code commerçant : 012544',
-                  textAlign: TextAlign.center,
-                  style: getRegularStyle(
-                    color: ColorManager.blackColor,
-                    fontSize: FontSize.s14,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          const BankilyMerchantCodeBox(),
         ],
       ),
     );

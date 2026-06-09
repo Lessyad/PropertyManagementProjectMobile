@@ -28,6 +28,7 @@ class AddNewRealEstateState extends Equatable {
     this.selectedAmenities = const [],
     this.selectedLocation,
     this.currentPaymentMethod = PaymentMethod.cash,
+    this.bankilyCommercialCode = '',
     this.landLicenseStatus = LandLicenseStatus.licensed,
     this.getPropertyDetailsState = RequestState.initial,
     this.propertyDetailsEntity,
@@ -60,6 +61,7 @@ class AddNewRealEstateState extends Equatable {
   final RequestState getAmenitiesState;
   final List<String> selectedAmenities;
   final PaymentMethod currentPaymentMethod;
+  final String bankilyCommercialCode;
   final LandLicenseStatus landLicenseStatus;
   final RequestState getPropertyDetailsState;
   final BasePropertyDetailsEntity? propertyDetailsEntity;
@@ -94,6 +96,7 @@ class AddNewRealEstateState extends Equatable {
     String? selectedCityId,
     String? selectedCityName,
     PaymentMethod? currentPaymentMethod,
+    String? bankilyCommercialCode,
     LandLicenseStatus? landLicenseStatus,
     RequestState? getPropertyDetailsState,
     BasePropertyDetailsEntity? propertyDetailsEntity,
@@ -126,6 +129,7 @@ class AddNewRealEstateState extends Equatable {
       selectedAmenities: selectedAmenities ?? this.selectedAmenities,
       selectedLocation: selectedLocation ?? this.selectedLocation,
       currentPaymentMethod: currentPaymentMethod ?? this.currentPaymentMethod,
+      bankilyCommercialCode: bankilyCommercialCode ?? this.bankilyCommercialCode,
       landLicenseStatus: landLicenseStatus ?? this.landLicenseStatus,
       getPropertyDetailsState: getPropertyDetailsState ?? this.getPropertyDetailsState,
       propertyDetailsEntity: propertyDetailsEntity ?? this.propertyDetailsEntity,
@@ -161,6 +165,7 @@ class AddNewRealEstateState extends Equatable {
     selectedAmenities,
     selectedLocation,
     currentPaymentMethod,
+    bankilyCommercialCode,
     landLicenseStatus,
     getPropertyDetailsState,
     propertyDetailsEntity,

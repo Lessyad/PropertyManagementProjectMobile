@@ -105,6 +105,12 @@ class ServerFailure extends Failure {
         return ServerFailure(msg(joinMsg.isEmpty ? errorMessage : joinMsg));
 
       case 500:
+        if (messageError is Map<String, dynamic>) {
+          final detail = messageError['detail']?.toString() ?? '';
+          if (detail.isNotEmpty) {
+            return ServerFailure(ServerFailure._parseBankilyError(detail));
+          }
+        }
         return ServerFailure(msg(LocaleKeys.internalServerError.tr()));
 
       case 502:
@@ -113,6 +119,38 @@ class ServerFailure extends Failure {
       default:
         return ServerFailure(msg(LocaleKeys.somethingWentWrong.tr()));
     }
+  }
+
+  static String _parseBankilyError(String detail) {
+    final lower = detail.toLowerCase();
+    if (lower.contains('numero de mobile') ||
+        lower.contains("n'est pas enregistre") ||
+        lower.contains('not registered') ||
+        lower.contains('mobile non enregistre')) {
+      return LocaleKeys.bankilyErrorPhoneNotRegistered.tr();
+    }
+    if (lower.contains('code de verification') ||
+        lower.contains('passcode') ||
+        lower.contains('code incorrect') ||
+        lower.contains('invalid passcode') ||
+        lower.contains('code invalide')) {
+      return LocaleKeys.bankilyErrorInvalidPasscode.tr();
+    }
+    if (lower.contains('solde') ||
+        lower.contains('insufficient') ||
+        lower.contains('insuffisant') ||
+        lower.contains('balance')) {
+      return LocaleKeys.bankilyErrorInsufficientBalance.tr();
+    }
+    if (lower.contains('operation') &&
+        (lower.contains('exist') || lower.contains('deja') || lower.contains('already'))) {
+      return LocaleKeys.bankilyErrorOperationExists.tr();
+    }
+    if (lower.contains('paiement') || lower.contains('payment') ||
+        lower.contains('echoue') || lower.contains('échoué')) {
+      return '${LocaleKeys.bankilyPaymentError.tr()} : $detail';
+    }
+    return detail;
   }
 }
 
