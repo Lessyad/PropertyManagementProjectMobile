@@ -34,12 +34,17 @@ class PreviewPropertyRepository extends BasePreviewPropertyRepository {
   }
 
   @override
-  Future<Either<Failure, void>> addPreviewTimeForSpecificProperty(AddNewPreviewRequestModel data)async {
+  Future<Either<Failure, void>> addPreviewTimeForSpecificProperty(AddNewPreviewRequestModel data) async {
     return await HandleRequestService.handleApiCall<void>(() async {
-      final result = await basePreviewPropertyDataSource.addNewPreviewTime(data);
-      return result;
+      await basePreviewPropertyDataSource.addNewPreviewTime(data);
     });
   }
 
-
+  @override
+  Future<Either<Failure, ({String approvalUrl, String reservationToken})>> initiatePayPalViewingRequest(
+      AddNewPreviewRequestModel data) async {
+    return await HandleRequestService.handleApiCall<({String approvalUrl, String reservationToken})>(() async {
+      return await basePreviewPropertyDataSource.initiatePayPalViewingRequest(data);
+    });
+  }
 }

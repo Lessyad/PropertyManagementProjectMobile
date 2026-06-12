@@ -182,8 +182,8 @@ class BookPropertyCubit extends Cubit<BookPropertyState> {
         currency: 'USD', // ou 'EGP' selon votre configuration
         orderId: orderId,
         description: 'Property Booking Payment - Property ID: $propertyId',
-        returnUrl: 'https://inmaapi-gkgxdtc0c6ded3bk.spaincentral-01.azurewebsites.net/api/payments/paypal/success',
-        cancelUrl: 'https://inmaapi-gkgxdtc0c6ded3bk.spaincentral-01.azurewebsites.net/api/payments/paypal/cancel',
+        returnUrl: 'https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/payments/paypal/success',
+        cancelUrl: 'https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/payments/paypal/cancel',
         authToken: authToken,
       );
 
@@ -318,14 +318,59 @@ class BookPropertyCubit extends Cubit<BookPropertyState> {
 
     final result = await _bookPropertyUseCase.call(bookPropertyRequest);
 
+    BookPropertyResponseEntity? successResponse;
     result.fold(
-          (failure) => emit(state.copyWith(
+      (failure) => emit(state.copyWith(
           bookPropertyState: RequestState.error,
           bookPropertyError: failure.message)),
-          (response) => emit(state.copyWith(
-          bookPropertyState: RequestState.loaded,
-          bookPropertyResponse: response)),
+      (response) {
+        successResponse = response;
+        // Pour PayPal : état "en attente" — la réservation n'est confirmée qu'après paiement
+        final newState = paymentMethodValue == 'paypal'
+            ? RequestState.paypalPending
+            : RequestState.loaded;
+        emit(state.copyWith(
+            bookPropertyState: newState,
+            bookPropertyResponse: response));
+      },
     );
+
+    // Après création du deal PayPal, ouvrir PayPal dans le navigateur
+    if (paymentMethodValue == 'paypal' && successResponse != null) {
+      await _openPayPalForProperty(successResponse!.orderId);
+    }
+  }
+
+  Future<void> _openPayPalForProperty(String orderId) async {
+    try {
+      final authToken = SharedPreferencesService().accessToken ?? '';
+      if (authToken.isEmpty) return;
+
+      final amount = double.tryParse(
+              state.propertySaleDetailsEntity?.bookingDeposit ?? '0') ??
+          0.0;
+
+      final paymentResponse = await PayPalPaymentService.createPayment(
+        amount: amount,
+        currency: 'MRU',
+        orderId: orderId,
+        description: 'Property Payment',
+        returnUrl:
+            'https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/payments/paypal/success?orderId=$orderId',
+        cancelUrl:
+            'https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/payments/paypal/cancel',
+        authToken: authToken,
+      );
+
+      if (paymentResponse.success && paymentResponse.approvalUrl != null) {
+        await PayPalPaymentService.openPayPalInBrowser(
+            paymentResponse.approvalUrl!);
+      } else {
+        print('PayPal: ${paymentResponse.errorMessage ?? "URL non disponible"}');
+      }
+    } catch (e) {
+      print('Erreur ouverture PayPal: $e');
+    }
   }
 
   @override

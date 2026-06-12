@@ -102,7 +102,29 @@ class _PreviewPropertyScreenState extends State<PreviewPropertyScreen> {
   Widget _buildDateAndTimeSelectionPage(BuildContext context) {
     return BlocBuilder<PreviewPropertyCubit, PreviewPropertyState>(
       builder: (context, state) {
-        if (state.getAvailableHoursState.isLoaded) {
+        if (state.getAvailableHoursState.isError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                const SizedBox(height: 12),
+                Text(
+                  state.getAvailableHoursErrorMessage,
+                  textAlign: TextAlign.center,
+                  style: getMediumStyle(color: ColorManager.blackColor, fontSize: FontSize.s14),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => context
+                      .read<PreviewPropertyCubit>()
+                      .getAvailableHoursForSpecificProperty(widget.propertyId),
+                  child: Text(LocaleKeys.retryButton.tr()),
+                ),
+              ],
+            ),
+          );
+        } else if (state.getAvailableHoursState.isLoaded) {
           return SingleChildScrollView(
             child: SafeArea(
               top: false,
@@ -275,6 +297,7 @@ class _PreviewPropertyScreenState extends State<PreviewPropertyScreen> {
                     duration: Duration(seconds: 1),
                     child: Container(
                       key: ValueKey<bool>(state.showPreviewDate),
+                      height: context.scale(380),
                       margin: EdgeInsets.only(top: context.scale(8)),
                       decoration: BoxDecoration(
                         color: ColorManager.whiteColor,

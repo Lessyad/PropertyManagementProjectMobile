@@ -114,17 +114,17 @@ class _VehicleSearchResultsScreenState extends State<VehicleSearchResultsScreen>
       // deliveryZoneId: widget.deliveryZoneId,
       categoryId: widget.vehicleCategoryId,
       userAge: widget.userAge,
-      userCountryId: widget.userCountryId, // Passer userCountryId depuis la sélection
+      userCountryId: widget.userCountryId,
       receptionDate: widget.receptionDate,
       receptionTime: widget.receptionTime,
       deliveryDate: widget.deliveryDate,
       deliveryTime: widget.deliveryTime,
     );
-    
-    // Utiliser la recherche avec debounce pour optimiser les performances
-    _vehicleController.debouncedSearch(
+
+    _vehicleController.searchVehicles(
       query: '',
       filter: _vehicleController.currentFilters.value,
+      pageNumber: 1,
     );
   }
 

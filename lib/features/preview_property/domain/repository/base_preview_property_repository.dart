@@ -14,6 +14,7 @@ abstract class BasePreviewPropertyRepository {
   Future<Either<Failure, List<DayAndHoursEntity>>> getPropertyPreviewAvailableHours(String propertyId);
   Future<Either<Failure, String>> getInspectionAmountToBePaid(String propertyId);
   Future<Either<Failure, void>> addPreviewTimeForSpecificProperty(AddNewPreviewRequestModel data);
+  Future<Either<Failure, ({String approvalUrl, String reservationToken})>> initiatePayPalViewingRequest(AddNewPreviewRequestModel data);
 
 
 }

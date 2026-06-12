@@ -7,7 +7,8 @@ class ApiConstants {
 
 
   static const String baseUrl = "https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/";
-//   static const String baseUrl ="http://192.168.100.13:5000/api/" ;
+
+  // static const String baseUrl ="http://192.168.100.13:5000/api/" ;
   static const String properties= "${baseUrl}properties/";
   static const String banners= "${baseUrl}banners/";
   static const String notifications= "${baseUrl}notifications/";
@@ -37,6 +38,7 @@ class ApiConstants {
   static const String propertyOrderDetails = "${baseUrl}property-order-detail";
   static const String amenities = "${baseUrl}amenities";
   static const String preview = "${baseUrl}viewing-requests";
+  static const String previewPayPalInitiate = "${baseUrl}viewing-requests/paypal/initiate";
   static const String appointments = "${baseUrl}viewing-requests-list";
   static const String appointmentUpdate = "${baseUrl}viewing-requests";
 
@@ -56,6 +58,7 @@ class ApiConstants {
   static const String vehicleWishList = '${baseUrl}VehicleWishlist/';
   static const String vehicleMakes = "${baseUrl}VehicleMakes/";
   static const String VehicleDeals = "${baseUrl}Vehicles/deal/";
+  static const String vehicleContractPreview = "${baseUrl}vehicles/contract-preview";
   static const String vehicleRentals = "${baseUrl}Vehicles/rentals";
   static String cancelVehicleRental(int rentalId) =>
       "${baseUrl}Vehicles/rentals/$rentalId/cancel";

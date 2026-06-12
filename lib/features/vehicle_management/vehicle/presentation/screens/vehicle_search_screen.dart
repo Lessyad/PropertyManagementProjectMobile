@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../configuration/managers/color_manager.dart';
 import '../../../../../core/components/need_to_login_component.dart';
+import '../../../../../core/components/searchable_select_field.dart';
 import '../../../../../core/translation/locale_keys.dart';
 import '../../../../../core/services/geo_service.dart';
 import '../../../../../core/models/geo_models.dart';
@@ -32,19 +33,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
     'manual': false,
   };
 
-  // Controllers pour les nouveaux champs de filtrage
-  final TextEditingController _countryController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
-  final TextEditingController _deliveryCityController = TextEditingController();
-  final TextEditingController _receptionLocationController = TextEditingController();
-  final TextEditingController _deliveryLocationController = TextEditingController();
   final TextEditingController _driverAgeController = TextEditingController();
-
-  // Focus nodes pour gérer les états actifs
-  final FocusNode _cityFocusNode = FocusNode();
-  final FocusNode _deliveryCityFocusNode = FocusNode();
-  final FocusNode _receptionLocationFocusNode = FocusNode();
-  final FocusNode _deliveryLocationFocusNode = FocusNode();
   final FocusNode _driverAgeFocusNode = FocusNode();
 
   // Variables pour les dates et heures
@@ -238,16 +227,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
 
   @override
   void dispose() {
-    _countryController.dispose();
-    _cityController.dispose();
-    _deliveryCityController.dispose();
-    _receptionLocationController.dispose();
-    _deliveryLocationController.dispose();
     _driverAgeController.dispose();
-    _cityFocusNode.dispose();
-    _deliveryCityFocusNode.dispose();
-    _receptionLocationFocusNode.dispose();
-    _deliveryLocationFocusNode.dispose();
     _driverAgeFocusNode.dispose();
     super.dispose();
   }
@@ -272,15 +252,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
 
   void _resetAllFilters() {
     setState(() {
-      _activeFilters.forEach((key, value) {
-        _activeFilters[key] = false;
-      });
-      // Réinitialiser tous les nouveaux filtres
-      _countryController.clear();
-      _cityController.clear();
-      _deliveryCityController.clear();
-      _receptionLocationController.clear();
-      _deliveryLocationController.clear();
+      _activeFilters.forEach((key, _) => _activeFilters[key] = false);
       _driverAgeController.clear();
       _selectedCountry = null;
       _selectedReceptionCity = null;
@@ -292,7 +264,6 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
       _deliveryCities = [];
       _receptionAreas = [];
       _deliveryAreas = [];
-      _vehicleCategories = [];
       _receptionDate = null;
       _receptionTime = null;
       _deliveryDate = null;
@@ -509,22 +480,55 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
           children: [
             _buildSectionTitle(tr(LocaleKeys.locationSection)),
             const SizedBox(height: 12),
-            _buildCountryDropdown(),
+            // Pays
+            SearchableSelectField<Country>(
+              label: tr(LocaleKeys.country),
+              selectedValue: _selectedCountry,
+              items: _countries,
+              displayValue: (c) => c.name,
+              isLoading: _isLoadingCountries,
+              prefixIcon: Icons.public_rounded,
+              modalTitle: tr(LocaleKeys.country),
+              searchHint: tr(LocaleKeys.searchCriteriaHint),
+              onChanged: (Country? country) {
+                setState(() {
+                  _selectedCountry = country;
+                  _selectedReceptionCity = null;
+                  _selectedDeliveryCity = null;
+                  _selectedReceptionArea = null;
+                  _selectedDeliveryArea = null;
+                  _receptionCities = [];
+                  _deliveryCities = [];
+                  _receptionAreas = [];
+                  _deliveryAreas = [];
+                  if (country != null) {
+                    _loadReceptionCities(country.id);
+                    _loadDeliveryCities(country.id);
+                  }
+                });
+              },
+            ),
             const SizedBox(height: 16),
 
             _buildSectionTitle(tr(LocaleKeys.receptionInfoSection)),
             const SizedBox(height: 12),
-            _buildCityDropdown(
+            // Ville de réception
+            SearchableSelectField<City>(
               label: tr(LocaleKeys.receptionCity),
-              cities: _receptionCities,
-              selectedCity: _selectedReceptionCity,
+              selectedValue: _selectedReceptionCity,
+              items: _receptionCities,
+              displayValue: (c) => c.name,
               isLoading: _isLoadingReceptionCities,
+              isDisabled: _selectedCountry == null,
+              prefixIcon: Icons.location_city_rounded,
+              modalTitle: tr(LocaleKeys.receptionCity),
+              searchHint: tr(LocaleKeys.searchCriteriaHint),
               onChanged: (City? city) {
                 setState(() {
                   _selectedReceptionCity = city;
-                  if (city != null) {
-                    _loadReceptionAreas(city.id);
-                  }
+                  _selectedReceptionArea = null;
+                  _receptionAreas = [];
+                  if (city != null) _loadReceptionAreas(city.id);
                 });
               },
             ),
@@ -534,65 +538,95 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
               tr(LocaleKeys.receptionTime),
               _receptionDate,
               _receptionTime,
-                  () => _selectDate(context, isReception: true),
-                  () => _selectTime(context, isReception: true),
+              () => _selectDate(context, isReception: true),
+              () => _selectTime(context, isReception: true),
             ),
             const SizedBox(height: 12),
-            _buildAreaDropdown(
+            // Zone de réception
+            SearchableSelectField<Area>(
               label: tr(LocaleKeys.receptionPlace),
-              areas: _receptionAreas,
-              selectedArea: _selectedReceptionArea,
+              selectedValue: _selectedReceptionArea,
+              items: _receptionAreas,
+              displayValue: (a) => a.name,
               isLoading: _isLoadingReceptionAreas,
+              isDisabled: _selectedReceptionCity == null,
+              prefixIcon: Icons.place_rounded,
+              modalTitle: tr(LocaleKeys.receptionPlace),
+              searchHint: tr(LocaleKeys.searchCriteriaHint),
               onChanged: (Area? area) {
-                setState(() {
-                  _selectedReceptionArea = area;
-                });
+                setState(() => _selectedReceptionArea = area);
               },
             ),
             const SizedBox(height: 16),
 
             _buildSectionTitle(tr(LocaleKeys.deliveryInfoSection)),
             const SizedBox(height: 12),
-            _buildCityDropdown(
+            // Ville de livraison
+            SearchableSelectField<City>(
               label: tr(LocaleKeys.deliveryCity),
-              cities: _deliveryCities,
-              selectedCity: _selectedDeliveryCity,
+              selectedValue: _selectedDeliveryCity,
+              items: _deliveryCities,
+              displayValue: (c) => c.name,
               isLoading: _isLoadingDeliveryCities,
+              isDisabled: _selectedCountry == null,
+              prefixIcon: Icons.location_city_rounded,
+              modalTitle: tr(LocaleKeys.deliveryCity),
+              searchHint: tr(LocaleKeys.searchCriteriaHint),
               onChanged: (City? city) {
                 setState(() {
                   _selectedDeliveryCity = city;
-                  if (city != null) {
-                    _loadDeliveryAreas(city.id);
-                  }
+                  _selectedDeliveryArea = null;
+                  _deliveryAreas = [];
+                  if (city != null) _loadDeliveryAreas(city.id);
                 });
               },
             ),
             const SizedBox(height: 12),
             _buildDateTimeRow(
-              tr( LocaleKeys.deliveryDate),
+              tr(LocaleKeys.deliveryDate),
               tr(LocaleKeys.deliveryTime),
               _deliveryDate,
               _deliveryTime,
-                  () => _selectDate(context, isReception: false),
-                  () => _selectTime(context, isReception: false),
+              () => _selectDate(context, isReception: false),
+              () => _selectTime(context, isReception: false),
             ),
             const SizedBox(height: 12),
-            _buildAreaDropdown(
+            // Zone de livraison
+            SearchableSelectField<Area>(
               label: tr(LocaleKeys.deliveryPlace),
-              areas: _deliveryAreas,
-              selectedArea: _selectedDeliveryArea,
+              selectedValue: _selectedDeliveryArea,
+              items: _deliveryAreas,
+              displayValue: (a) => a.name,
               isLoading: _isLoadingDeliveryAreas,
+              isDisabled: _selectedDeliveryCity == null,
+              prefixIcon: Icons.place_rounded,
+              modalTitle: tr(LocaleKeys.deliveryPlace),
+              searchHint: tr(LocaleKeys.searchCriteriaHint),
               onChanged: (Area? area) {
-                setState(() {
-                  _selectedDeliveryArea = area;
-                });
+                setState(() => _selectedDeliveryArea = area);
               },
             ),
             const SizedBox(height: 16),
 
             _buildSectionTitle(tr(LocaleKeys.vehicleDetailsSection)),
             const SizedBox(height: 12),
-            _buildVehicleCategoryDropdown(),
+            // Catégorie de véhicule
+            SearchableSelectField<VehicleCategory>(
+              label: tr(LocaleKeys.vehicleCategory),
+              selectedValue: _selectedVehicleCategory,
+              items: _vehicleCategories,
+              displayValue: (cat) => cat.name,
+              isLoading: _isLoadingVehicleCategories,
+              prefixIcon: Icons.directions_car_rounded,
+              modalTitle: tr(LocaleKeys.vehicleCategory),
+              searchHint: tr(LocaleKeys.searchCriteriaHint),
+              onChanged: (VehicleCategory? cat) {
+                setState(() {
+                  _selectedVehicleCategory = cat;
+                  if (_driverAgeController.text.isNotEmpty) _validateDriverAge();
+                });
+              },
+            ),
             const SizedBox(height: 16),
 
             _buildSectionTitle(tr(LocaleKeys.driverInfoSection)),
@@ -822,269 +856,6 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
     return ColorManager.grey3;
   }
 
-  Widget _buildCountryDropdown() {
-    bool hasValue = _selectedCountry != null;
-
-    if (_isLoadingCountries) {
-      return Container(
-        height: 40,
-        decoration: BoxDecoration(
-          color: ColorManager.greyShade,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: ColorManager.grey3,
-            width: 1.5,
-          ),
-        ),
-        child: Center(
-          child: SizedBox(
-            height: 20,
-            width: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: ColorManager.primaryColor,
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      height: 40,
-      decoration: BoxDecoration(
-        color: ColorManager.greyShade,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: _getBorderColor(false, hasValue),
-          width: 1.5,
-        ),
-      ),
-      child: DropdownButtonFormField<Country>(
-        value: _selectedCountry,
-        decoration: InputDecoration(
-          labelText: _selectedCountry == null ? tr(LocaleKeys.country) : null,
-          labelStyle: TextStyle(color: hasValue ? ColorManager.primaryColor : ColorManager.grey),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        ),
-        dropdownColor: ColorManager.whiteColor,
-        items: _countries.map((Country country) {
-          return DropdownMenuItem<Country>(
-            value: country,
-            child: Text(
-              country.name,
-              style: TextStyle(color: ColorManager.blackColor, fontSize: 14),
-            ),
-          );
-        }).toList(),
-        onChanged: (Country? newValue) {
-          setState(() {
-            _selectedCountry = newValue;
-            if (newValue != null) {
-              _loadReceptionCities(newValue.id);
-              _loadDeliveryCities(newValue.id);
-            }
-          });
-        },
-      ),
-    );
-  }
-
-  Widget _buildCityDropdown({
-    required String label,
-    required List<City> cities,
-    required City? selectedCity,
-    required bool isLoading,
-    required Function(City?) onChanged,
-  }) {
-    bool hasValue = selectedCity != null;
-
-    if (isLoading) {
-      return Container(
-        height: 40,
-        decoration: BoxDecoration(
-          color: ColorManager.greyShade,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: ColorManager.grey3,
-            width: 1.5,
-          ),
-        ),
-        child: Center(
-          child: SizedBox(
-            height: 20,
-            width: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: ColorManager.primaryColor,
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      height: 40,
-      decoration: BoxDecoration(
-        color: ColorManager.greyShade,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: _getBorderColor(false, hasValue),
-          width: 1.5,
-        ),
-      ),
-      child: DropdownButtonFormField<City>(
-        value: selectedCity,
-        decoration: InputDecoration(
-          hintText: label,
-          hintStyle: TextStyle(color: hasValue ? ColorManager.primaryColor : ColorManager.grey),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          prefixIcon: Icon(
-            Icons.location_city,
-            color: hasValue ? ColorManager.primaryColor : ColorManager.grey,
-            size: 20,
-          ),
-        ),
-        dropdownColor: ColorManager.whiteColor,
-        items: cities.isEmpty
-            ? null
-            : cities.map((City city) {
-                return DropdownMenuItem<City>(
-                  value: city,
-                  child: Text(
-                    city.name,
-                    style: TextStyle(color: ColorManager.blackColor, fontSize: 14),
-                  ),
-                );
-              }).toList(),
-        onChanged: cities.isEmpty ? null : onChanged,
-      ),
-    );
-  }
-
-  Widget _buildAreaDropdown({
-    required String label,
-    required List<Area> areas,
-    required Area? selectedArea,
-    required bool isLoading,
-    required Function(Area?) onChanged,
-  }) {
-    bool hasValue = selectedArea != null;
-
-    if (isLoading) {
-      return Container(
-        height: 40,
-        decoration: BoxDecoration(
-          color: ColorManager.greyShade,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: ColorManager.grey3,
-            width: 1.5,
-          ),
-        ),
-        child: Center(
-          child: SizedBox(
-            height: 20,
-            width: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: ColorManager.primaryColor,
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      height: 40,
-      decoration: BoxDecoration(
-        color: ColorManager.greyShade,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: _getBorderColor(false, hasValue),
-          width: 1.5,
-        ),
-      ),
-      child: DropdownButtonFormField<Area>(
-        value: selectedArea,
-        decoration: InputDecoration(
-          hintText: label,
-          hintStyle: TextStyle(color: hasValue ? ColorManager.primaryColor : ColorManager.grey),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          prefixIcon: Icon(
-            Icons.place,
-            color: hasValue ? ColorManager.primaryColor : ColorManager.grey,
-            size: 20,
-          ),
-        ),
-        dropdownColor: ColorManager.whiteColor,
-        items: areas.isEmpty
-            ? null
-            : areas.map((Area area) {
-                return DropdownMenuItem<Area>(
-                  value: area,
-                  child: Text(
-                    area.name,
-                    style: TextStyle(color: ColorManager.blackColor, fontSize: 14),
-                  ),
-                );
-              }).toList(),
-        onChanged: areas.isEmpty ? null : onChanged,
-      ),
-    );
-  }
-
-  Widget _buildCityField({
-    TextEditingController? controller,
-    FocusNode? focusNode,
-    String? label,
-  }) {
-    final cityController = controller ?? _cityController;
-    final cityFocusNode = focusNode ?? _cityFocusNode;
-    final cityLabel = label ?? tr(LocaleKeys.city);
-
-    return Focus(
-      child: Builder(
-        builder: (context) {
-          final hasFocus = Focus.of(context).hasFocus;
-          final hasValue = cityController.text.isNotEmpty;
-
-          return Container(
-            height: 40,
-            decoration: BoxDecoration(
-              color: ColorManager.greyShade,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: _getBorderColor(hasFocus, hasValue),
-                width: 1.5,
-              ),
-            ),
-            child: TextField(
-              controller: cityController,
-              focusNode: cityFocusNode,
-              onChanged: (value) => setState(() {}),
-              decoration: InputDecoration(
-                hintText: cityLabel,
-                hintStyle: TextStyle(
-                  color: hasFocus || hasValue ? ColorManager.primaryColor : ColorManager.grey,
-                ),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                prefixIcon: Icon(
-                  Icons.location_city,
-                  color: hasFocus || hasValue ? ColorManager.primaryColor : ColorManager.grey,
-                  size: 20,
-                ),
-              ),
-              style: TextStyle(color: ColorManager.blackColor, fontSize: 14),
-            ),
-          );
-        },
-      ),
-    );
-  }
 
   Widget _buildDateTimeRow(
       String dateLabel,
@@ -1217,125 +988,6 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildLocationField(TextEditingController controller, String label, FocusNode focusNode) {
-    return Focus(
-      child: Builder(
-        builder: (context) {
-          final hasFocus = Focus.of(context).hasFocus;
-          final hasValue = controller.text.isNotEmpty;
-
-          return Container(
-            height: 40,
-            decoration: BoxDecoration(
-              color: ColorManager.greyShade,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: _getBorderColor(hasFocus, hasValue),
-                width: 1.5,
-              ),
-            ),
-            child: TextField(
-              controller: controller,
-              focusNode: focusNode,
-              onChanged: (value) => setState(() {}),
-              decoration: InputDecoration(
-                labelText: label,
-                labelStyle: TextStyle(
-                  color: hasFocus || hasValue ? ColorManager.primaryColor : ColorManager.grey,
-                ),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                prefixIcon: Icon(
-                  Icons.place,
-                  color: hasFocus || hasValue ? ColorManager.primaryColor : ColorManager.grey,
-                  size: 20,
-                ),
-              ),
-              style: TextStyle(color: ColorManager.blackColor, fontSize: 14),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildVehicleCategoryDropdown() {
-    bool hasValue = _selectedVehicleCategory != null;
-
-    if (_isLoadingVehicleCategories) {
-      return Container(
-        height: 40,
-        decoration: BoxDecoration(
-          color: ColorManager.greyShade,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: ColorManager.grey3,
-            width: 1.5,
-          ),
-        ),
-        child: Center(
-          child: SizedBox(
-            height: 20,
-            width: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: ColorManager.primaryColor,
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      height: 40,
-      decoration: BoxDecoration(
-        color: ColorManager.greyShade,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: _getBorderColor(false, hasValue),
-          width: 1.5,
-        ),
-      ),
-      child: DropdownButtonFormField<VehicleCategory>(
-        value: _selectedVehicleCategory,
-        decoration: InputDecoration(
-          labelText: _selectedVehicleCategory == null ? tr(LocaleKeys.vehicleCategory) : null,
-          labelStyle: TextStyle(
-            color: hasValue ? ColorManager.primaryColor : ColorManager.grey,
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          prefixIcon: Icon(
-            Icons.directions_car,
-            color: hasValue ? ColorManager.primaryColor : ColorManager.grey,
-            size: 20,
-          ),
-        ),
-        dropdownColor: ColorManager.whiteColor,
-        items: _vehicleCategories.isEmpty
-            ? null
-            : _vehicleCategories.map((VehicleCategory category) {
-                return DropdownMenuItem<VehicleCategory>(
-                  value: category,
-                  child: Text(
-                    category.name,
-                    style: TextStyle(color: ColorManager.blackColor, fontSize: 14),
-                  ),
-                );
-              }).toList(),
-        onChanged: _vehicleCategories.isEmpty ? null : (VehicleCategory? newValue) {
-          setState(() {
-            _selectedVehicleCategory = newValue;
-            // Re-valider l'âge si une catégorie est sélectionnée et qu'un âge est déjà saisi
-            if (_driverAgeController.text.isNotEmpty) {
-              _validateDriverAge();
-            }
-          });
-        },
-      ),
     );
   }
 

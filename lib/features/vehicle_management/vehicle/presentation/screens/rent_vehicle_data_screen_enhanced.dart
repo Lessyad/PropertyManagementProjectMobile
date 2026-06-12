@@ -804,6 +804,7 @@ class _RentVehicleDataScreenEnhancedState
                   backgroundColor: ColorManager.whiteColor,
                   padding: EdgeInsets.zero,
                   controller: _phoneController,
+                  showBorder: true,
                 ),
               ),
               SizedBox(width: context.scale(8)),
@@ -1317,6 +1318,7 @@ class _RentVehicleDataScreenEnhancedState
                   backgroundColor: ColorManager.whiteColor,
                   padding: EdgeInsets.zero,
                   controller: _secondPhoneController,
+                  showBorder: true,
                 ),
               ),
               SizedBox(width: context.scale(8)),
@@ -1445,6 +1447,7 @@ class _RentVehicleDataScreenEnhancedState
           backgroundColor: ColorManager.whiteColor,
           padding: EdgeInsets.zero,
           controller: controller,
+          showBorder: true,
         ),
       ],
     );

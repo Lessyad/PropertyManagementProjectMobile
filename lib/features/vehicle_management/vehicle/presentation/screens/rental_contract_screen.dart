@@ -6,6 +6,7 @@ import '../../../../../core/translation/locale_keys.dart';
 import '../../domain/entities/vehicle_entity.dart';
 import '../../data/models/vehicle_deal_request.dart';
 import 'payment_screen.dart';
+import 'pdf_contract_viewer_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class RentalContractScreen extends StatefulWidget {
@@ -23,12 +24,10 @@ class RentalContractScreen extends StatefulWidget {
   final double totalPrice;
   final bool secondDriverAmount;
 
-  // Données du locataire principal
   final MainDriverData mainDriver;
   final bool secondDriverEnabled;
   final SecondDriverData? secondDriver;
 
-  // Données de localisation
   final int pickupAreaId;
   final int returnAreaId;
 
@@ -60,6 +59,7 @@ class RentalContractScreen extends StatefulWidget {
 
 class _RentalContractScreenState extends State<RentalContractScreen> {
   bool _isContractAccepted = false;
+  bool _hasViewedContract = false;
 
   @override
   Widget build(BuildContext context) {
@@ -79,205 +79,212 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // En-tête du contrat
                   _buildContractHeader(),
-                  const SizedBox(height: 20),
-
-                  // Contenu du contrat PDF
-                  _buildContractContent(),
-                  const SizedBox(height: 20),
-
-                  // Case à cocher pour accepter
+                  const SizedBox(height: 16),
+                  _buildContractSummary(),
+                  const SizedBox(height: 16),
+                  _buildViewContractButton(),
+                  const SizedBox(height: 16),
                   _buildAcceptanceCheckbox(),
                 ],
               ),
             ),
           ),
-
-          // Footer avec bouton de navigation vers paiement
           _buildFooter(),
         ],
       ),
     );
   }
 
+  // ── En-tête ────────────────────────────────────────────────────────────────
+
   Widget _buildContractHeader() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: _cardDecoration(),
       child: Column(
         children: [
-          Icon(
-            Icons.description,
-            size: 48,
-            color: ColorManager.primaryColor,
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: ColorManager.primaryColor.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.description_rounded,
+                size: 32, color: ColorManager.primaryColor),
           ),
           const SizedBox(height: 12),
           Text(
             LocaleKeys.rentalContractTitle.tr(),
             textAlign: TextAlign.center,
-            style: getBoldStyle(
-              color: ColorManager.blackColor,
-              fontSize: FontSize.s18,
-            ),
+            style:
+                getBoldStyle(color: ColorManager.blackColor, fontSize: FontSize.s18),
           ),
           const SizedBox(height: 8),
           Text(
             LocaleKeys.readTermsCarefully.tr(),
             textAlign: TextAlign.center,
-            style: getRegularStyle(
-              color: ColorManager.grey,
-              fontSize: FontSize.s14,
-            ),
+            style:
+                getRegularStyle(color: ColorManager.grey, fontSize: FontSize.s13),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildContractContent() {
+  // ── Résumé du contrat ──────────────────────────────────────────────────────
+
+  Widget _buildContractSummary() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: _cardDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            LocaleKeys.termsAndConditions.tr(),
-            style: getBoldStyle(
-              color: ColorManager.blackColor,
-              fontSize: FontSize.s16,
-            ),
-          ),
+          _sectionTitle(LocaleKeys.termsAndConditions.tr()),
           const SizedBox(height: 16),
-
-          // Informations du véhicule
-          _buildContractSection(
-            LocaleKeys.rentedVehicle.tr(),
-            '${LocaleKeys.brandModel.tr()}: ${widget.vehicle.makeName} ${widget.vehicle.modelName}\n'
-                '${LocaleKeys.category.tr()}: ${widget.vehicle.categoryName}\n'
-                '${LocaleKeys.color.tr()}: ${widget.vehicle.color}\n'
-                '${LocaleKeys.dailyPrice.tr()}: ${widget.vehicle.dailyPrice.toStringAsFixed(0)} ',
-          ),
-
-          const SizedBox(height: 16),
-
-          // Période de location
-          _buildContractSection(
-            LocaleKeys.rentalPeriod.tr(),
-            '${LocaleKeys.startDate.tr()}: ${_formatDate(widget.receptionDate)} ${LocaleKeys.at.tr()} ${_formatTime(widget.receptionTime)}\n'
-                '${LocaleKeys.endDate.tr()}: ${_formatDate(widget.deliveryDate)} ${LocaleKeys.at.tr()} ${_formatTime(widget.deliveryTime)}\n'
-                '${LocaleKeys.pickupLocation.tr()}: ${widget.receptionLocation}\n'
-                '${LocaleKeys.returnLocation.tr()}: ${widget.deliveryLocation}',
-          ),
-
-          const SizedBox(height: 16),
-
-          // Options supplémentaires
-          if (widget.extraKilometers || widget.fullInsurance || widget.childSeat)
-            _buildContractSection(
-              LocaleKeys.additionalOptions.tr(),
-              '${widget.extraKilometers ? "${LocaleKeys.extraKilometers.tr()}: ${widget.kilometerDetails ?? LocaleKeys.included.tr()}\n" : ""}'
-                  '${widget.fullInsurance ? "${LocaleKeys.fullInsurance.tr()}: ${LocaleKeys.included.tr()}\n" : ""}'
-                  '${widget.childSeat ? "${LocaleKeys.childSeatOption.tr()}: ${LocaleKeys.included.tr()}\n" : ""}',
-            ),
-
-          const SizedBox(height: 16),
-
-          // Montant total
-          _buildContractSection(
-            LocaleKeys.totalAmount.tr(),
-            '${LocaleKeys.totalToPay.tr()}: ${widget.totalPrice} MRU',
-          ),
-
-          const SizedBox(height: 16),
-
-          // Conditions générales
-          // _buildContractSection(
-          //   LocaleKeys.generalConditions.tr(),
-          //   '${LocaleKeys.condition1.tr()}\n'
-          //       '${LocaleKeys.condition2.tr()}\n'
-          //       '${LocaleKeys.condition3.tr()}\n'
-          //       '${LocaleKeys.condition4.tr()}\n'
-          //       '${LocaleKeys.condition5.tr()}\n'
-          //       '${LocaleKeys.condition6.tr()}\n'
-          //       '${LocaleKeys.condition7.tr()}',
-          // ),
-
-          const SizedBox(height: 16),
-
-          // Clause d'acceptation
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: ColorManager.primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: ColorManager.primaryColor,
-                width: 1,
-              ),
-            ),
-            child: Text(
-              LocaleKeys.acceptanceClause.tr(),
-              style: getRegularStyle(
-                color: ColorManager.blackColor,
-                fontSize: FontSize.s14,
-              ),
-            ),
-          ),
+          _buildInfoRow(
+              Icons.directions_car_rounded, LocaleKeys.rentedVehicle.tr(),
+              '${widget.vehicle.makeName} ${widget.vehicle.modelName} — ${widget.vehicle.color}'),
+          const Divider(height: 20, color: Color(0xFFEEEEEE)),
+          _buildInfoRow(
+              Icons.calendar_today_rounded, LocaleKeys.rentalPeriod.tr(),
+              '${_formatDate(widget.receptionDate)} → ${_formatDate(widget.deliveryDate)}'),
+          const Divider(height: 20, color: Color(0xFFEEEEEE)),
+          _buildInfoRow(
+              Icons.location_on_rounded, LocaleKeys.pickupLocation.tr(),
+              widget.receptionLocation),
+          const Divider(height: 20, color: Color(0xFFEEEEEE)),
+          _buildInfoRow(
+              Icons.flag_rounded, LocaleKeys.returnLocation.tr(),
+              widget.deliveryLocation),
+          const Divider(height: 20, color: Color(0xFFEEEEEE)),
+          _buildInfoRow(
+              Icons.payments_rounded, LocaleKeys.totalToPay.tr(),
+              '${widget.totalPrice.toStringAsFixed(0)} MRU',
+              valueColor: ColorManager.primaryColor,
+              bold: true),
         ],
       ),
     );
   }
 
-  Widget _buildContractSection(String title, String content) {
-    return SizedBox(
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: getBoldStyle(
-              color: ColorManager.primaryColor,
-              fontSize: FontSize.s14,
-            ),
+  Widget _buildInfoRow(IconData icon, String label, String value,
+      {Color? valueColor, bool bold = false}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 18, color: ColorManager.primaryColor),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label,
+                  style: getRegularStyle(
+                      color: ColorManager.grey, fontSize: FontSize.s11)),
+              const SizedBox(height: 2),
+              Text(value,
+                  style: bold
+                      ? getBoldStyle(
+                          color: valueColor ?? ColorManager.blackColor,
+                          fontSize: FontSize.s13)
+                      : getRegularStyle(
+                          color: valueColor ?? ColorManager.blackColor,
+                          fontSize: FontSize.s13)),
+            ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            content,
-            style: getRegularStyle(
-              color: ColorManager.blackColor,
-              fontSize: FontSize.s13,
-            ),
+        ),
+      ],
+    );
+  }
+
+  // ── Bouton "Consulter le contrat" ──────────────────────────────────────────
+
+  Widget _buildViewContractButton() {
+    return GestureDetector(
+      onTap: _openContractSheet,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+        decoration: BoxDecoration(
+          color: _hasViewedContract
+              ? const Color(0xFFE8F5E9)
+              : ColorManager.primaryColor.withOpacity(0.07),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: _hasViewedContract
+                ? Colors.green.shade400
+                : ColorManager.primaryColor,
+            width: 1.5,
           ),
-        ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: _hasViewedContract
+                    ? Colors.green.shade50
+                    : ColorManager.primaryColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                _hasViewedContract
+                    ? Icons.check_circle_rounded
+                    : Icons.visibility_rounded,
+                color: _hasViewedContract
+                    ? Colors.green.shade600
+                    : ColorManager.primaryColor,
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    LocaleKeys.viewContract.tr(),
+                    style: getBoldStyle(
+                      color: _hasViewedContract
+                          ? Colors.green.shade700
+                          : ColorManager.primaryColor,
+                      fontSize: FontSize.s14,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    _hasViewedContract
+                        ? LocaleKeys.iHaveReadContract.tr()
+                        : LocaleKeys.contractReadRequired.tr(),
+                    style: getRegularStyle(
+                      color: _hasViewedContract
+                          ? Colors.green.shade600
+                          : ColorManager.grey,
+                      fontSize: FontSize.s11,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 14,
+              color: _hasViewedContract
+                  ? Colors.green.shade400
+                  : ColorManager.grey,
+            ),
+          ],
+        ),
       ),
     );
   }
+
+  // ── Checkbox acceptation ───────────────────────────────────────────────────
 
   Widget _buildAcceptanceCheckbox() {
     return Container(
@@ -288,43 +295,48 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.08),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
+        border: !_hasViewedContract
+            ? Border.all(color: const Color(0xFFEEEEEE), width: 1)
+            : null,
       ),
-      child: Row(
-        children: [
-          Checkbox(
-            value: _isContractAccepted,
-            onChanged: (value) {
-              setState(() {
-                _isContractAccepted = value ?? false;
-              });
-            },
-            activeColor: ColorManager.primaryColor,
-          ),
-          Expanded(
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  _isContractAccepted = !_isContractAccepted;
-                });
-              },
-              child: Text(
-                LocaleKeys.acceptTerms.tr(),
-                style: getRegularStyle(
-                  color: ColorManager.blackColor,
-                  fontSize: FontSize.s14,
+      child: Opacity(
+        opacity: _hasViewedContract ? 1.0 : 0.45,
+        child: Row(
+          children: [
+            Checkbox(
+              value: _isContractAccepted,
+              onChanged: _hasViewedContract
+                  ? (value) {
+                      setState(() => _isContractAccepted = value ?? false);
+                    }
+                  : null,
+              activeColor: ColorManager.primaryColor,
+            ),
+            Expanded(
+              child: GestureDetector(
+                onTap: _hasViewedContract
+                    ? () => setState(
+                        () => _isContractAccepted = !_isContractAccepted)
+                    : null,
+                child: Text(
+                  LocaleKeys.acceptTerms.tr(),
+                  style: getRegularStyle(
+                      color: ColorManager.blackColor, fontSize: FontSize.s14),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+
+  // ── Footer ─────────────────────────────────────────────────────────────────
 
   Widget _buildFooter() {
     return Container(
@@ -344,48 +356,44 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
         children: [
           Expanded(
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[300],
+                backgroundColor: Colors.grey[200],
                 foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                elevation: 2,
+                    borderRadius: BorderRadius.circular(10)),
               ),
               child: Text(
                 LocaleKeys.backButton.tr(),
                 style: getBoldStyle(
-                  color: ColorManager.primaryColor,
-                  fontSize: FontSize.s14,
-                ),
+                    color: ColorManager.primaryColor, fontSize: FontSize.s14),
               ),
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: ElevatedButton(
-              onPressed: _isContractAccepted ? _proceedToPayment : null,
+              onPressed:
+                  _isContractAccepted ? _proceedToPayment : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: _isContractAccepted
                     ? ColorManager.primaryColor
-                    : Colors.grey[400],
+                    : Colors.grey[300],
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                elevation: _isContractAccepted ? 2 : 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                elevation: 2,
+                    borderRadius: BorderRadius.circular(10)),
               ),
               child: Text(
                 LocaleKeys.proceedToPayment.tr(),
                 style: getBoldStyle(
-                  color: Colors.white,
-                  fontSize: FontSize.s14,
-                ),
+                    color: _isContractAccepted
+                        ? Colors.white
+                        : Colors.grey[500]!,
+                    fontSize: FontSize.s14),
               ),
             ),
           ),
@@ -393,6 +401,35 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
       ),
     );
   }
+
+  // ── Bottom sheet contrat complet ───────────────────────────────────────────
+
+  void _openContractSheet() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => PdfContractViewerScreen(
+          vehicle: widget.vehicle,
+          startDate: widget.receptionDate,
+          startTime: widget.receptionTime,
+          endDate: widget.deliveryDate,
+          endTime: widget.deliveryTime,
+          mainDriver: widget.mainDriver,
+          secondDriverEnabled: widget.secondDriverEnabled,
+          secondDriver: widget.secondDriver,
+          extraKilometers: widget.extraKilometers,
+          fullInsurance: widget.fullInsurance,
+          childSeat: widget.childSeat,
+          pickupAreaId: widget.pickupAreaId,
+          returnAreaId: widget.returnAreaId,
+          onContractRead: () {
+            setState(() => _hasViewedContract = true);
+          },
+        ),
+      ),
+    );
+  }
+
+  // ── Navigation ─────────────────────────────────────────────────────────────
 
   void _proceedToPayment() {
     Navigator.of(context).push(
@@ -415,17 +452,32 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
           secondDriver: widget.secondDriver,
           pickupAreaId: widget.pickupAreaId,
           returnAreaId: widget.returnAreaId,
-          secondDriverAmount : widget.secondDriverAmount
+          secondDriverAmount: widget.secondDriverAmount,
         ),
       ),
     );
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
-  }
+  // ── Helpers ────────────────────────────────────────────────────────────────
 
-  String _formatTime(TimeOfDay time) {
-    return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
-  }
+  Widget _sectionTitle(String title) => Text(
+        title,
+        style: getBoldStyle(
+            color: ColorManager.blackColor, fontSize: FontSize.s15),
+      );
+
+  BoxDecoration _cardDecoration() => BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      );
+
+  String _formatDate(DateTime date) =>
+      '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
 }

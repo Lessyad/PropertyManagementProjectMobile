@@ -37,6 +37,16 @@ class BookPropertyButtons extends StatelessWidget {
             type: SnackBarType.error,
           );
         }
+        if (state.bookPropertyState.isPaypalPending &&
+            state.bookPropertyResponse != null) {
+          context.read<RealEstateCubit>().fetchPropertyDetails(propertyID);
+          Navigator.pop(context);
+          CustomSnackBar.show(
+            message: LocaleKeys.paypalPendingPaymentMessage.tr(),
+            type: SnackBarType.warning,
+            duration: const Duration(seconds: 6),
+          );
+        }
         if (state.bookPropertyState.isLoaded) {
           context.read<RealEstateCubit>().fetchPropertyDetails(propertyID);
         }

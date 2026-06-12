@@ -11,8 +11,8 @@ import '../models/add_new_preview_time_request_model.dart';
 abstract class BasePreviewPropertyDataSource {
   Future<List<DayAndHoursModel>> getPropertyPreviewAvailableHours(String propertyId);
   Future<String> getInspectionAmountToBePaid(String propertyId);
-  Future<void> addNewPreviewTime (AddNewPreviewRequestModel data);
-
+  Future<void> addNewPreviewTime(AddNewPreviewRequestModel data);
+  Future<({String approvalUrl, String reservationToken})> initiatePayPalViewingRequest(AddNewPreviewRequestModel data);
 }
 
 class PreviewPropertyRemoteDataSource extends BasePreviewPropertyDataSource {
@@ -39,32 +39,35 @@ class PreviewPropertyRemoteDataSource extends BasePreviewPropertyDataSource {
     print('>>> Heures disponibles générées: $availableHours');
     return availableHours;
   }
+
   @override
-  Future<String> getInspectionAmountToBePaid(String propertyId)async {
+  Future<String> getInspectionAmountToBePaid(String propertyId) async {
     final response = await dioService.get(
-      url: '${ApiConstants.propertyOrderDetails}/$propertyId/' ,
+      url: '${ApiConstants.propertyOrderDetails}/$propertyId/',
     );
-
-
-    return response.data['viewing_request_amount'].toString() ;
-
-   }
+    return response.data['viewing_request_amount'].toString();
+  }
 
   @override
   Future<void> addNewPreviewTime(AddNewPreviewRequestModel data) async {
-    FormData formData = FormData.fromMap(data.toJson());
-
-    var res = await dioService.post(
+    await dioService.post(
       url: '${ApiConstants.preview}/',
-      // data: formData,
       data: data.toJson(),
-      options: Options(
-        contentType: Headers.jsonContentType,
-      ),
-      // options: Options(
-      //   contentType: Headers.multipartFormDataContentType,
-      // ),
+      options: Options(contentType: Headers.jsonContentType),
     );
   }
 
+  @override
+  Future<({String approvalUrl, String reservationToken})> initiatePayPalViewingRequest(
+      AddNewPreviewRequestModel data) async {
+    final res = await dioService.post(
+      url: ApiConstants.previewPayPalInitiate,
+      data: data.toJson(),
+      options: Options(contentType: Headers.jsonContentType),
+    );
+    return (
+      approvalUrl: res.data['approvalUrl'] as String,
+      reservationToken: res.data['reservationToken'] as String,
+    );
+  }
 }

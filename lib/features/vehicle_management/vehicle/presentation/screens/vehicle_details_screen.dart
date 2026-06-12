@@ -45,6 +45,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
             final vehicle = controller.vehicleDetails.value!;
             return _buildLoadedScreen(context, vehicle);
           case RequestState.error:
+          case RequestState.paypalPending:
             return ErrorAppScreen();
         }
       }),

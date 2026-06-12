@@ -15,6 +15,7 @@ class CodegenLoader extends AssetLoader{
   }
 
   static const Map<String,dynamic> _ar = {
+      "paypalPendingPaymentMessage": "الحجز قيد الانتظار — يرجى إتمام الدفع عبر PayPal للتأكيد.",
   "somethingWentWrong": "حدث خطأ ما",
   "badGateway": "بوابة خاطئة",
   "internalServerError": "خطأ في الخادم الداخلي",
@@ -772,9 +773,17 @@ class CodegenLoader extends AssetLoader{
   "rentalHistoryAppearance": "Your rentals will appear here",
   "emptyScreenNoProperties": "لا توجد عقارات",
   "emptyScreenAddPropertyToStart": "أضف عقارا للبدء",
-  "addNewPropertyButton": "أضف عقارا"
+  "addNewPropertyButton": "أضف عقارا",
+  "search_criteria_hint": "بحث...",
+  "view_contract": "استعراض العقد",
+  "contract_read_required": "يرجى قراءة العقد قبل قبول الشروط والأحكام",
+  "i_have_read_contract": "لقد قرأت العقد وفهمته",
+  "contract_parties": "أطراف العقد",
+  "lessor": "المؤجر",
+  "lessee": "المستأجر"
 };
 static const Map<String,dynamic> _en = {
+    "paypalPendingPaymentMessage": "Booking pending — please complete your payment on PayPal to confirm.",
   "somethingWentWrong": "Something went wrong",
   "badGateway": "Bad Gateway",
   "internalServerError": "Internal Server Error",
@@ -1532,9 +1541,17 @@ static const Map<String,dynamic> _en = {
   "rentalHistoryAppearance": "Your rentals will appear here",
   "emptyScreenNoProperties": "No properties",
   "emptyScreenAddPropertyToStart": "Add a property to get started",
-  "addNewPropertyButton": "Add property"
+  "addNewPropertyButton": "Add property",
+  "search_criteria_hint": "Search...",
+  "view_contract": "View Contract",
+  "contract_read_required": "Please read the contract before accepting the general conditions",
+  "i_have_read_contract": "I have read and understood the contract",
+  "contract_parties": "Contract Parties",
+  "lessor": "Lessor",
+  "lessee": "Lessee"
 };
 static const Map<String,dynamic> _fr = {
+    "paypalPendingPaymentMessage": "Réservation en attente — veuillez compléter votre paiement sur PayPal pour confirmer.",
   "somethingWentWrong": "Quelque chose s'est mal passé",
   "badGateway": "Mauvaise Passerelle",
   "internalServerError": "Erreur Interne du Serveur",
@@ -2292,7 +2309,14 @@ static const Map<String,dynamic> _fr = {
   "rentalHistoryAppearance": "Vos locations apparaitront ici",
   "emptyScreenNoProperties": "Aucune propriété",
   "emptyScreenAddPropertyToStart": "Ajoutez une propriété pour commencer",
-  "addNewPropertyButton": "Ajouter une propriété"
+  "addNewPropertyButton": "Ajouter une propriété",
+  "search_criteria_hint": "Rechercher...",
+  "view_contract": "Consulter le contrat",
+  "contract_read_required": "Veuillez lire le contrat avant d'accepter les conditions générales",
+  "i_have_read_contract": "J'ai lu et compris le contrat",
+  "contract_parties": "Parties du contrat",
+  "lessor": "Bailleur (Loueur)",
+  "lessee": "Locataire"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ar": _ar, "en": _en, "fr": _fr};
 }

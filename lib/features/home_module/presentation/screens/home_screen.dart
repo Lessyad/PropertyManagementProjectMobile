@@ -225,6 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
                                       case RequestState.error:
+                                      case RequestState.paypalPending:
                                         return Center(
                                           child: Text(
                                             propertyData?.errorMessage ?? context.tr(LocaleKeys.homeErrorOccurred),

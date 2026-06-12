@@ -9,5 +9,5 @@ extension RequestStateExtension on RequestState {
 
   bool get isError => this == RequestState.error;
 
-
+  bool get isPaypalPending => this == RequestState.paypalPending;
 }

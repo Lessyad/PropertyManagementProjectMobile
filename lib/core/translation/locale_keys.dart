@@ -794,6 +794,12 @@ abstract class LocaleKeys {
   static const String acceptanceClause = 'acceptance_clause';
   static const String acceptTerms = 'accept_terms';
   static const String proceedToPayment = 'proceed_to_payment';
+  static const String viewContract = 'view_contract';
+  static const String contractReadRequired = 'contract_read_required';
+  static const String iHaveReadContract = 'i_have_read_contract';
+  static const String contractParties = 'contract_parties';
+  static const String lessor = 'lessor';
+  static const String lessee = 'lessee';
 
   // contact infos
   static const contact_us = 'contact_us';
@@ -1134,4 +1140,7 @@ abstract class LocaleKeys {
   static const String propertyTypeAll = 'propertyTypeAll';
   static const String mapLoadingProperties = 'mapLoadingProperties';
   static const String mapPropertiesCount = 'mapPropertiesCount';
+
+  // PayPal
+  static const String paypalPendingPaymentMessage = 'paypalPendingPaymentMessage';
 }

@@ -333,6 +333,7 @@ class AppRouters {
                 ServiceLocator.getIt(),
                 ServiceLocator.getIt(),
                 ServiceLocator.getIt(),
+                ServiceLocator.getIt(),
               );
             },
             child: PreviewPropertyScreen(

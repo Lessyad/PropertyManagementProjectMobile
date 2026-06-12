@@ -86,6 +86,7 @@ dependencies:
   get: ^4.6.5
   syncfusion_flutter_datepicker: 28.2.12
   syncfusion_flutter_core: 28.2.12
+  syncfusion_flutter_pdfviewer: 28.2.12
 dev_dependencies:
   flutter_test:
     sdk: flutter
