@@ -3,7 +3,7 @@ import 'package:enmaa/configuration/managers/color_manager.dart';
 import 'package:enmaa/configuration/managers/style_manager.dart';
 import 'package:enmaa/configuration/managers/font_manager.dart';
 
-enum SnackBarType { success, error }
+enum SnackBarType { success, error, warning }
 
 class CustomSnackBar {
   static final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -19,11 +19,15 @@ class CustomSnackBar {
         type == SnackBarType.error ? const Duration(seconds: 5) : duration;
     final Color iconColor = type == SnackBarType.success
         ? ColorManager.primaryColor
-        : ColorManager.redColor;
+        : type == SnackBarType.warning
+            ? const Color(0xFFF59E0B)
+            : ColorManager.redColor;
 
     final IconData icon = type == SnackBarType.success
         ? Icons.check_circle
-        : Icons.error;
+        : type == SnackBarType.warning
+            ? Icons.warning_amber_rounded
+            : Icons.error;
 
     final snackBar = SnackBar(
       margin: EdgeInsets.zero,

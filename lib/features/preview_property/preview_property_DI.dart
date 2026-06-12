@@ -3,6 +3,7 @@ import 'package:enmaa/features/preview_property/domain/repository/base_preview_p
 import 'package:enmaa/features/preview_property/domain/use_cases/add_new_preview_time_use_case.dart';
 import 'package:enmaa/features/preview_property/domain/use_cases/get_available_hours_for_specific_property_use_case.dart';
 import 'package:enmaa/features/preview_property/domain/use_cases/get_inspection_amount_to_be_paid_use_case.dart';
+import 'package:enmaa/features/preview_property/domain/use_cases/initiate_paypal_viewing_request_use_case.dart';
 import '../../core/services/service_locator.dart';
 import 'data/repository/preview_property_repository.dart';
 
@@ -42,5 +43,7 @@ class PreviewPropertyDi {
         () => GetInspectionAmountToBePaidUseCase(sl()));
     sl.registerLazySingleton<AddNewPreviewTimeUseCase>(
         () => AddNewPreviewTimeUseCase(sl()));
+    sl.registerLazySingleton<InitiatePayPalViewingRequestUseCase>(
+        () => InitiatePayPalViewingRequestUseCase(sl()));
   }
 }

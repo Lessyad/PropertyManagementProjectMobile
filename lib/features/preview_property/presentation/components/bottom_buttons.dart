@@ -11,7 +11,6 @@ import '../../../../configuration/managers/font_manager.dart';
 import '../../../../configuration/managers/style_manager.dart';
 import '../../../../core/components/button_app_component.dart';
 import '../../../../core/translation/locale_keys.dart';
-import '../../../../core/services/shared_preferences_service.dart';
 import '../../data/models/add_new_preview_time_request_model.dart';
 
 class BottomButtons extends material.StatelessWidget {
@@ -80,6 +79,19 @@ class BottomButtons extends material.StatelessWidget {
                     type: SnackBarType.success,
                   );
                   material.Navigator.pop(context);
+                } else if (state.addNewPreviewTimeState.isPaypalPending) {
+                  CustomSnackBar.show(
+                    context: context,
+                    message: LocaleKeys.paypalPendingPaymentMessage.tr(),
+                    type: SnackBarType.success,
+                  );
+                  material.Navigator.pop(context);
+                } else if (state.addNewPreviewTimeState.isError) {
+                  CustomSnackBar.show(
+                    context: context,
+                    message: state.addNewPreviewTimeErrorMessage,
+                    type: SnackBarType.error,
+                  );
                 }
               },
               builder: (context, state) {
@@ -144,57 +156,37 @@ class BottomButtons extends material.StatelessWidget {
                       );
                     } else {
                       if (canSendRequest) {
-                        // Si PayPal est sélectionné, utiliser le processus PayPal
+                        String paymentMethod;
                         if (state.currentPaymentMethod == LocaleKeys.paypal.tr()) {
-                          // Obtenir le token d'authentification depuis SharedPreferences
-                          final authToken = SharedPreferencesService().accessToken;
-                          if (authToken.isEmpty) {
-                            CustomSnackBar.show(
-                              context: context,
-                              message: 'Token d\'authentification manquant',
-                              type: SnackBarType.error,
-                            );
-                            return;
-                          }
-                          context
-                              .read<PreviewPropertyCubit>()
-                              .processPayPalPayment(
-                            propertyId: propertyId,
-                            authToken: authToken,
-                          );
+                          paymentMethod = 'paypal';
+                        } else if (state.currentPaymentMethod == LocaleKeys.wallet.tr()) {
+                          paymentMethod = 'wallet';
+                        } else if (state.currentPaymentMethod == LocaleKeys.bankily.tr()) {
+                          paymentMethod = 'bankily';
                         } else {
-                          // Pour les autres méthodes de paiement (wallet, bankily)
-                          String paymentMethod;
-                          if (state.currentPaymentMethod == LocaleKeys.wallet.tr()) {
-                            paymentMethod = 'wallet';
-                          } else if (state.currentPaymentMethod == LocaleKeys.bankily.tr()) {
-                            paymentMethod = 'bankily';
-                          } else {
-                            paymentMethod = 'wallet'; // default
-                          }
-
-                          AddNewPreviewRequestModel request =
-                          AddNewPreviewRequestModel(
-                            propertyId: propertyId,
-                            previewTime: state.selectedTime,
-                            previewDate: DateFormat('yyyy-MM-dd', 'en')
-                                .format(state.selectedDate!),
-                            paymentMethod: paymentMethod,
-                            clientBankilyPhoneNumber: paymentMethod == 'bankily'
-                                ? state.clientBankilyPhoneNumber.trim().isNotEmpty
-                                ? state.clientBankilyPhoneNumber.trim()
-                                : null
-                                : null,
-                            bankilyPassCode: paymentMethod == 'bankily'
-                                ? state.bankilyPassCode.trim().isNotEmpty
-                                ? state.bankilyPassCode.trim()
-                                : null
-                                : null,
-                          );
-                          context
-                              .read<PreviewPropertyCubit>()
-                              .addPreviewTimeForSpecificProperty(request);
+                          paymentMethod = 'wallet';
                         }
+
+                        final request = AddNewPreviewRequestModel(
+                          propertyId: propertyId,
+                          previewTime: state.selectedTime,
+                          previewDate: DateFormat('yyyy-MM-dd', 'en')
+                              .format(state.selectedDate!),
+                          paymentMethod: paymentMethod,
+                          clientBankilyPhoneNumber: paymentMethod == 'bankily'
+                              ? state.clientBankilyPhoneNumber.trim().isNotEmpty
+                                  ? state.clientBankilyPhoneNumber.trim()
+                                  : null
+                              : null,
+                          bankilyPassCode: paymentMethod == 'bankily'
+                              ? state.bankilyPassCode.trim().isNotEmpty
+                                  ? state.bankilyPassCode.trim()
+                                  : null
+                              : null,
+                        );
+                        context
+                            .read<PreviewPropertyCubit>()
+                            .addPreviewTimeForSpecificProperty(request);
                       }
                     }
                   },

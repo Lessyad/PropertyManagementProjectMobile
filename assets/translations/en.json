@@ -809,5 +809,13 @@
   ,
   "emptyScreenNoProperties": "No properties",
   "emptyScreenAddPropertyToStart": "Add a property to get started",
-  "addNewPropertyButton": "Add property"
+  "addNewPropertyButton": "Add property",
+  "paypalPendingPaymentMessage": "Booking pending — please complete your payment on PayPal to confirm.",
+  "search_criteria_hint": "Search...",
+  "view_contract": "View Contract",
+  "contract_read_required": "Please read the contract before accepting the general conditions",
+  "i_have_read_contract": "I have read and understood the contract",
+  "contract_parties": "Contract Parties",
+  "lessor": "Lessor",
+  "lessee": "Lessee"
 }

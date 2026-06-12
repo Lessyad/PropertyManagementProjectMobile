@@ -128,7 +128,7 @@
   "removeAccountSuccessMessage": "Compte supprimé avec succès",
   "userScreensAppointments": "Mes rendez-vous",
   "userScreensElectronicContracts": "Mes contrats électroniques",
-
+  
   "changePassword": "Changer le mot de passe",
 
   "changePasswordTitle": "Changer le mot de passe",
@@ -803,5 +803,13 @@
   ,
   "emptyScreenNoProperties": "Aucune propriété",
   "emptyScreenAddPropertyToStart": "Ajoutez une propriété pour commencer",
-  "addNewPropertyButton": "Ajouter une propriété"
+  "addNewPropertyButton": "Ajouter une propriété",
+  "paypalPendingPaymentMessage": "Réservation en attente — veuillez compléter votre paiement sur PayPal pour confirmer.",
+  "search_criteria_hint": "Rechercher...",
+  "view_contract": "Consulter le contrat",
+  "contract_read_required": "Veuillez lire le contrat avant d'accepter les conditions générales",
+  "i_have_read_contract": "J'ai lu et compris le contrat",
+  "contract_parties": "Parties du contrat",
+  "lessor": "Bailleur (Loueur)",
+  "lessee": "Locataire"
 }

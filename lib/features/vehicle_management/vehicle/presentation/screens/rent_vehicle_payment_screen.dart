@@ -13,6 +13,8 @@ import '../../../../../core/extensions/request_states_extension.dart';
 import '../../../../../core/utils/enums.dart';
 import '../controller/rent_vehicle_cubit.dart';
 import 'debug_state_screen.dart';
+import '../../../../../core/services/paypal_payment_service.dart';
+import '../../../../../core/services/shared_preferences_service.dart';
 
 class RentVehiclePaymentScreen extends StatefulWidget {
   final String vehicleId;
@@ -37,7 +39,7 @@ class RentVehiclePaymentScreen extends StatefulWidget {
 }
 
 class _RentVehiclePaymentScreenState extends State<RentVehiclePaymentScreen> {
-  String selectedPaymentMethod = 'credit_card';
+  String selectedPaymentMethod = 'paypal';
   final TextEditingController _passCodeController = TextEditingController();
 
   @override
@@ -315,6 +317,17 @@ class _RentVehiclePaymentScreenState extends State<RentVehiclePaymentScreen> {
                           ),
                         ),
                         SizedBox(height: context.scale(16)),
+
+                        // PayPal
+                        _buildPaymentOption(
+                          icon: Icons.payment,
+                          title: 'PayPal',
+                          subtitle: 'Payer avec PayPal de manière sécurisée',
+                          value: 'paypal',
+                          isSelected: selectedPaymentMethod == 'paypal',
+                        ),
+
+                        SizedBox(height: context.scale(12)),
 
                         // Carte bancaire
                         _buildPaymentOption(
@@ -766,7 +779,58 @@ class _RentVehiclePaymentScreenState extends State<RentVehiclePaymentScreen> {
     );
   }
 
-  void _confirmPayment() {
+  Future<void> _processPayPalPayment() async {
+    try {
+      final authToken = SharedPreferencesService().accessToken ?? '';
+      if (authToken.isEmpty) {
+        throw Exception('Token d\'authentification manquant. Veuillez vous reconnecter.');
+      }
+
+      final orderId = DateTime.now().millisecondsSinceEpoch.toString();
+
+      final paymentResponse = await PayPalPaymentService.createPayment(
+        amount: widget.totalPrice,
+        currency: 'USD',
+        orderId: orderId,
+        description: 'Location de véhicule - ${widget.vehicleName}',
+        returnUrl: 'https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/payments/paypal/success',
+        cancelUrl: 'https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/payments/paypal/cancel',
+        authToken: authToken,
+      );
+
+      if (paymentResponse.success && paymentResponse.approvalUrl != null) {
+        await PayPalPaymentService.openPayPalInBrowser(paymentResponse.approvalUrl!);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Redirection vers PayPal...'),
+              backgroundColor: Colors.blue,
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      } else {
+        throw Exception(paymentResponse.errorMessage ?? 'Erreur lors de la création du paiement PayPal');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erreur PayPal: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _confirmPayment() async {
+    // Traitement spécial pour PayPal
+    if (selectedPaymentMethod == 'paypal') {
+      await _processPayPalPayment();
+      return;
+    }
+
     final cubit = context.read<RentVehicleCubit>();
 
     // Vérifier que toutes les données sont remplies

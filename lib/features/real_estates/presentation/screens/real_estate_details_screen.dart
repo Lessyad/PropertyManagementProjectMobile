@@ -134,6 +134,7 @@ class _RealEstateDetailsScreenState extends State<RealEstateDetailsScreen> {
                   ],
                 );
               case RequestState.error:
+              case RequestState.paypalPending:
                 return ErrorAppScreen();
             }
           },

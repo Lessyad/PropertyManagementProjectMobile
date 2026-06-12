@@ -4,6 +4,7 @@ import 'package:enmaa/features/preview_property/data/models/add_new_preview_time
 import 'package:enmaa/features/preview_property/domain/entities/day_and_hours_entity.dart';
 import 'package:enmaa/features/preview_property/domain/use_cases/add_new_preview_time_use_case.dart';
 import 'package:enmaa/features/preview_property/domain/use_cases/get_inspection_amount_to_be_paid_use_case.dart';
+import 'package:enmaa/features/preview_property/domain/use_cases/initiate_paypal_viewing_request_use_case.dart';
 import 'package:equatable/equatable.dart';
 import 'package:enmaa/core/services/paypal_payment_service.dart';
 import '../../domain/use_cases/get_available_hours_for_specific_property_use_case.dart';
@@ -11,16 +12,17 @@ import '../../domain/use_cases/get_available_hours_for_specific_property_use_cas
 part 'preview_property_state.dart';
 
 class PreviewPropertyCubit extends Cubit<PreviewPropertyState> {
-  PreviewPropertyCubit(this._availableHoursForSpecificPropertyUseCase, this._addNewPreviewTimeUseCase,
-      this._getInspectionAmountToBePaidUseCase)
-      : super(PreviewPropertyState());
+  PreviewPropertyCubit(
+    this._availableHoursForSpecificPropertyUseCase,
+    this._addNewPreviewTimeUseCase,
+    this._getInspectionAmountToBePaidUseCase,
+    this._initiatePayPalViewingRequestUseCase,
+  ) : super(PreviewPropertyState());
 
-  final GetAvailableHoursForSpecificPropertyUseCase
-      _availableHoursForSpecificPropertyUseCase;
-
+  final GetAvailableHoursForSpecificPropertyUseCase _availableHoursForSpecificPropertyUseCase;
   final GetInspectionAmountToBePaidUseCase _getInspectionAmountToBePaidUseCase;
-
   final AddNewPreviewTimeUseCase _addNewPreviewTimeUseCase;
+  final InitiatePayPalViewingRequestUseCase _initiatePayPalViewingRequestUseCase;
 
   void changePreviewDateVisibility() {
     emit(state.copyWith(showPreviewDate: !state.showPreviewDate));
@@ -37,58 +39,9 @@ class PreviewPropertyCubit extends Cubit<PreviewPropertyState> {
   void setBankilyPassCode(String code) {
     emit(state.copyWith(bankilyPassCode: code));
   }
+
   void setClientBankilyPhoneNumber(String value) {
     emit(state.copyWith(clientBankilyPhoneNumber: value));
-  }
-
-  /// Traiter le paiement PayPal pour les viewing requests
-  Future<void> processPayPalPayment({
-    required String propertyId,
-    required String authToken,
-  }) async {
-    try {
-      emit(state.copyWith(addNewPreviewTimeState: RequestState.loading));
-
-      // Générer un ID de commande unique
-      final orderId = DateTime.now().millisecondsSinceEpoch.toString();
-
-      // Créer le paiement PayPal
-      final paymentResponse = await PayPalPaymentService.createPayment(
-        amount: double.parse(state.inspectionAmount),
-        currency: 'USD', // ou 'EGP' selon votre configuration
-        orderId: orderId,
-        description: 'Viewing Request Payment - Property ID: $propertyId',
-        returnUrl: 'https://inmaapi-gkgxdtc0c6ded3bk.spaincentral-01.azurewebsites.net/api/payments/paypal/success',
-        cancelUrl: 'https://inmaapi-gkgxdtc0c6ded3bk.spaincentral-01.azurewebsites.net/api/payments/paypal/cancel',
-        authToken: authToken,
-      );
-
-      if (paymentResponse.success && paymentResponse.approvalUrl != null) {
-        // Ouvrir PayPal dans le navigateur
-        final success = await PayPalPaymentService.openPayPalInBrowser(paymentResponse.approvalUrl!);
-        
-        if (success) {
-          emit(state.copyWith(addNewPreviewTimeState: RequestState.loaded));
-          // Ici vous pouvez ajouter une logique pour suivre le statut du paiement
-          // ou rediriger vers une page de confirmation
-        } else {
-          emit(state.copyWith(
-            addNewPreviewTimeState: RequestState.error,
-            addNewPreviewTimeErrorMessage: 'Impossible d\'ouvrir PayPal',
-          ));
-        }
-      } else {
-        emit(state.copyWith(
-          addNewPreviewTimeState: RequestState.error,
-          addNewPreviewTimeErrorMessage: paymentResponse.errorMessage ?? 'Erreur lors de la création du paiement PayPal',
-        ));
-      }
-    } catch (e) {
-      emit(state.copyWith(
-        addNewPreviewTimeState: RequestState.error,
-        addNewPreviewTimeErrorMessage: 'Erreur PayPal: $e',
-      ));
-    }
   }
 
   void selectDate(DateTime? date) {
@@ -142,18 +95,30 @@ class PreviewPropertyCubit extends Cubit<PreviewPropertyState> {
     );
   }
 
-  Future<void> addPreviewTimeForSpecificProperty(
-      AddNewPreviewRequestModel data) async {
+  Future<void> addPreviewTimeForSpecificProperty(AddNewPreviewRequestModel data) async {
     emit(state.copyWith(addNewPreviewTimeState: RequestState.loading));
 
-    final result = await _addNewPreviewTimeUseCase(data);
-    result.fold(
-      (failure) {
-        emit(state.copyWith(
+    if (data.paymentMethod?.toLowerCase() == 'paypal') {
+      // PayPal-first : initier le paiement AVANT de créer la viewing request
+      final result = await _initiatePayPalViewingRequestUseCase(data);
+      result.fold(
+        (failure) => emit(state.copyWith(
             addNewPreviewTimeState: RequestState.error,
-            addNewPreviewTimeErrorMessage: failure.message));
-      },
-      (_) => emit(state.copyWith(addNewPreviewTimeState: RequestState.loaded)),
-    );
+            addNewPreviewTimeErrorMessage: failure.message)),
+        (paypalData) async {
+          emit(state.copyWith(addNewPreviewTimeState: RequestState.paypalPending));
+          await PayPalPaymentService.openPayPalInBrowser(paypalData.approvalUrl);
+        },
+      );
+    } else {
+      // Paiement non-PayPal : créer directement la viewing request
+      final result = await _addNewPreviewTimeUseCase(data);
+      result.fold(
+        (failure) => emit(state.copyWith(
+            addNewPreviewTimeState: RequestState.error,
+            addNewPreviewTimeErrorMessage: failure.message)),
+        (_) => emit(state.copyWith(addNewPreviewTimeState: RequestState.loaded)),
+      );
+    }
   }
 }

@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class PayPalPaymentService {
-  static const String baseUrl = 'https://inmaapi-gkgxdtc0c6ded3bk.spaincentral-01.azurewebsites.net/api/'; // URL cohérente avec api_constants.dart
+  static const String baseUrl = 'https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api';
   
   /// Créer un paiement PayPal pour les viewing requests et propriétés
   static Future<PayPalPaymentResponse> createPayment({

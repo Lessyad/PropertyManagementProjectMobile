@@ -15,15 +15,15 @@ class BookPropertyResponseModel extends BookPropertyResponseEntity {
 
   factory BookPropertyResponseModel.fromJson(Map<String, dynamic> json) {
     return BookPropertyResponseModel(
-      orderId: json['order_id'].toString(),
-      totalPrice: json['total_price'].toString(),
-      platformProfit: json['platform_profit'].toString(),
-      ownerPortion: json['owner_portion'].toString(),
-      paidAmount: json['paid_amount'].toString(),
-      paymentMethod: json['payment_method'].toString(),
-      orderStatus: json['order_status'].toString(),
-      transactionStatus: json['transaction_status'].toString(),
-      gatewayUrl: json['gateway_url']?.toString() ?? '',
+      orderId: (json['orderId'] ?? json['order_id'])?.toString() ?? '',
+      totalPrice: (json['totalPrice'] ?? json['total_price'])?.toString() ?? '0',
+      platformProfit: (json['platformProfit'] ?? json['platform_profit'])?.toString() ?? '0',
+      ownerPortion: (json['ownerPortion'] ?? json['owner_portion'])?.toString() ?? '0',
+      paidAmount: (json['paidAmount'] ?? json['paid_amount'])?.toString() ?? '0',
+      paymentMethod: (json['paymentMethod'] ?? json['payment_method'])?.toString() ?? '',
+      orderStatus: (json['orderStatus'] ?? json['order_status'])?.toString() ?? '',
+      transactionStatus: (json['transactionStatus'] ?? json['transaction_status'])?.toString() ?? '',
+      gatewayUrl: (json['gatewayUrl'] ?? json['gateway_url'])?.toString() ?? '',
     );
   }
 

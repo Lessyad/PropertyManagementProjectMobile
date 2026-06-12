@@ -1,4 +1,4 @@
-enum RequestState { initial, loading, loaded, error }
+enum RequestState { initial, loading, loaded, error, paypalPending }
 
 enum Language { ar, en , fr }
 

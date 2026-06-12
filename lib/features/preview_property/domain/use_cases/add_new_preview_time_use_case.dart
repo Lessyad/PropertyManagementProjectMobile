@@ -9,10 +9,10 @@ import '../../../../core/entites/amenity_entity.dart';
 import '../../../../core/errors/failure.dart';
 
 class AddNewPreviewTimeUseCase {
-  final BasePreviewPropertyRepository _basePreviewPropertyRepository ;
+  final BasePreviewPropertyRepository _basePreviewPropertyRepository;
 
   AddNewPreviewTimeUseCase(this._basePreviewPropertyRepository);
 
-  Future<Either<Failure, void>> call(AddNewPreviewRequestModel data ) =>
-      _basePreviewPropertyRepository.addPreviewTimeForSpecificProperty( data);
+  Future<Either<Failure, void>> call(AddNewPreviewRequestModel data) =>
+      _basePreviewPropertyRepository.addPreviewTimeForSpecificProperty(data);
 }

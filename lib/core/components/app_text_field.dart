@@ -23,6 +23,8 @@ class AppTextField extends StatefulWidget {
   final  FocusNode? focusNode;
   final bool editable;
   final List<TextInputFormatter>? inputFormatters;
+  final bool showBorder;
+  final Color? borderColor;
   const AppTextField({
     super.key,
     this.width = double.infinity,
@@ -46,6 +48,8 @@ class AppTextField extends StatefulWidget {
     this.initialValue,
     this.editable = true,
     this.focusNode ,
+    this.showBorder = false,
+    this.borderColor,
   });
 
   @override
@@ -116,17 +120,23 @@ class _AppTextFieldState extends State<AppTextField> {
                   borderRadius: BorderRadius.circular(widget.borderRadius),
                   borderSide: _hasError
                       ? const BorderSide(color: Colors.red, width: 1)
-                      : BorderSide.none,
+                      : widget.showBorder
+                          ? BorderSide(color: widget.borderColor ?? const Color(0xFFDDE1E7), width: 1)
+                          : BorderSide.none,
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(widget.borderRadius),
                   borderSide: _hasError
-                      ? const BorderSide(color: Colors.red, width: 1)
-                      : BorderSide.none,
+                      ? const BorderSide(color: Colors.red, width: 1.5)
+                      : widget.showBorder
+                          ? const BorderSide(color: Color(0xFF17305D), width: 1.5)
+                          : BorderSide.none,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(widget.borderRadius),
-                  borderSide: BorderSide.none,
+                  borderSide: widget.showBorder
+                      ? BorderSide(color: widget.borderColor ?? const Color(0xFFDDE1E7), width: 1)
+                      : BorderSide.none,
                 ),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               ),

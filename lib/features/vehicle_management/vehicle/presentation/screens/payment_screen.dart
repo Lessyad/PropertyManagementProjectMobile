@@ -21,6 +21,7 @@ import '../../data/models/vehicle_deal_request.dart';
 import '../../data/datasources/vehicle_deal_multipart_corrected.dart';
 import '../../data/datasources/paypal_service.dart';
 import '../../data/datasources/backend_test_service.dart';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
@@ -875,79 +876,119 @@ class _PaymentScreenState extends State<PaymentScreen> {
     }
   }
 
+  // Flux PayPal transactionnel : aucun deal n'est créé tant que le paiement n'est pas confirmé.
+  // 1. Appel à /api/Vehicles/deal/paypal/initiate → backend valide, stocke la réservation, crée le paiement PayPal
+  // 2. Ouverture du navigateur avec l'URL d'approbation PayPal
+  // 3. Sur succès PayPal → backend crée le deal (Active) et la transaction (Completed)
+  // 4. Sur annulation PayPal → backend supprime la réservation pendante (aucun deal créé)
   Future<void> _processPayPalPayment() async {
     try {
-      // Récupérer le token d'authentification
       final authToken = AuthHelper.getAuthToken();
-      if (authToken.isEmpty) {
-        throw Exception('Token d\'authentification manquant');
+      if (authToken.isEmpty) throw Exception('Token d\'authentification manquant');
+
+      const baseUrl = 'https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api';
+      final uri = Uri.parse('$baseUrl/Vehicles/deal/paypal/initiate');
+      final userId = AuthHelper.getAuthenticatedUserId();
+
+      // Construire la requête multipart (même structure que la création normale)
+      final req = http.MultipartRequest('POST', uri)
+        ..headers['Authorization'] = 'Bearer $authToken'
+        ..fields['userId'] = userId.toString()
+        ..fields['isClientUser'] = 'true'
+        ..fields['VehicleId'] = widget.vehicle.id.toString()
+        ..fields['StartDate'] = widget.receptionDate.toIso8601String()
+        ..fields['EndDate'] = widget.deliveryDate.toIso8601String()
+        ..fields['PaymentMethod'] = 'paypal'
+        ..fields['KilometerIllimitedPerDay'] = widget.extraKilometers.toString()
+        ..fields['AllRiskCarInsurance'] = widget.fullInsurance.toString()
+        ..fields['AddChildsChair'] = widget.childSeat.toString()
+        ..fields['PickupAreaId'] = widget.pickupAreaId.toString()
+        ..fields['ReturnAreaId'] = widget.returnAreaId.toString()
+        ..fields['MainDriver.DocumentType'] = widget.mainDriver.documentType
+        ..fields['MainDriver.FirstName'] = widget.mainDriver.firstName
+        ..fields['MainDriver.LastName'] = widget.mainDriver.lastName
+        ..fields['MainDriver.FamilyName'] = widget.mainDriver.familyName
+        ..fields['MainDriver.PhoneNumber'] = widget.mainDriver.phoneNumber
+        ..fields['MainDriver.IdNumber'] = widget.mainDriver.idNumber
+        ..fields['MainDriver.BirthDate'] = widget.mainDriver.birthDate.toIso8601String()
+        ..fields['MainDriver.IdExpiryDate'] = widget.mainDriver.idExpiryDate.toIso8601String()
+        ..fields['MainDriver.DrivingLicenseNumber'] = widget.mainDriver.drivingLicenseNumber
+        ..fields['MainDriver.DrivingLicenseIssueDate'] = widget.mainDriver.drivingLicenseIssueDate.toIso8601String()
+        ..fields['SecondDriverEnabled'] = widget.secondDriverEnabled.toString();
+
+      // Images du conducteur principal
+      if (widget.mainDriver.idCardImage != null) {
+        final bytes = await widget.mainDriver.idCardImage!.readAsBytes();
+        req.files.add(http.MultipartFile.fromBytes('MainDriver.IdCardImage', bytes,
+            filename: 'id_card_${DateTime.now().millisecondsSinceEpoch}.jpg'));
+      }
+      if (widget.mainDriver.drivingLicenseImage != null) {
+        final bytes = await widget.mainDriver.drivingLicenseImage!.readAsBytes();
+        req.files.add(http.MultipartFile.fromBytes('MainDriver.DrivingLicenseImage', bytes,
+            filename: 'license_${DateTime.now().millisecondsSinceEpoch}.jpg'));
       }
 
-      // Test de connectivité backend
-      print('🔍 Test de connectivité backend...');
-      final isBackendConnected = await BackendTestService.testConnection();
-      if (!isBackendConnected) {
-        throw Exception('Backend non accessible. Vérifiez votre connexion réseau et l\'URL du serveur.');
-      }
-
-      // Test de l'endpoint PayPal
-      print('🔍 Test de l\'endpoint PayPal...');
-      final isPayPalEndpointWorking = await BackendTestService.testPayPalEndpoint(authToken);
-      if (!isPayPalEndpointWorking) {
-        throw Exception('Endpoint PayPal non accessible. Vérifiez la configuration du backend.');
-      }
-
-      // Générer un ID de commande unique
-      final orderId = DateTime.now().millisecondsSinceEpoch;
-
-      // Créer le paiement PayPal avec la devise automatique
-      final currencyService = CurrencyService();
-      final currentCurrency = currencyService.getPreferredCurrency();
-      
-      final paymentResponse = await PayPalService.createPayment(
-        amount: widget.totalPrice,
-        currency: currentCurrency.code, // Devise automatique basée sur le pays
-        orderId: orderId,
-        description: 'Location de véhicule - ${widget.vehicle.makeName} ${widget.vehicle.modelName}',
-        returnUrl: 'http://192.168.100.173:5000/api/payments/paypal/success',
-        cancelUrl: 'http://192.168.100.173:5000/api/payments/paypal/cancel',
-        authToken: authToken,
-      );
-
-      if (paymentResponse.success && paymentResponse.approvalUrl != null) {
-        // Ouvrir PayPal dans le navigateur
-        final Uri paypalUrl = Uri.parse(paymentResponse.approvalUrl!);
-
-        if (await canLaunchUrl(paypalUrl)) {
-          await launchUrl(paypalUrl, mode: LaunchMode.externalApplication);
-
-          // Afficher un message d'information
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Redirection vers PayPal...',
-                style: getRegularStyle(color: Colors.white, fontSize: FontSize.s14),
-              ),
-              backgroundColor: Colors.blue,
-              duration: const Duration(seconds: 3),
-            ),
-          );
-        } else {
-          throw Exception('Impossible d\'ouvrir PayPal');
+      // Deuxième conducteur
+      if (widget.secondDriverEnabled && widget.secondDriver != null) {
+        final d = widget.secondDriver!;
+        req.fields['SecondDriver.DocumentType'] = d.documentType;
+        req.fields['SecondDriver.FirstName'] = d.firstName;
+        req.fields['SecondDriver.LastName'] = d.lastName;
+        req.fields['SecondDriver.FamilyName'] = d.familyName;
+        req.fields['SecondDriver.PhoneNumber'] = d.phoneNumber;
+        req.fields['SecondDriver.IdNumber'] = d.idNumber;
+        req.fields['SecondDriver.BirthDate'] = d.birthDate.toIso8601String();
+        req.fields['SecondDriver.IdExpiryDate'] = d.idExpiryDate.toIso8601String();
+        req.fields['SecondDriver.DrivingLicenseNumber'] = d.drivingLicenseNumber;
+        req.fields['SecondDriver.DrivingLicenseIssueDate'] = d.drivingLicenseIssueDate.toIso8601String();
+        if (d.idCardImage != null) {
+          final bytes = await d.idCardImage!.readAsBytes();
+          req.files.add(http.MultipartFile.fromBytes('SecondDriver.IdCardImage', bytes,
+              filename: 'id2_${DateTime.now().millisecondsSinceEpoch}.jpg'));
         }
-      } else {
-        throw Exception(paymentResponse.errorMessage ?? 'Erreur lors de la création du paiement PayPal');
+        if (d.drivingLicenseImage != null) {
+          final bytes = await d.drivingLicenseImage!.readAsBytes();
+          req.files.add(http.MultipartFile.fromBytes('SecondDriver.DrivingLicenseImage', bytes,
+              filename: 'license2_${DateTime.now().millisecondsSinceEpoch}.jpg'));
+        }
+      }
+
+      final streamed = await req.send();
+      final responseBody = await streamed.stream.bytesToString();
+      print('📡 Initiate Response ${streamed.statusCode}: $responseBody');
+
+      if (streamed.statusCode != 200) {
+        throw Exception('Erreur serveur (${streamed.statusCode}): $responseBody');
+      }
+
+      final data = json.decode(responseBody) as Map<String, dynamic>;
+      final approvalUrl = data['approvalUrl'] as String?;
+      if (approvalUrl == null || approvalUrl.isEmpty) {
+        throw Exception('URL PayPal manquante dans la réponse du serveur');
+      }
+
+      final paypalUri = Uri.parse(approvalUrl);
+      if (!await canLaunchUrl(paypalUri)) throw Exception('Impossible d\'ouvrir PayPal');
+
+      await launchUrl(paypalUri, mode: LaunchMode.externalApplication);
+
+      setState(() => _isProcessing = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Complétez le paiement sur PayPal. Votre réservation sera confirmée automatiquement.',
+              style: getRegularStyle(color: Colors.white, fontSize: FontSize.s14),
+            ),
+            backgroundColor: Colors.blue,
+            duration: const Duration(seconds: 6),
+          ),
+        );
+        Navigator.of(context).popUntil((route) => route.isFirst);
       }
     } catch (e) {
-      setState(() {
-        _isProcessing = false;
-      });
-
-      // Afficher un message d'erreur
-      ErrorHandlerService.showError(
-        context: context,
-        errorResponse: e,
-      );
+      setState(() => _isProcessing = false);
+      ErrorHandlerService.showError(context: context, errorResponse: e);
     }
   }
 

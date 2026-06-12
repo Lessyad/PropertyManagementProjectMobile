@@ -153,6 +153,7 @@ class _RentVehicleDataScreenState extends State<RentVehicleDataScreen> {
                       padding: EdgeInsets.zero,
                       controller: cubit.phoneNumberController,
                       validator: _validatePhone,
+                      showBorder: true,
                       onChanged: (value) {
                         cubit.setPhoneNumber(value);
                       },
@@ -199,6 +200,7 @@ class _RentVehicleDataScreenState extends State<RentVehicleDataScreen> {
                 padding: EdgeInsets.zero,
                 controller: cubit.nameController,
                 validator: _validateName,
+                showBorder: true,
                 onChanged: (value) {
                   cubit.setUserName(value);
                 },
@@ -232,6 +234,7 @@ class _RentVehicleDataScreenState extends State<RentVehicleDataScreen> {
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
                 ],
+                showBorder: true,
                 onChanged: (value) {
                   cubit.setIDUserNumber(value);
                 },
@@ -264,6 +267,7 @@ class _RentVehicleDataScreenState extends State<RentVehicleDataScreen> {
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
                 ],
+                showBorder: true,
                 onChanged: (value) {
                   cubit.setAge(value);
                 },
