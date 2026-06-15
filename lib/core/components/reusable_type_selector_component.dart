@@ -13,6 +13,7 @@ class TypeSelectorComponent<T> extends StatelessWidget {
   final T? currentType;
   final ValueChanged<T> onTap;
   final String Function(T)? getIcon;
+  final Widget Function(T)? getIconWidget;
   final String Function(T) getLabel;
 
   final double selectorWidth, selectorHeight;
@@ -25,6 +26,7 @@ class TypeSelectorComponent<T> extends StatelessWidget {
     required this.getLabel,
     required this.selectorWidth,
     this.getIcon,
+    this.getIconWidget,
     this.selectorHeight = 40,
   });
 
@@ -78,13 +80,21 @@ class TypeSelectorComponent<T> extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (getIcon != null)
+          if (getIconWidget != null) ...[
+            SizedBox(
+              width: context.scale(20),
+              height: context.scale(20),
+              child: FittedBox(fit: BoxFit.contain, child: getIconWidget!(type)),
+            ),
+            SizedBox(width: context.scale(6)),
+          ] else if (getIcon != null) ...[
             SvgImageComponent(
               iconPath: getIcon!(type),
               width: context.scale(16),
               height: context.scale(16),
             ),
-          if (getIcon != null) SizedBox(width: context.scale(6)),
+            SizedBox(width: context.scale(6)),
+          ],
           Flexible(
             child: Text(
               getLabel(type),

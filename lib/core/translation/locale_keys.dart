@@ -1144,4 +1144,12 @@ abstract class LocaleKeys {
 
   // PayPal
   static const String paypalPendingPaymentMessage = 'paypalPendingPaymentMessage';
+
+  // Policies
+  static const String policiesScreenTitle = 'policiesScreenTitle';
+  static const String policyTypePrivacy = 'policyTypePrivacy';
+  static const String policyTypeTerms = 'policyTypeTerms';
+  static const String policiesLoadError = 'policiesLoadError';
+  static const String policiesEmpty = 'policiesEmpty';
+  static const String returnDateMustBeAfterPickup = 'returnDateMustBeAfterPickup';
 }

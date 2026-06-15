@@ -325,9 +325,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                         SizedBox(height: context.scale(16)),
 
                         InkWell(
-                          onTap: (){
-
-                          },
+                          onTap: () {},
                           child: Row(
                             children: [
                               SvgImageComponent(

@@ -43,4 +43,7 @@ class RoutersNames {
   static const String rentVehicleScreen = "rent_vehicle_screen";
   static const String locationPickerScreen = "/location-picker-screen";
   static const String homeVehicleScreen = "home_vehicle_screen";
+  static const String policiesScreen = "/policies-screen";
+  static const String policyDetailScreen = "/policy-detail-screen";
+  static const String policiesContentScreen = "/policies-content-screen";
 }

@@ -212,13 +212,16 @@ class RealEstateDetailsSpecifications extends StatelessWidget {
               color: iconColor,
             ),
         const SizedBox(width: 8),
-        Text(
-          text,
-          style: textStyle ??
-              getRegularStyle(
-                color: ColorManager.blackColor,
-                fontSize: FontSize.s10,
-              ),
+        Expanded(
+          child: Text(
+            text,
+            overflow: TextOverflow.ellipsis,
+            style: textStyle ??
+                getRegularStyle(
+                  color: ColorManager.blackColor,
+                  fontSize: FontSize.s10,
+                ),
+          ),
         ),
       ],
     );

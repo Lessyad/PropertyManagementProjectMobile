@@ -49,6 +49,7 @@ class ApiConstants {
   static const String balance = "${baseUrl}payments/balance/";
   static const String contracts = "${baseUrl}contracts";
   static const String rentalHistory = "${baseUrl}rentals/history/";
+  static const String policies = "${baseUrl}policies";
   static const String contact = "${baseUrl}contact-us/";
   static const String notification = "${baseUrl}notifications/devices/";
   static const String updateFcmToken = "${baseUrl}auth/update-fcm-token/";

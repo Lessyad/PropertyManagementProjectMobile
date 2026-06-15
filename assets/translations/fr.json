@@ -179,8 +179,6 @@
   "country" : "Pays",
   "countryRequired": "Le pays est requis",
 
-  "countryRequired": "Le pays est requis",
-
   "descriptionLabel": "Description :",
 
   "propertyDetailsLabel": "Détails de la propriété :",
@@ -696,7 +694,6 @@
   "hours": "Heures",
   "total": "Total",
   "at": "à",
-  "yes": "Oui",
   "brand_label": "Marque",
   "model_label": "Modèle",
   "color_label": "Couleur",
@@ -812,7 +809,14 @@
   "i_have_read_contract": "J'ai lu et compris le contrat",
   "contract_parties": "Parties du contrat",
   "lessor": "Bailleur (Loueur)",
-  "lessee": "Locataire"
+  "lessee": "Locataire",
+  "policiesScreenTitle": "Politiques",
+  "policyTypePrivacy": "Politique de confidentialité",
+  "policyTypeTerms": "Conditions générales d'utilisation",
+  "policiesLoadError": "Impossible de charger les politiques",
+  "policiesEmpty": "Aucune politique disponible",
+  "returnDateMustBeAfterPickup": "La date et l'heure de retour doivent être après la date et l'heure de réception",
+
   "vehiclesSearchscreen": "Véhicules",
   "contact_us": "Contactez-nous",
   "name": "Nom",

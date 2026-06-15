@@ -1986,6 +1986,33 @@ class _RentVehicleDataScreenEnhancedState
   }
 
   void _submitForm() {
+    // Vérification que la date de retour est après la date de réception
+    final receptionDT = DateTime(
+      widget.receptionDate.year, widget.receptionDate.month, widget.receptionDate.day,
+      widget.receptionTime.hour, widget.receptionTime.minute,
+    );
+    final deliveryDT = DateTime(
+      widget.deliveryDate.year, widget.deliveryDate.month, widget.deliveryDate.day,
+      widget.deliveryTime.hour, widget.deliveryTime.minute,
+    );
+
+    if (!receptionDT.isBefore(deliveryDT)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            tr(LocaleKeys.returnDateMustBeAfterPickup),
+            style: const TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(16),
+          shape: matrial.RoundedRectangleBorder(borderRadius: matrial.BorderRadius.circular(12)),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+      return;
+    }
+
     // Validation et soumission du formulaire
     if (_validateForm()) {
       // IMPORTANT: le total est déjà calculé dans `RentalSummaryScreen` (jours+heures + options)

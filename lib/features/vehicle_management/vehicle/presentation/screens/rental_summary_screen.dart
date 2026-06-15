@@ -868,6 +868,33 @@ class RentalSummaryScreen extends StatelessWidget {
   }
 
   void _confirmRental(BuildContext context) {
+    // Validation : la date/heure de retour doit être APRÈS la date/heure de réception
+    final receptionDateTime = DateTime(
+      receptionDate.year, receptionDate.month, receptionDate.day,
+      receptionTime.hour, receptionTime.minute,
+    );
+    final deliveryDateTime = DateTime(
+      deliveryDate.year, deliveryDate.month, deliveryDate.day,
+      deliveryTime.hour, deliveryTime.minute,
+    );
+
+    if (!receptionDateTime.isBefore(deliveryDateTime)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            tr(LocaleKeys.returnDateMustBeAfterPickup),
+            style: const TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+      return;
+    }
+
     final optionsController = Get.find<GlobalRentalOptionsController>();
     final basePrice = _calculateRentalPrice(vehicle.dailyPrice);
     final extraCosts = _calculateExtraCosts(optionsController);
