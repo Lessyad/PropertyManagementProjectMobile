@@ -10,6 +10,7 @@ import 'package:enmaa/features/add_new_real_estate/presentation/screens/add_new_
 import 'package:enmaa/features/book_property/book_property_DI.dart';
 import 'package:enmaa/features/book_property/presentation/controller/book_property_cubit.dart';
 import 'package:enmaa/features/book_property/presentation/screens/sale_details_screen.dart';
+import 'package:enmaa/features/my_profile/modules/user_data_module/user_data_DI.dart';
 import 'package:flutter/material.dart';
 import 'package:enmaa/core/components/app_bar_component.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,6 +53,7 @@ class _BookPropertyMainScreenState extends State<BookPropertyMainScreen> {
     return BlocProvider(
       create: (context) {
         BookPropertyDi().setup();
+        UserDataDi().setup();
         return BookPropertyCubit(
           ServiceLocator.getIt(),
           ServiceLocator.getIt(),

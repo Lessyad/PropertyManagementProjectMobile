@@ -30,10 +30,21 @@ class UserDataModel extends UserDataEntity {
     return s;
   }
 
+  static String? _readAny(Map<String, dynamic> json, List<String> keys) {
+    for (final key in keys) {
+      final value = json[key];
+      final text = value?.toString().trim();
+      if (text != null && text.isNotEmpty) {
+        return text;
+      }
+    }
+    return null;
+  }
+
   factory UserDataModel.fromJson(Map<String, dynamic> json) {
     return UserDataModel(
-      phoneNumber: json['phone_number'],
-      userName: json['full_name'],
+      phoneNumber: _readAny(json, ['phone_number', 'phoneNumber']) ?? '',
+      userName: _readAny(json, ['full_name', 'fullName', 'name']) ?? '',
       city: json['city'] != null ? CityModel.fromJson(json['city']) : null,
       state: json['city'] != null && json['city']['state'] != null
           ? StateModel.fromJson(json['city']['state'])
@@ -46,10 +57,14 @@ class UserDataModel extends UserDataEntity {
       // frozenBalance: json['frozen_balance'],
       availableBalance: json['available_balance']?.toString() ?? '0', // Convert to string
     frozenBalance: json['frozen_balance']?.toString() ?? '0',
-      idNumber: json['id_number'],
-      dateOfBirth: _parseDateOfBirth(json['date_of_birth']),
-      idExpirationDate: json['id_expiry_date']?.toString() ?? '0',
-      idImage: json['id_image'],
+      idNumber: _readAny(json, ['id_number', 'idNumber', 'identity_number']),
+      dateOfBirth: _parseDateOfBirth(
+        _readAny(json, ['date_of_birth', 'dateOfBirth', 'birth_date']),
+      ),
+      idExpirationDate: _parseDateOfBirth(
+        _readAny(json, ['id_expiry_date', 'idExpirationDate', 'id_expiration_date']),
+      ),
+      idImage: _readAny(json, ['id_image', 'idImage']),
       dateJoined: json['date_joined'],
     );
   }

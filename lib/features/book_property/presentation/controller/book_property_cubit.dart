@@ -4,10 +4,13 @@ import 'package:bloc/bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:enmaa/core/constants/local_keys.dart';
 import 'package:enmaa/core/extensions/buyer_type_extension.dart';
+import 'package:enmaa/core/services/service_locator.dart';
 import 'package:enmaa/core/services/shared_preferences_service.dart';
 import 'package:enmaa/core/translation/locale_keys.dart';
 import 'package:enmaa/features/book_property/domain/entities/book_property_response_entity.dart';
 import 'package:enmaa/features/book_property/domain/use_cases/get_property_sale_details_use_case.dart';
+import 'package:enmaa/features/my_profile/modules/user_data_module/domain/entity/user_data_entity.dart';
+import 'package:enmaa/features/my_profile/modules/user_data_module/domain/use_cases/get_user_data_use_case.dart';
 import 'package:equatable/equatable.dart';
 import 'package:enmaa/core/services/paypal_payment_service.dart';
 
@@ -31,31 +34,91 @@ class BookPropertyCubit extends Cubit<BookPropertyState> {
   // 🆕 Variables pour stocker les informations de la propriété
   final String? _propertyOperation;
   final String? _propertyMonthlyRentPeriod;
+  final GetUserDataUseCase? _getUserDataUseCase;
 
   BookPropertyCubit(
       this._getPropertySaleDetailsUseCase,
       this._bookPropertyUseCase,
       {
+        GetUserDataUseCase? getUserDataUseCase,
         String? operation, // 🆕 Paramètre optionnel
         String? monthlyRentPeriod, // 🆕 Paramètre optionnel
       }
   ) : _propertyOperation = operation,
       _propertyMonthlyRentPeriod = monthlyRentPeriod,
+      _getUserDataUseCase = getUserDataUseCase ??
+          (ServiceLocator.getIt.isRegistered<GetUserDataUseCase>()
+              ? ServiceLocator.getIt<GetUserDataUseCase>()
+              : null),
       super(BookPropertyState()){
 
-    nameController.text = SharedPreferencesService().userName ;
-    phoneNumberController.text = SharedPreferencesService().userPhone ;
-    iDNumberController.text = SharedPreferencesService().getValue(LocalKeys.userIdNumber) ?? '';
+    _fillBuyerDataFromCache();
+    loadBuyerData();
+  }
 
+  String _stringValue(dynamic value) => value?.toString().trim() ?? '';
+
+  DateTime? _parseStoredDate(dynamic value) {
+    final text = _stringValue(value);
+    if (text.isEmpty || text == '0') return null;
+    return DateTime.tryParse(text);
+  }
+
+  Future<void> loadBuyerData() async {
+    _fillBuyerDataFromCache();
+
+    if (_getUserDataUseCase == null) return;
+
+    final result = await _getUserDataUseCase!.call();
+    result.fold(
+      (_) {},
+      (userData) async {
+        await _saveBuyerDataToCache(userData);
+        _fillBuyerDataFromCache();
+      },
+    );
+  }
+
+  Future<void> _saveBuyerDataToCache(UserDataEntity userData) async {
+    final sharedPrefs = SharedPreferencesService();
+
+    await sharedPrefs.storeValue(LocalKeys.userName, userData.userName);
+    await sharedPrefs.storeValue(LocalKeys.userPhone, userData.phoneNumber);
+
+    final idNumber = _stringValue(userData.idNumber);
+    if (idNumber.isNotEmpty && idNumber != '0') {
+      await sharedPrefs.storeValue(LocalKeys.userIdNumber, idNumber);
+    }
+
+    final dateOfBirth = _stringValue(userData.dateOfBirth);
+    if (dateOfBirth.isNotEmpty && dateOfBirth != '0') {
+      await sharedPrefs.storeValue(LocalKeys.userDateOfBirth, dateOfBirth);
+    }
+
+    final idExpirationDate = _stringValue(userData.idExpirationDate);
+    if (idExpirationDate.isNotEmpty && idExpirationDate != '0') {
+      await sharedPrefs.storeValue(
+          LocalKeys.userIdExpirationDate, idExpirationDate);
+    }
+  }
+
+  void _fillBuyerDataFromCache() {
+    final sharedPrefs = SharedPreferencesService();
+    final idNumber = _stringValue(sharedPrefs.getValue(LocalKeys.userIdNumber));
+
+    nameController.text = sharedPrefs.userName;
+    phoneNumberController.text = sharedPrefs.userPhone;
+    iDNumberController.text = idNumber;
 
     print('currentCountryCode: $currentCountryCode');
     emit(state.copyWith(
-      userName: SharedPreferencesService().userName,
-      phoneNumber: SharedPreferencesService().userPhone,
-      userID: SharedPreferencesService().getValue(LocalKeys.userIdNumber) ?? '',
-      birthDate: SharedPreferencesService().getValue(LocalKeys.userDateOfBirth) != null ? DateTime.parse(SharedPreferencesService().getValue(LocalKeys.userDateOfBirth)) : null,
-      idExpirationDate: SharedPreferencesService().getValue(LocalKeys.userIdExpirationDate) != null ? DateTime.parse(SharedPreferencesService().getValue(LocalKeys.userIdExpirationDate)) : null,
-      countryCode: currentCountryCode ,
+      userName: sharedPrefs.userName,
+      phoneNumber: sharedPrefs.userPhone,
+      userID: idNumber,
+      birthDate: _parseStoredDate(sharedPrefs.getValue(LocalKeys.userDateOfBirth)),
+      idExpirationDate:
+          _parseStoredDate(sharedPrefs.getValue(LocalKeys.userIdExpirationDate)),
+      countryCode: currentCountryCode,
     ));
   }
 
