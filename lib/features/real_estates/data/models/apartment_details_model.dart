@@ -78,7 +78,7 @@ class ApartmentDetailsModel extends ApartmentDetailsEntity {
           '',
       officePhoneNumber:
           propertyData['partner_info']?['phone_number'].toString() ?? '',
-      isOwner: propertyData['is_owner'] ?? false,
+      isOwner: propertyData['isOwner'] ?? propertyData['is_owner'] ?? false,
     );
   }
 }

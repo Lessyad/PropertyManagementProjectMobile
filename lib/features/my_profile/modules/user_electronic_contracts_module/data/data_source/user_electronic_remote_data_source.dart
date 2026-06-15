@@ -41,8 +41,11 @@ class UserElectronicRemoteDataSource extends BaseUserElectronicContractsDataSour
     );
 
     List<UserElectronicContractModel> contracts = [];
-    for (var contract in response.data['results']) {
-      contracts.add(UserElectronicContractModel.fromJson(contract));
+    final results = response.data is Map ? response.data['results'] : null;
+    if (results is List) {
+      for (var contract in results) {
+        contracts.add(UserElectronicContractModel.fromJson(contract));
+      }
     }
 
     return contracts ;

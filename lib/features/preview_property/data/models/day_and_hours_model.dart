@@ -13,26 +13,31 @@ class DayAndHoursModel extends DayAndHoursEntity {
     final startHour = json['start_hour'] ?? '09:00';
     final endHour = json['end_hour'] ?? '19:00';
 
-    final busyHours = (json['busy_hours'] as List<dynamic>).map((e) => e.toString()).toList();
+    final busyHoursRaw = json['busy_hours'];
+    final busyHours = busyHoursRaw is List
+        ? busyHoursRaw.map((e) => e.toString()).toList()
+        : <String>[];
 
     final availableHours = generateAvailableHours(startHour, endHour, busyHours);
 
     return DayAndHoursModel(
-      currentDay: json['date'] as String,
+      currentDay: json['date']?.toString() ?? '',
       hours: availableHours,
       startHour: startHour,
       endHour: endHour,
     );
   }
 
+  static int _parseHour(String time) {
+    return int.tryParse(time.split(':')[0]) ?? 0;
+  }
+
   static List<String> generateAvailableHours(String startHour, String endHour, List<String> busyHours) {
     final availableHours = <String>[];
-    final startTime = int.parse(startHour.split(':')[0]);
-    final endTime = int.parse(endHour.split(':')[0]);
+    final startTime = _parseHour(startHour);
+    final endTime = _parseHour(endHour);
 
-    final busyHourSet = busyHours.map((time) {
-      return int.parse(time.split(':')[0]);
-    }).toSet();
+    final busyHourSet = busyHours.map(_parseHour).toSet();
 
     for (int hour = startTime; hour < endTime; hour++) {
       if (!busyHourSet.contains(hour)) {

@@ -811,6 +811,7 @@
   "emptyScreenNoProperties": "لا توجد عقارات",
   "emptyScreenAddPropertyToStart": "أضف عقارا للبدء",
   "addNewPropertyButton": "أضف عقارا",
+<<<<<<< HEAD
   "paypalPendingPaymentMessage": "الحجز قيد الانتظار — يرجى إتمام الدفع عبر PayPal للتأكيد.",
   "search_criteria_hint": "بحث...",
   "view_contract": "استعراض العقد",
@@ -818,14 +819,8 @@
   "i_have_read_contract": "لقد قرأت العقد وفهمته",
   "contract_parties": "أطراف العقد",
   "lessor": "المؤجر",
-  "lessee": "المستأجر",
-  "policiesScreenTitle": "السياسات",
-  "policyTypePrivacy": "سياسة الخصوصية",
-  "policyTypeTerms": "شروط الاستخدام",
-  "policiesLoadError": "تعذر تحميل السياسات",
-  "policiesEmpty": "لا توجد سياسات متاحة",
-  "returnDateMustBeAfterPickup": "يجب أن يكون تاريخ ووقت الإرجاع بعد تاريخ ووقت الاستلام",
-
+  "lessee": "المستأجر"
+=======
   "vehiclesSearchscreen": "المركبات",
   "contact_us": "تواصل معنا",
   "name": "الاسم",
@@ -841,4 +836,5 @@
   "nomElectronicContracts": "لا توجد عقود إلكترونية",
   "myElectronicContractsAppearance": "ستظهر عقودك الإلكترونية هنا",
   "myRealEstate": "عقاراتي"
+>>>>>>> ad940ff (Add exception handling)
 }

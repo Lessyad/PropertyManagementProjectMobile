@@ -83,13 +83,13 @@ class ApartmentModel extends ApartmentEntity {
       isInWishlist: json['is_in_wishlist'] ?? true,
       floor: propertyData['floor'] is int
           ? propertyData['floor']
-          : int.parse(propertyData['floor'].toString()),
+          : int.tryParse(propertyData['floor'].toString()) ?? 0,
       rooms: propertyData['rooms'] is int
           ? propertyData['rooms']
-          : int.parse(propertyData['rooms'].toString()),
+          : int.tryParse(propertyData['rooms'].toString()) ?? 0,
       bathrooms: propertyData['bathrooms'] is int
           ? propertyData['bathrooms']
-          : int.parse(propertyData['bathrooms'].toString()),
+          : int.tryParse(propertyData['bathrooms'].toString()) ?? 0,
       isFurnished: propertyData['is_furnitured'] ?? false,
       // latitude: propertyData['latitude'] ?? propertyData['latitude'],
       // longitude: propertyData['longitude'] ?? propertyData['longitude'],

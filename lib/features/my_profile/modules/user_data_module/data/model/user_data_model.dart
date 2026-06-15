@@ -38,7 +38,9 @@ class UserDataModel extends UserDataEntity {
       state: json['city'] != null && json['city']['state'] != null
           ? StateModel.fromJson(json['city']['state'])
           : null,
-      country: json['city'] != null ? CountryModel.fromJson(json['city']['state']['country']) : null,
+      country: (json['city'] != null && json['city']['state'] != null && json['city']['state']['country'] != null)
+          ? CountryModel.fromJson(json['city']['state']['country'])
+          : null,
       notificationEnabled: json['notifications_enabled'],
       // availableBalance: json['available_balance'],
       // frozenBalance: json['frozen_balance'],

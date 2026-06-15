@@ -106,7 +106,10 @@ class ServerFailure extends Failure {
 
       case 500:
         if (messageError is Map<String, dynamic>) {
-          final detail = messageError['detail']?.toString() ?? '';
+          final detail = messageError['detail']?.toString() ??
+              messageError['details']?.toString() ??
+              messageError['Details']?.toString() ??
+              '';
           if (detail.isNotEmpty) {
             return ServerFailure(ServerFailure._parseBankilyError(detail));
           }

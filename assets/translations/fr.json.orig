@@ -179,6 +179,8 @@
   "country" : "Pays",
   "countryRequired": "Le pays est requis",
 
+  "countryRequired": "Le pays est requis",
+
   "descriptionLabel": "Description :",
 
   "propertyDetailsLabel": "Détails de la propriété :",
@@ -694,6 +696,7 @@
   "hours": "Heures",
   "total": "Total",
   "at": "à",
+  "yes": "Oui",
   "brand_label": "Marque",
   "model_label": "Modèle",
   "color_label": "Couleur",
@@ -802,6 +805,7 @@
   "emptyScreenNoProperties": "Aucune propriété",
   "emptyScreenAddPropertyToStart": "Ajoutez une propriété pour commencer",
   "addNewPropertyButton": "Ajouter une propriété",
+<<<<<<< HEAD
   "paypalPendingPaymentMessage": "Réservation en attente — veuillez compléter votre paiement sur PayPal pour confirmer.",
   "search_criteria_hint": "Rechercher...",
   "view_contract": "Consulter le contrat",
@@ -809,14 +813,8 @@
   "i_have_read_contract": "J'ai lu et compris le contrat",
   "contract_parties": "Parties du contrat",
   "lessor": "Bailleur (Loueur)",
-  "lessee": "Locataire",
-  "policiesScreenTitle": "Politiques",
-  "policyTypePrivacy": "Politique de confidentialité",
-  "policyTypeTerms": "Conditions générales d'utilisation",
-  "policiesLoadError": "Impossible de charger les politiques",
-  "policiesEmpty": "Aucune politique disponible",
-  "returnDateMustBeAfterPickup": "La date et l'heure de retour doivent être après la date et l'heure de réception",
-
+  "lessee": "Locataire"
+=======
   "vehiclesSearchscreen": "Véhicules",
   "contact_us": "Contactez-nous",
   "name": "Nom",
@@ -832,4 +830,5 @@
   "nomElectronicContracts": "Aucun contrat électronique",
   "myElectronicContractsAppearance": "Vos contrats électroniques apparaîtront ici",
   "myRealEstate": "Mes biens immobiliers"
+>>>>>>> ad940ff (Add exception handling)
 }

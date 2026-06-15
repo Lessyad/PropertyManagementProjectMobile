@@ -59,7 +59,10 @@ class _RealEstateDetailsScreenState extends State<RealEstateDetailsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          RealEstateDetailsBanner(banners: banners),
+                          RealEstateDetailsBanner(
+                            banners: banners,
+                            isOwner: currentProperty.isOwner,
+                          ),
                           Expanded(
                             child: Padding(
                               padding: EdgeInsets.all(context.scale(8)),

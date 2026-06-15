@@ -76,10 +76,14 @@ class HomeRemoteDataSource extends BaseHomeRemoteData {
       jsonResponse = [];
     }
 
-    List<NotificationModel> notifications = jsonResponse.map((notification) {
-      return NotificationModel.fromJson(notification);
-    }).toList();
-
+    List<NotificationModel> notifications = [];
+    for (final notification in jsonResponse) {
+      try {
+        notifications.add(NotificationModel.fromJson(notification));
+      } catch (_) {
+        // Ignore malformed notification entries
+      }
+    }
 
     return notifications;
   }

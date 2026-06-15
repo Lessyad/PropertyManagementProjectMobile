@@ -27,11 +27,17 @@ class UserAppointmentsRemoteDataSource extends BaseUserAppointmentsRemoteData {
       // options: Options(contentType: 'multipart/form-data'),
     );
 
-    List<dynamic> jsonResponse = response.data['results'] ?? [];
+    final rawResults = response.data is Map ? response.data['results'] : null;
+    List<dynamic> jsonResponse = rawResults is List ? rawResults : [];
 
-    List<AppointmentModel> properties = jsonResponse.map((jsonItem) {
-      return AppointmentModel.fromJson(jsonItem);
-    }).toList();
+    List<AppointmentModel> properties = [];
+    for (final jsonItem in jsonResponse) {
+      try {
+        properties.add(AppointmentModel.fromJson(jsonItem));
+      } catch (_) {
+        // Ignore malformed appointment entries
+      }
+    }
 
     return properties;
   }
@@ -46,7 +52,7 @@ class UserAppointmentsRemoteDataSource extends BaseUserAppointmentsRemoteData {
       options: Options(contentType: 'multipart/form-data'),
     );
 
-    return response.data['message'];
+    return response.data is Map ? (response.data['message']?.toString() ?? '') : '';
   }
 
   @override

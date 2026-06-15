@@ -191,7 +191,7 @@ class _AddNewRealEstatePriceScreenState extends State<AddNewRealEstatePriceScree
             ),
 
 
-            const PaymentOptionsComponent(),
+            // const PaymentOptionsComponent(),
 
           ],
         ),

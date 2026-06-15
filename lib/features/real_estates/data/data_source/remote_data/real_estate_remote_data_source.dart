@@ -32,15 +32,15 @@ class RealEstateRemoteDataSource extends BaseRealEstateRemoteData {
     final List<dynamic> jsonResponse = response.data['results'] ?? [];
     print('JSON results count: ${jsonResponse.length}, total: $totalCount');
 
-    final List<PropertyEntity> properties = jsonResponse.map((jsonItem) {
+    final List<PropertyEntity> properties = [];
+    for (final jsonItem in jsonResponse) {
       try {
-        return PropertyModel.fromJson(jsonItem);
+        properties.add(PropertyModel.fromJson(jsonItem));
       } catch (e, stack) {
         print('Erreur de parsing pour un item: $e');
         print(stack);
-        rethrow;
       }
-    }).toList();
+    }
 
     print('Nombre de propriétés parsées: ${properties.length}');
     return PagedPropertyResponse(items: properties, totalCount: totalCount);

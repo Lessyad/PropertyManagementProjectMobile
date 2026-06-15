@@ -45,8 +45,16 @@ class PreviewPropertyRemoteDataSource extends BasePreviewPropertyDataSource {
     final response = await dioService.get(
       url: '${ApiConstants.propertyOrderDetails}/$propertyId/',
     );
-    return response.data?['viewing_request_amount']?.toString() ?? '0';
+<<<<<<< HEAD
+    return response.data['viewing_request_amount'].toString();
   }
+=======
+
+
+    return response.data?['viewing_request_amount']?.toString() ?? '0';
+
+   }
+>>>>>>> ad940ff (Add exception handling)
 
   @override
   Future<void> addNewPreviewTime(AddNewPreviewRequestModel data) async {

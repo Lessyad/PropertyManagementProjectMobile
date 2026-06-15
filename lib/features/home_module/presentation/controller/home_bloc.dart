@@ -253,7 +253,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             image: AppAssets.aqarIcon,
           ),
           AppServiceEntity(
-            text: LocaleKeys.vehiclesSearchscreen,
+            text: LocaleKeys.cars,
+            routeKey: LocaleKeys.vehiclesSearchscreen,
             image: AppAssets.carIcon,
           ),
           AppServiceEntity(

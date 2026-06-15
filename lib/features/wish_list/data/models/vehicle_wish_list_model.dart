@@ -26,7 +26,7 @@ class VehicleWishListModel extends VehicleWishListEntity {
       vehicleBrand: json['vehicleBrand'] ?? '',
       dailyPrice: (json['dailyPrice'] ?? 0).toDouble(),
       imageUrl: List<String>.from(json['imageUrl'] ?? []),
-      addedDate: DateTime.parse(json['addedDate']),
+      addedDate: DateTime.tryParse(json['addedDate']?.toString() ?? '') ?? DateTime.now(),
       notes: json['notes'],
       isAvailable: json['isAvailable'] ?? false,
       year: json['year'] ?? 0,
