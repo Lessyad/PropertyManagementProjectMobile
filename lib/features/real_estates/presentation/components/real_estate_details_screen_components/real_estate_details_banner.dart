@@ -1,6 +1,7 @@
 import 'package:enmaa/core/extensions/context_extension.dart';
 
 import '../../../../../core/components/circular_icon_button.dart';
+import '../../../../../core/components/my_property_badge.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/entites/image_entity.dart';
 import '../../../../home_module/home_imports.dart';
@@ -9,8 +10,13 @@ import '../real_estate_details_header_actions_component.dart';
 
 
 class RealEstateDetailsBanner extends StatelessWidget {
-  const RealEstateDetailsBanner({super.key , required this.banners});
+  const RealEstateDetailsBanner({
+    super.key,
+    required this.banners,
+    this.isOwner = false,
+  });
   final List<ImageEntity> banners ;
+  final bool isOwner;
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -27,6 +33,12 @@ class RealEstateDetailsBanner extends StatelessWidget {
           right: context.scale(16),
           child: RealEstateDetailsHeaderActionsComponent(),
         ),
+        if (isOwner)
+          Positioned(
+            bottom: context.scale(16),
+            left: context.scale(16),
+            child: const MyPropertyBadge(),
+          ),
       ],
     );
   }

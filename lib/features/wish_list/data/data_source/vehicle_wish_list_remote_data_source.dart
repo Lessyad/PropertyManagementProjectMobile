@@ -47,7 +47,7 @@ class VehicleWishListRemoteDataSource extends BaseVehicleWishListDataSource {
       url: '${ApiConstants.vehicleWishList}remove/$vehicleId',
     );
 
-    return response.data['success'] == true;
+    return response.data is Map && response.data['success'] == true;
   }
   @override
   Future<bool> addVehicleToWishList(int vehicleId) async {
@@ -57,7 +57,7 @@ class VehicleWishListRemoteDataSource extends BaseVehicleWishListDataSource {
     );
 
     // Vérifier si l'ajout a réussi
-    return response.data['success'] == true;
+    return response.data is Map && response.data['success'] == true;
   }
 
   @override
@@ -66,6 +66,9 @@ class VehicleWishListRemoteDataSource extends BaseVehicleWishListDataSource {
       url: '${ApiConstants.vehicleWishList}check/$vehicleId',
     );
 
-    return response.data['isInWishlist'] ?? false;
+    if (response.data is Map) {
+      return response.data['isInWishlist'] ?? false;
+    }
+    return false;
   }
 }

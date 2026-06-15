@@ -66,6 +66,7 @@ abstract class LocaleKeys {
 
   static const String reserved = "reserved";
   static const String available = "available";
+  static const String myProperty = "myProperty";
   static const String rented = "rented";
   static const String sold = "sold";
 

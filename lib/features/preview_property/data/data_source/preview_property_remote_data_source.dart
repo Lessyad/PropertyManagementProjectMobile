@@ -45,7 +45,7 @@ class PreviewPropertyRemoteDataSource extends BasePreviewPropertyDataSource {
     final response = await dioService.get(
       url: '${ApiConstants.propertyOrderDetails}/$propertyId/',
     );
-    return response.data['viewing_request_amount'].toString();
+    return response.data?['viewing_request_amount']?.toString() ?? '0';
   }
 
   @override

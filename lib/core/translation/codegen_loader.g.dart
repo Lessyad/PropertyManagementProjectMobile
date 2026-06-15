@@ -62,6 +62,7 @@ class CodegenLoader extends AssetLoader{
   "cancelled": "ملغي",
   "reserved": "محجوز",
   "available": "متاح",
+  "myProperty": "لك",
   "rented": "مؤجر",
   "sold": "مباع",
   "coming": "قادم",
@@ -781,6 +782,21 @@ class CodegenLoader extends AssetLoader{
   "contract_parties": "أطراف العقد",
   "lessor": "المؤجر",
   "lessee": "المستأجر"
+  "vehiclesSearchscreen": "المركبات",
+  "contact_us": "تواصل معنا",
+  "name": "الاسم",
+  "contactToGetHelp": "كيف يمكننا مساعدتك؟",
+  "enterMessage": "أدخل رسالتك",
+  "writeInquiry": "اكتب استفسارك",
+  "messageSentSuccessively": "تم إرسال الرسالة بنجاح",
+  "message": "الرسالة",
+  "send": "إرسال",
+  "cancellation": "إلغاء",
+  "myAppointments": "مواعيدي",
+  "myElectronicContracts": "عقودي الإلكترونية",
+  "nomElectronicContracts": "لا توجد عقود إلكترونية",
+  "myElectronicContractsAppearance": "ستظهر عقودك الإلكترونية هنا",
+  "myRealEstate": "عقاراتي"
 };
 static const Map<String,dynamic> _en = {
     "paypalPendingPaymentMessage": "Booking pending — please complete your payment on PayPal to confirm.",
@@ -830,6 +846,7 @@ static const Map<String,dynamic> _en = {
   "cancelled": "Cancelled",
   "reserved": "Reserved",
   "available": "Available",
+  "myProperty": "For you",
   "rented": "Rented",
   "sold": "Sold",
   "coming": "Coming",
@@ -1549,6 +1566,21 @@ static const Map<String,dynamic> _en = {
   "contract_parties": "Contract Parties",
   "lessor": "Lessor",
   "lessee": "Lessee"
+  "vehiclesSearchscreen": "Vehicles",
+  "contact_us": "Contact us",
+  "name": "Name",
+  "contactToGetHelp": "How can we help you?",
+  "enterMessage": "Enter your message",
+  "writeInquiry": "Write your inquiry",
+  "messageSentSuccessively": "Message sent successfully",
+  "message": "Message",
+  "send": "Send",
+  "cancellation": "Cancel",
+  "myAppointments": "My appointments",
+  "myElectronicContracts": "My electronic contracts",
+  "nomElectronicContracts": "No electronic contracts",
+  "myElectronicContractsAppearance": "Your electronic contracts will appear here",
+  "myRealEstate": "My real estate"
 };
 static const Map<String,dynamic> _fr = {
     "paypalPendingPaymentMessage": "Réservation en attente — veuillez compléter votre paiement sur PayPal pour confirmer.",
@@ -1598,6 +1630,7 @@ static const Map<String,dynamic> _fr = {
   "cancelled": "Annulé",
   "reserved": "Réservé",
   "available": "Disponible",
+  "myProperty": "Pour vous",
   "rented": "Loué",
   "sold": "Vendu",
   "coming": "À Venir",
@@ -2317,6 +2350,21 @@ static const Map<String,dynamic> _fr = {
   "contract_parties": "Parties du contrat",
   "lessor": "Bailleur (Loueur)",
   "lessee": "Locataire"
+  "vehiclesSearchscreen": "Véhicules",
+  "contact_us": "Contactez-nous",
+  "name": "Nom",
+  "contactToGetHelp": "Comment pouvons-nous vous aider ?",
+  "enterMessage": "Entrez votre message",
+  "writeInquiry": "Écrivez votre demande",
+  "messageSentSuccessively": "Message envoyé avec succès",
+  "message": "Message",
+  "send": "Envoyer",
+  "cancellation": "Annuler",
+  "myAppointments": "Mes rendez-vous",
+  "myElectronicContracts": "Mes contrats électroniques",
+  "nomElectronicContracts": "Aucun contrat électronique",
+  "myElectronicContractsAppearance": "Vos contrats électroniques apparaîtront ici",
+  "myRealEstate": "Mes biens immobiliers"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ar": _ar, "en": _en, "fr": _fr};
 }

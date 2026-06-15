@@ -36,7 +36,7 @@ class ServicesList extends StatelessWidget  {
                       category: category,
                       isEnabled: isEnabled,
                       onTap: () {
-                        onServicePressed(category.text);
+                        onServicePressed(category.routeKey ?? category.text);
                       },
                     );
                   },

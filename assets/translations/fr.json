@@ -45,6 +45,7 @@
   "cancelled": "Annulé",
   "reserved": "Réservé",
   "available": "Disponible",
+  "myProperty": "Pour vous",
   "rented": "Loué",
   "sold": "Vendu",
   "coming": "À Venir",
@@ -812,4 +813,19 @@
   "contract_parties": "Parties du contrat",
   "lessor": "Bailleur (Loueur)",
   "lessee": "Locataire"
+  "vehiclesSearchscreen": "Véhicules",
+  "contact_us": "Contactez-nous",
+  "name": "Nom",
+  "contactToGetHelp": "Comment pouvons-nous vous aider ?",
+  "enterMessage": "Entrez votre message",
+  "writeInquiry": "Écrivez votre demande",
+  "messageSentSuccessively": "Message envoyé avec succès",
+  "message": "Message",
+  "send": "Envoyer",
+  "cancellation": "Annuler",
+  "myAppointments": "Mes rendez-vous",
+  "myElectronicContracts": "Mes contrats électroniques",
+  "nomElectronicContracts": "Aucun contrat électronique",
+  "myElectronicContractsAppearance": "Vos contrats électroniques apparaîtront ici",
+  "myRealEstate": "Mes biens immobiliers"
 }

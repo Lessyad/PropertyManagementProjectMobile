@@ -5,6 +5,7 @@ import '../../configuration/managers/color_manager.dart';
 import '../../configuration/managers/font_manager.dart';
 import '../../configuration/managers/style_manager.dart';
 import '../constants/api_constants.dart';
+import '../services/currency_service.dart';
 import '../translation/locale_keys.dart';
 
 class BankilyMerchantCodeBox extends StatefulWidget {
@@ -24,14 +25,27 @@ class _BankilyMerchantCodeBoxState extends State<BankilyMerchantCodeBox> {
   }
 
   Future<String> _fetchMerchantCode() async {
+    final dio = Dio(BaseOptions(
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+    ));
+
+    // Si l'utilisateur a un pays connu, on cherche d'abord un code dedie a ce pays
+    final countryCode = CurrencyService().getCurrentUserCountry();
+    if (countryCode != null && countryCode.isNotEmpty) {
+      final suffix = countryCode.replaceAll('+', '');
+      final countrySpecific =
+          await _fetchConfigValue(dio, 'BankilyMerchantCode_$suffix');
+      if (countrySpecific.isNotEmpty) return countrySpecific;
+    }
+
+    // Sinon, on retombe sur le code par defaut
+    return await _fetchConfigValue(dio, 'BankilyMerchantCode');
+  }
+
+  Future<String> _fetchConfigValue(Dio dio, String key) async {
     try {
-      final dio = Dio(BaseOptions(
-        connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 10),
-      ));
-      final response = await dio.get(
-        '${ApiConstants.appConfigsPublic}BankilyMerchantCode',
-      );
+      final response = await dio.get('${ApiConstants.appConfigsPublic}$key');
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
         final stringVal = data['stringValue'] as String?;

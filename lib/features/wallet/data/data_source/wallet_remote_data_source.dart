@@ -83,7 +83,11 @@ class WalletRemoteDataSource extends BaseWalletRemoteDataSource {
     final response = await dioService.get(
       url: ApiConstants.balance,
     );
-    
-    return (response.data['Balance'] as num).toDouble();
+
+    final balance = response.data?['Balance'];
+    if (balance is num) {
+      return balance.toDouble();
+    }
+    return 0.0;
   }
 }

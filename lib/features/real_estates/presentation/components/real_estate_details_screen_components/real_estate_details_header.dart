@@ -26,6 +26,7 @@ class RealEstateDetailsHeader extends StatelessWidget {
   final String realEstateDetailsLocation;
 
   final String realEstateDetailsStatus ;
+
   @override
   Widget build(BuildContext context) {
     return Column(
