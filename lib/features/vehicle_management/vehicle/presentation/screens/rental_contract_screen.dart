@@ -1,13 +1,19 @@
+import 'dart:typed_data';
+
+import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+
 import '../../../../../configuration/managers/color_manager.dart';
 import '../../../../../configuration/managers/font_manager.dart';
 import '../../../../../configuration/managers/style_manager.dart';
+import '../../../../../core/constants/api_constants.dart';
+import '../../../../../core/services/shared_preferences_service.dart';
 import '../../../../../core/translation/locale_keys.dart';
-import '../../domain/entities/vehicle_entity.dart';
 import '../../data/models/vehicle_deal_request.dart';
+import '../../domain/entities/vehicle_entity.dart';
 import 'payment_screen.dart';
 import 'pdf_contract_viewer_screen.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class RentalContractScreen extends StatefulWidget {
   final VehicleEntity vehicle;
@@ -60,6 +66,94 @@ class RentalContractScreen extends StatefulWidget {
 class _RentalContractScreenState extends State<RentalContractScreen> {
   bool _isContractAccepted = false;
   bool _hasViewedContract = false;
+
+  // Pré-chargement du PDF dès l'affichage de cet écran
+  Future<Uint8List>? _pdfPrefetchFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _startPrefetch();
+  }
+
+  void _startPrefetch() {
+    final startDT = DateTime(
+      widget.receptionDate.year, widget.receptionDate.month, widget.receptionDate.day,
+      widget.receptionTime.hour, widget.receptionTime.minute,
+    );
+    final endDT = DateTime(
+      widget.deliveryDate.year, widget.deliveryDate.month, widget.deliveryDate.day,
+      widget.deliveryTime.hour, widget.deliveryTime.minute,
+    );
+    if (!startDT.isBefore(endDT)) return;
+    _pdfPrefetchFuture = _fetchContractBytes(startDT, endDT);
+  }
+
+  Future<Uint8List> _fetchContractBytes(DateTime startDT, DateTime endDT) async {
+    final token = SharedPreferencesService().accessToken;
+    final language = SharedPreferencesService().language;
+    final body = _buildContractBody(startDT, endDT);
+
+    final dio = Dio(BaseOptions(
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 60),
+    ));
+    final response = await dio.post(
+      ApiConstants.vehicleContractPreview,
+      data: body,
+      options: Options(
+        responseType: ResponseType.bytes,
+        headers: {
+          'Accept': 'application/pdf',
+          'content-type': 'application/json',
+          'Accept-Language': language,
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Uint8List.fromList(response.data as List<int>);
+    }
+    throw Exception('HTTP ${response.statusCode}');
+  }
+
+  Map<String, dynamic> _buildContractBody(DateTime startDT, DateTime endDT) {
+    return {
+      'vehicleId': widget.vehicle.id,
+      'startDate': startDT.toIso8601String(),
+      'endDate': endDT.toIso8601String(),
+      'documentType': widget.mainDriver.documentType,
+      'firstName': widget.mainDriver.firstName,
+      'lastName': widget.mainDriver.lastName,
+      'familyName': widget.mainDriver.familyName,
+      'name': '${widget.mainDriver.firstName} ${widget.mainDriver.lastName}',
+      'phoneNumber': widget.mainDriver.phoneNumber,
+      'idNumber': widget.mainDriver.idNumber,
+      'dateOfBirth': widget.mainDriver.birthDate.toIso8601String(),
+      'idExpiryDate': widget.mainDriver.idExpiryDate.toIso8601String(),
+      'drivingLicenseNumber': widget.mainDriver.drivingLicenseNumber,
+      'drivingLicenseIssueDate': widget.mainDriver.drivingLicenseIssueDate.toIso8601String(),
+      'secondDriverEnabled': widget.secondDriverEnabled,
+      'kilometerIllimitedPerDay': widget.extraKilometers,
+      'allRiskCarInsurance': widget.fullInsurance,
+      'addChildsChair': widget.childSeat,
+      'pickupAreaId': widget.pickupAreaId,
+      'returnAreaId': widget.returnAreaId,
+      if (widget.secondDriverEnabled && widget.secondDriver != null) ...{
+        'secondDriverDocumentType': widget.secondDriver!.documentType,
+        'secondDriverFirstName': widget.secondDriver!.firstName,
+        'secondDriverLastName': widget.secondDriver!.lastName,
+        'secondDriverFamilyName': widget.secondDriver!.familyName,
+        'secondDriverName': '${widget.secondDriver!.firstName} ${widget.secondDriver!.lastName}',
+        'secondDriverPhoneNumber': widget.secondDriver!.phoneNumber,
+        'secondDriverIdNumber': widget.secondDriver!.idNumber,
+        'secondDriverBirthDate': widget.secondDriver!.birthDate.toIso8601String(),
+        'secondDriverIdExpiryDate': widget.secondDriver!.idExpiryDate.toIso8601String(),
+        'secondDriverLicenseNumber': widget.secondDriver!.drivingLicenseNumber,
+        'secondDriverLicenseIssueDate': widget.secondDriver!.drivingLicenseIssueDate.toIso8601String(),
+      },
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -405,6 +499,33 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
   // ── Bottom sheet contrat complet ───────────────────────────────────────────
 
   void _openContractSheet() {
+    // Vérifier que les dates sont valides avant d'ouvrir le contrat
+    final startDT = DateTime(
+      widget.receptionDate.year, widget.receptionDate.month, widget.receptionDate.day,
+      widget.receptionTime.hour, widget.receptionTime.minute,
+    );
+    final endDT = DateTime(
+      widget.deliveryDate.year, widget.deliveryDate.month, widget.deliveryDate.day,
+      widget.deliveryTime.hour, widget.deliveryTime.minute,
+    );
+
+    if (!startDT.isBefore(endDT)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            LocaleKeys.returnDateMustBeAfterPickup.tr(),
+            style: const TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+      return;
+    }
+
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => PdfContractViewerScreen(
@@ -421,6 +542,7 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
           childSeat: widget.childSeat,
           pickupAreaId: widget.pickupAreaId,
           returnAreaId: widget.returnAreaId,
+          prefetchedBytes: _pdfPrefetchFuture,
           onContractRead: () {
             setState(() => _hasViewedContract = true);
           },

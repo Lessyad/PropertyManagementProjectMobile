@@ -9,7 +9,7 @@ import '../../../../../configuration/managers/color_manager.dart';
 import '../../../../../configuration/managers/font_manager.dart';
 import '../../../../../configuration/managers/style_manager.dart';
 import '../../../../../core/constants/api_constants.dart';
-import '../../../../../core/services/dio_service.dart';
+import '../../../../../core/services/shared_preferences_service.dart';
 import '../../../../../core/translation/locale_keys.dart';
 import '../../data/models/vehicle_deal_request.dart';
 import '../../domain/entities/vehicle_entity.dart';
@@ -30,6 +30,9 @@ class PdfContractViewerScreen extends StatefulWidget {
   final int returnAreaId;
   final VoidCallback onContractRead;
 
+  /// Bytes pré-chargés depuis RentalContractScreen (optionnel — accélère l'affichage).
+  final Future<Uint8List>? prefetchedBytes;
+
   const PdfContractViewerScreen({
     Key? key,
     required this.vehicle,
@@ -46,6 +49,7 @@ class PdfContractViewerScreen extends StatefulWidget {
     required this.pickupAreaId,
     required this.returnAreaId,
     required this.onContractRead,
+    this.prefetchedBytes,
   }) : super(key: key);
 
   @override
@@ -58,6 +62,7 @@ class _PdfContractViewerScreenState extends State<PdfContractViewerScreen> {
   bool _isLoading = true;
   String? _error;
   bool _hasScrolledToEnd = false;
+  bool _prefetchConsumed = false;
 
   final PdfViewerController _pdfController = PdfViewerController();
 
@@ -76,88 +81,109 @@ class _PdfContractViewerScreenState extends State<PdfContractViewerScreen> {
   // ── Appel API ──────────────────────────────────────────────────────────────
 
   Future<void> _fetchPreview() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+    // Validation locale avant appel API
+    final startDT = DateTime(
+      widget.startDate.year, widget.startDate.month, widget.startDate.day,
+      widget.startTime.hour, widget.startTime.minute,
+    );
+    final endDT = DateTime(
+      widget.endDate.year, widget.endDate.month, widget.endDate.day,
+      widget.endTime.hour, widget.endTime.minute,
+    );
+
+    if (!startDT.isBefore(endDT)) {
+      setState(() {
+        _isLoading = false;
+        _error = LocaleKeys.returnDateMustBeAfterPickup.tr();
+      });
+      return;
+    }
+
+    setState(() { _isLoading = true; _error = null; });
 
     try {
-      final dio = DioService(dio: Dio());
-
-      DateTime _combine(DateTime date, TimeOfDay time) => DateTime(
-            date.year,
-            date.month,
-            date.day,
-            time.hour,
-            time.minute,
-          );
-
-      final body = <String, dynamic>{
-        'vehicleId': widget.vehicle.id,
-        'startDate': _combine(widget.startDate, widget.startTime).toIso8601String(),
-        'endDate': _combine(widget.endDate, widget.endTime).toIso8601String(),
-        'documentType': widget.mainDriver.documentType,
-        'firstName': widget.mainDriver.firstName,
-        'lastName': widget.mainDriver.lastName,
-        'familyName': widget.mainDriver.familyName,
-        'name': '${widget.mainDriver.firstName} ${widget.mainDriver.lastName}',
-        'phoneNumber': widget.mainDriver.phoneNumber,
-        'idNumber': widget.mainDriver.idNumber,
-        'dateOfBirth': widget.mainDriver.birthDate.toIso8601String(),
-        'idExpiryDate': widget.mainDriver.idExpiryDate.toIso8601String(),
-        'drivingLicenseNumber': widget.mainDriver.drivingLicenseNumber,
-        'drivingLicenseIssueDate':
-            widget.mainDriver.drivingLicenseIssueDate.toIso8601String(),
-        'secondDriverEnabled': widget.secondDriverEnabled,
-        'kilometerIllimitedPerDay': widget.extraKilometers,
-        'allRiskCarInsurance': widget.fullInsurance,
-        'addChildsChair': widget.childSeat,
-        'pickupAreaId': widget.pickupAreaId,
-        'returnAreaId': widget.returnAreaId,
-        // Champs second conducteur
-        if (widget.secondDriverEnabled && widget.secondDriver != null) ...{
-          'secondDriverDocumentType': widget.secondDriver!.documentType,
-          'secondDriverFirstName': widget.secondDriver!.firstName,
-          'secondDriverLastName': widget.secondDriver!.lastName,
-          'secondDriverFamilyName': widget.secondDriver!.familyName,
-          'secondDriverName':
-              '${widget.secondDriver!.firstName} ${widget.secondDriver!.lastName}',
-          'secondDriverPhoneNumber': widget.secondDriver!.phoneNumber,
-          'secondDriverIdNumber': widget.secondDriver!.idNumber,
-          'secondDriverBirthDate':
-              widget.secondDriver!.birthDate.toIso8601String(),
-          'secondDriverIdExpiryDate':
-              widget.secondDriver!.idExpiryDate.toIso8601String(),
-          'secondDriverLicenseNumber': widget.secondDriver!.drivingLicenseNumber,
-          'secondDriverLicenseIssueDate':
-              widget.secondDriver!.drivingLicenseIssueDate.toIso8601String(),
-        },
-      };
-
-      final response = await dio.post(
-        url: ApiConstants.vehicleContractPreview,
-        data: body,
-        options: Options(
-          responseType: ResponseType.bytes,
-          headers: {'Accept': 'application/pdf'},
-        ),
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final bytes = response.data as List<int>;
-        setState(() {
-          _pdfBytes = Uint8List.fromList(bytes);
-          _isLoading = false;
-        });
+      Uint8List bytes;
+      // Première ouverture : utiliser les bytes pré-chargés si disponibles
+      if (!_prefetchConsumed && widget.prefetchedBytes != null) {
+        _prefetchConsumed = true;
+        try {
+          bytes = await widget.prefetchedBytes!;
+        } catch (_) {
+          // Le pré-chargement a échoué → appel frais
+          bytes = await _doFetch(startDT, endDT);
+        }
       } else {
-        throw Exception('HTTP ${response.statusCode}');
+        bytes = await _doFetch(startDT, endDT);
       }
+      setState(() { _pdfBytes = bytes; _isLoading = false; });
     } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
+      setState(() { _error = e.toString(); _isLoading = false; });
     }
+  }
+
+  // Appel HTTP direct, sans PrettyDioLogger (plus rapide sur réponse binaire)
+  Future<Uint8List> _doFetch(DateTime startDT, DateTime endDT) async {
+    final token = SharedPreferencesService().accessToken;
+    final language = SharedPreferencesService().language;
+
+    final body = <String, dynamic>{
+      'vehicleId': widget.vehicle.id,
+      'startDate': startDT.toIso8601String(),
+      'endDate': endDT.toIso8601String(),
+      'documentType': widget.mainDriver.documentType,
+      'firstName': widget.mainDriver.firstName,
+      'lastName': widget.mainDriver.lastName,
+      'familyName': widget.mainDriver.familyName,
+      'name': '${widget.mainDriver.firstName} ${widget.mainDriver.lastName}',
+      'phoneNumber': widget.mainDriver.phoneNumber,
+      'idNumber': widget.mainDriver.idNumber,
+      'dateOfBirth': widget.mainDriver.birthDate.toIso8601String(),
+      'idExpiryDate': widget.mainDriver.idExpiryDate.toIso8601String(),
+      'drivingLicenseNumber': widget.mainDriver.drivingLicenseNumber,
+      'drivingLicenseIssueDate': widget.mainDriver.drivingLicenseIssueDate.toIso8601String(),
+      'secondDriverEnabled': widget.secondDriverEnabled,
+      'kilometerIllimitedPerDay': widget.extraKilometers,
+      'allRiskCarInsurance': widget.fullInsurance,
+      'addChildsChair': widget.childSeat,
+      'pickupAreaId': widget.pickupAreaId,
+      'returnAreaId': widget.returnAreaId,
+      if (widget.secondDriverEnabled && widget.secondDriver != null) ...{
+        'secondDriverDocumentType': widget.secondDriver!.documentType,
+        'secondDriverFirstName': widget.secondDriver!.firstName,
+        'secondDriverLastName': widget.secondDriver!.lastName,
+        'secondDriverFamilyName': widget.secondDriver!.familyName,
+        'secondDriverName': '${widget.secondDriver!.firstName} ${widget.secondDriver!.lastName}',
+        'secondDriverPhoneNumber': widget.secondDriver!.phoneNumber,
+        'secondDriverIdNumber': widget.secondDriver!.idNumber,
+        'secondDriverBirthDate': widget.secondDriver!.birthDate.toIso8601String(),
+        'secondDriverIdExpiryDate': widget.secondDriver!.idExpiryDate.toIso8601String(),
+        'secondDriverLicenseNumber': widget.secondDriver!.drivingLicenseNumber,
+        'secondDriverLicenseIssueDate': widget.secondDriver!.drivingLicenseIssueDate.toIso8601String(),
+      },
+    };
+
+    final dio = Dio(BaseOptions(
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 60),
+    ));
+    final response = await dio.post(
+      ApiConstants.vehicleContractPreview,
+      data: body,
+      options: Options(
+        responseType: ResponseType.bytes,
+        headers: {
+          'Accept': 'application/pdf',
+          'content-type': 'application/json',
+          'Accept-Language': language,
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Uint8List.fromList(response.data as List<int>);
+    }
+    throw Exception('HTTP ${response.statusCode}');
   }
 
   // ── Build ──────────────────────────────────────────────────────────────────

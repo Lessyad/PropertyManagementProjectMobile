@@ -297,14 +297,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
             'PayPal',
             Icons.payment,
             'Payer avec PayPal de manière sécurisée',
+            imageAsset: 'assets/images/PayPalImage.png',
           ),
 
-          // Bankily (remplace mobile)
+          // Bankily
           _buildPaymentOption(
             'bankily',
             'Bankily',
             Icons.phone_android,
             'Payer avec Bankily',
+            imageAsset: 'assets/images/BankilyImage.png',
           ),
 
           // Paiement par wallet
@@ -319,7 +321,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  Widget _buildPaymentOption(String value, String title, IconData icon, String subtitle) {
+  Widget _buildPaymentOption(String value, String title, IconData icon, String subtitle, {String? imageAsset}) {
+    final isSelected = _selectedPaymentMethod == value;
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -332,43 +335,33 @@ class _PaymentScreenState extends State<PaymentScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: _selectedPaymentMethod == value
-                ? ColorManager.primaryColor
-                : Colors.grey[300]!,
+            color: isSelected ? ColorManager.primaryColor : Colors.grey[300]!,
             width: 2,
           ),
-          color: _selectedPaymentMethod == value
-              ? ColorManager.primaryColor.withOpacity(0.1)
-              : Colors.transparent,
+          color: isSelected ? ColorManager.primaryColor.withOpacity(0.1) : Colors.transparent,
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: _selectedPaymentMethod == value
-                  ? ColorManager.primaryColor
-                  : Colors.grey,
-              size: 24,
-            ),
+            if (imageAsset != null)
+              SizedBox(
+                width: 36,
+                height: 36,
+                child: Image.asset(
+                  imageAsset,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) =>
+                      Icon(icon, color: isSelected ? ColorManager.primaryColor : Colors.grey, size: 24),
+                ),
+              )
+            else
+              Icon(icon, color: isSelected ? ColorManager.primaryColor : Colors.grey, size: 24),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: getBoldStyle(
-                      color: ColorManager.blackColor,
-                      fontSize: FontSize.s14,
-                    ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: getRegularStyle(
-                      color: ColorManager.grey,
-                      fontSize: FontSize.s12,
-                    ),
-                  ),
+                  Text(title, style: getBoldStyle(color: ColorManager.blackColor, fontSize: FontSize.s14)),
+                  Text(subtitle, style: getRegularStyle(color: ColorManager.grey, fontSize: FontSize.s12)),
                 ],
               ),
             ),
@@ -376,9 +369,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               value: value,
               groupValue: _selectedPaymentMethod,
               onChanged: (String? newValue) {
-                setState(() {
-                  _selectedPaymentMethod = newValue!;
-                });
+                setState(() { _selectedPaymentMethod = newValue!; });
               },
               activeColor: ColorManager.primaryColor,
             ),

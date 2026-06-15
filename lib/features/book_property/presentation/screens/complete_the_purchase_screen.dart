@@ -90,19 +90,23 @@ class CompleteThePurchaseScreen extends StatelessWidget {
                   values: [LocaleKeys.paypal.tr(), LocaleKeys.wallet.tr(), LocaleKeys.bankily.tr()],
                   currentType: state.currentPaymentMethod,
                   onTap: (type) {
-                    print('DEBUG: Payment method selected: $type');
                     context.read<BookPropertyCubit>().changePaymentMethod(type);
                   },
-                  getIcon: (type) {
-                    print('DEBUG: Getting icon for payment method: $type');
+                  getIconWidget: (type) {
                     if (type == LocaleKeys.paypal.tr()) {
-                      return AppAssets.paypalIcon;
-                    } else if (type == LocaleKeys.wallet.tr()) {
-                      return AppAssets.walletIcon;
+                      return Image.asset(
+                        AppAssets.paypalImage,
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => const Icon(Icons.payment, size: 16),
+                      );
                     } else if (type == LocaleKeys.bankily.tr()) {
-                      return AppAssets.walletIcon;
+                      return Image.asset(
+                        AppAssets.bankilyImage,
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => const Icon(Icons.phone_android, size: 16),
+                      );
                     }
-                    return AppAssets.paypalIcon;
+                    return SvgImageComponent(iconPath: AppAssets.walletIcon);
                   },
                   getLabel: (type) => type,
                 ),

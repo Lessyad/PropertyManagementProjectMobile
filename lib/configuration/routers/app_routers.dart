@@ -64,6 +64,12 @@ import 'package:enmaa/features/my_profile/modules/user_rental_history_module/pre
 import 'package:enmaa/features/my_profile/modules/user_rental_history_module/user_rental_history_DI.dart';
 import 'package:enmaa/features/my_profile/modules/contact_us_module/contact_us_DI.dart';
 import 'package:enmaa/features/my_profile/modules/contact_us_module/presenation/controller/contact_us_cubit.dart';
+import 'package:enmaa/features/policies/policies_di.dart';
+import 'package:enmaa/features/policies/presentation/controller/policies_cubit.dart';
+import 'package:enmaa/features/policies/presentation/screens/policies_list_screen.dart';
+import 'package:enmaa/features/policies/presentation/screens/policy_detail_screen.dart';
+import 'package:enmaa/features/policies/presentation/screens/policies_content_screen.dart';
+import 'package:enmaa/features/policies/domain/entities/policy_entity.dart';
 
 import 'package:enmaa/features/wallet/presentation/screens/charge_wallet_screen.dart';
 import 'package:enmaa/features/wallet/presentation/screens/see_all_transactions.dart';
@@ -396,6 +402,40 @@ class AppRouters {
             title: title,
             initialAddress: initialAddress,
             initialLocation: initialLocation,
+          ),
+        );
+
+      case RoutersNames.policiesContentScreen:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: RoutersNames.policiesContentScreen),
+          builder: (_) => BlocProvider(
+            create: (context) {
+              PoliciesDi().setup();
+              return PoliciesCubit(ServiceLocator.getIt())..getPolicies();
+            },
+            child: const PoliciesContentScreen(),
+          ),
+        );
+
+      case RoutersNames.policiesScreen:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: RoutersNames.policiesScreen),
+          builder: (_) => BlocProvider(
+            create: (context) {
+              PoliciesDi().setup();
+              return PoliciesCubit(ServiceLocator.getIt())..getPolicies();
+            },
+            child: const PoliciesListScreen(),
+          ),
+        );
+
+      case RoutersNames.policyDetailScreen:
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          settings: RouteSettings(name: RoutersNames.policyDetailScreen),
+          builder: (_) => PolicyDetailScreen(
+            policy: args['policy'] as PolicyEntity,
+            title: args['title'] as String,
           ),
         );
 

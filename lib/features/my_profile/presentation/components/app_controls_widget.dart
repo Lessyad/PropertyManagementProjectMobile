@@ -78,16 +78,8 @@ class _AppControlsWidgetState extends State<AppControlsWidget> {
             _buildItem(
               iconPath: AppAssets.privacyIcon,
               text: LocaleKeys.appControlsTerms.tr(),
-              onTap: () async {
-                final Uri url = Uri.parse('https://www.musabholding.com/');
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url, mode: LaunchMode.externalApplication);
-                } else {
-                  CustomSnackBar.show(
-                    message: LocaleKeys.appControlsLinkError.tr(),
-                    type: SnackBarType.error,
-                  );
-                }
+              onTap: () {
+                Navigator.pushNamed(context, RoutersNames.policiesContentScreen);
               },
             ),
             _buildItem(

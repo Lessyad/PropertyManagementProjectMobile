@@ -116,6 +116,8 @@ flutter:
     - assets/icons/bottom_nav_bar/
     - assets/icons/book_property_icons/
     - assets/images/
+    - assets/images/BankilyImage.png
+    - assets/images/PayPalImage.png
     - assets/flags/
 
   # Polices Cairo supprimées (fichiers absents). Pour les réactiver, remettre les .ttf dans assets/fonts/cairo/ et décommenter ci-dessous.

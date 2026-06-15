@@ -127,6 +127,8 @@ class AppAssets {
   static const String priceToBePaidIcon = '${bookingPropertyFolder}price_to_be_paid_icon.svg';
 
 
-  static const String emptyState ='${baseImagesFolder}imagenocar.png' ;
+  static const String emptyState = '${baseImagesFolder}imagenocar.png';
+  static const String bankilyImage = '${baseImagesFolder}BankilyImage.png';
+  static const String paypalImage = '${baseImagesFolder}PayPalImage.png';
 
 }

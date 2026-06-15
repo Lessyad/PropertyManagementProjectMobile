@@ -122,21 +122,21 @@ class _ConfirmPreviewPaymentScreenState extends material.State<ConfirmPreviewPay
                         onTap: (type) {
                           context.read<PreviewPropertyCubit>().changePaymentMethod(type);
                         },
-                        getIcon: (type) {
-                          switch (type) {
-                            case 'PayPal':
-                            case 'بايبال':
-                              return AppAssets.paypalIcon;
-                            case 'المحفظة':
-                            case 'Wallet':
-                            case 'Portefeuille':
-                              return AppAssets.walletIcon;
-                            case 'Bankily':
-                            case 'بانكيلي':
-                              return AppAssets.walletIcon;
-                            default:
-                              return AppAssets.paypalIcon;
+                        getIconWidget: (type) {
+                          if (type == LocaleKeys.paypal.tr()) {
+                            return material.Image.asset(
+                              AppAssets.paypalImage,
+                              fit: material.BoxFit.contain,
+                              errorBuilder: (_, __, ___) => const material.Icon(material.Icons.payment, size: 16),
+                            );
+                          } else if (type == LocaleKeys.bankily.tr()) {
+                            return material.Image.asset(
+                              AppAssets.bankilyImage,
+                              fit: material.BoxFit.contain,
+                              errorBuilder: (_, __, ___) => const material.Icon(material.Icons.phone_android, size: 16),
+                            );
                           }
+                          return SvgImageComponent(iconPath: AppAssets.walletIcon);
                         },
                         getLabel: (type) => type,
                       ),

@@ -817,5 +817,11 @@
   "i_have_read_contract": "لقد قرأت العقد وفهمته",
   "contract_parties": "أطراف العقد",
   "lessor": "المؤجر",
-  "lessee": "المستأجر"
+  "lessee": "المستأجر",
+  "policiesScreenTitle": "السياسات",
+  "policyTypePrivacy": "سياسة الخصوصية",
+  "policyTypeTerms": "شروط الاستخدام",
+  "policiesLoadError": "تعذر تحميل السياسات",
+  "policiesEmpty": "لا توجد سياسات متاحة",
+  "returnDateMustBeAfterPickup": "يجب أن يكون تاريخ ووقت الإرجاع بعد تاريخ ووقت الاستلام"
 }

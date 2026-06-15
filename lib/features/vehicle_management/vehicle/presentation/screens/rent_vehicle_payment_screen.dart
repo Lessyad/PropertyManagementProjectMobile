@@ -325,6 +325,7 @@ class _RentVehiclePaymentScreenState extends State<RentVehiclePaymentScreen> {
                           subtitle: 'Payer avec PayPal de manière sécurisée',
                           value: 'paypal',
                           isSelected: selectedPaymentMethod == 'paypal',
+                          imageAsset: 'assets/images/PayPalImage.png',
                         ),
 
                         SizedBox(height: context.scale(12)),
@@ -351,13 +352,14 @@ class _RentVehiclePaymentScreenState extends State<RentVehiclePaymentScreen> {
 
                         SizedBox(height: context.scale(12)),
 
-                        // Bankity
+                        // Bankily
                         _buildPaymentOption(
                           icon: Icons.account_balance,
                           title: LocaleKeys.bankily.tr(),
                           subtitle: LocaleKeys.bankityDescription.tr(),
                           value: 'Bankily',
                           isSelected: selectedPaymentMethod == 'Bankily',
+                          imageAsset: 'assets/images/BankilyImage.png',
                         ),
                       ],
                     ),
@@ -703,6 +705,7 @@ class _RentVehiclePaymentScreenState extends State<RentVehiclePaymentScreen> {
     required String subtitle,
     required String value,
     required bool isSelected,
+    String? imageAsset,
   }) {
     return InkWell(
       onTap: () {
@@ -713,36 +716,43 @@ class _RentVehiclePaymentScreenState extends State<RentVehiclePaymentScreen> {
       child: Container(
         padding: EdgeInsets.all(AppPadding.p12),
         decoration: BoxDecoration(
-          color: isSelected
-              ? ColorManager.primaryColor.withOpacity(0.1)
-              : Colors.transparent,
+          color: isSelected ? ColorManager.primaryColor.withOpacity(0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected
-                ? ColorManager.primaryColor
-                : ColorManager.greyShade,
+            color: isSelected ? ColorManager.primaryColor : ColorManager.greyShade,
             width: 1,
           ),
         ),
         child: Row(
           children: [
-            Container(
-              width: context.scale(40),
-              height: context.scale(40),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? ColorManager.primaryColor
-                    : ColorManager.greyShade,
-                borderRadius: BorderRadius.circular(20),
+            if (imageAsset != null)
+              SizedBox(
+                width: context.scale(40),
+                height: context.scale(40),
+                child: Image.asset(
+                  imageAsset,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Container(
+                    width: context.scale(40),
+                    height: context.scale(40),
+                    decoration: BoxDecoration(
+                      color: isSelected ? ColorManager.primaryColor : ColorManager.greyShade,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Icon(icon, color: isSelected ? ColorManager.whiteColor : ColorManager.grey2, size: 20),
+                  ),
+                ),
+              )
+            else
+              Container(
+                width: context.scale(40),
+                height: context.scale(40),
+                decoration: BoxDecoration(
+                  color: isSelected ? ColorManager.primaryColor : ColorManager.greyShade,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Icon(icon, color: isSelected ? ColorManager.whiteColor : ColorManager.grey2, size: 20),
               ),
-              child: Icon(
-                icon,
-                color: isSelected
-                    ? ColorManager.whiteColor
-                    : ColorManager.grey2,
-                size: 20,
-              ),
-            ),
             SizedBox(width: context.scale(12)),
             Expanded(
               child: Column(
@@ -751,28 +761,15 @@ class _RentVehiclePaymentScreenState extends State<RentVehiclePaymentScreen> {
                   Text(
                     title,
                     style: getSemiBoldStyle(
-                      color: isSelected
-                          ? ColorManager.primaryColor
-                          : ColorManager.blackColor,
+                      color: isSelected ? ColorManager.primaryColor : ColorManager.blackColor,
                       fontSize: FontSize.s14,
                     ),
                   ),
-                  Text(
-                    subtitle,
-                    style: getRegularStyle(
-                      color: ColorManager.grey2,
-                      fontSize: FontSize.s12,
-                    ),
-                  ),
+                  Text(subtitle, style: getRegularStyle(color: ColorManager.grey2, fontSize: FontSize.s12)),
                 ],
               ),
             ),
-            if (isSelected)
-              Icon(
-                Icons.check_circle,
-                color: ColorManager.primaryColor,
-                size: 20,
-              ),
+            if (isSelected) Icon(Icons.check_circle, color: ColorManager.primaryColor, size: 20),
           ],
         ),
       ),

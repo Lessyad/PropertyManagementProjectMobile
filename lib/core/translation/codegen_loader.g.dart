@@ -780,7 +780,13 @@ class CodegenLoader extends AssetLoader{
   "i_have_read_contract": "لقد قرأت العقد وفهمته",
   "contract_parties": "أطراف العقد",
   "lessor": "المؤجر",
-  "lessee": "المستأجر"
+  "lessee": "المستأجر",
+  "policiesScreenTitle": "السياسات",
+  "policyTypePrivacy": "سياسة الخصوصية",
+  "policyTypeTerms": "شروط الاستخدام",
+  "policiesLoadError": "تعذر تحميل السياسات",
+  "policiesEmpty": "لا توجد سياسات متاحة",
+  "returnDateMustBeAfterPickup": "يجب أن يكون تاريخ ووقت الإرجاع بعد تاريخ ووقت الاستلام"
 };
 static const Map<String,dynamic> _en = {
     "paypalPendingPaymentMessage": "Booking pending — please complete your payment on PayPal to confirm.",
@@ -1548,7 +1554,13 @@ static const Map<String,dynamic> _en = {
   "i_have_read_contract": "I have read and understood the contract",
   "contract_parties": "Contract Parties",
   "lessor": "Lessor",
-  "lessee": "Lessee"
+  "lessee": "Lessee",
+  "policiesScreenTitle": "Policies",
+  "policyTypePrivacy": "Privacy Policy",
+  "policyTypeTerms": "Terms of Use",
+  "policiesLoadError": "Unable to load policies",
+  "policiesEmpty": "No policies available",
+  "returnDateMustBeAfterPickup": "The return date and time must be after the pickup date and time"
 };
 static const Map<String,dynamic> _fr = {
     "paypalPendingPaymentMessage": "Réservation en attente — veuillez compléter votre paiement sur PayPal pour confirmer.",
@@ -2316,7 +2328,13 @@ static const Map<String,dynamic> _fr = {
   "i_have_read_contract": "J'ai lu et compris le contrat",
   "contract_parties": "Parties du contrat",
   "lessor": "Bailleur (Loueur)",
-  "lessee": "Locataire"
+  "lessee": "Locataire",
+  "policiesScreenTitle": "Politiques",
+  "policyTypePrivacy": "Politique de confidentialité",
+  "policyTypeTerms": "Conditions générales d'utilisation",
+  "policiesLoadError": "Impossible de charger les politiques",
+  "policiesEmpty": "Aucune politique disponible",
+  "returnDateMustBeAfterPickup": "La date et l'heure de retour doivent être après la date et l'heure de réception"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ar": _ar, "en": _en, "fr": _fr};
 }

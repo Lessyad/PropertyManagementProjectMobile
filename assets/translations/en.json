@@ -817,5 +817,11 @@
   "i_have_read_contract": "I have read and understood the contract",
   "contract_parties": "Contract Parties",
   "lessor": "Lessor",
-  "lessee": "Lessee"
+  "lessee": "Lessee",
+  "policiesScreenTitle": "Policies",
+  "policyTypePrivacy": "Privacy Policy",
+  "policyTypeTerms": "Terms of Use",
+  "policiesLoadError": "Unable to load policies",
+  "policiesEmpty": "No policies available",
+  "returnDateMustBeAfterPickup": "The return date and time must be after the pickup date and time"
 }
