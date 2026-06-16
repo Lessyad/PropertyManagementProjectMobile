@@ -9,6 +9,7 @@ import '../../../../../core/components/currency_display_widget.dart';
 import '../../domain/entities/vehicle_entity.dart';
 import 'rent_vehicle_data_screen_enhanced.dart';
 import '../controller/global_rental_options_controller.dart';
+import '../components/vehicle_booking_stepper.dart';
 
 class RentalSummaryScreen extends StatelessWidget {
   final VehicleEntity vehicle;
@@ -79,6 +80,7 @@ class RentalSummaryScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
+          const VehicleBookingStepper(currentStep: 0),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -105,7 +107,7 @@ class RentalSummaryScreen extends StatelessWidget {
           ),
 
           // Footer avec bouton de confirmation
-          _buildFooter(totalPrice),
+          _buildFooter(context, totalPrice),
         ],
       ),
     );
@@ -431,73 +433,68 @@ class RentalSummaryScreen extends StatelessWidget {
 
 
 
-  Widget _buildFooter(double totalPrice) {
+  Widget _buildFooter(BuildContext context, double totalPrice) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorManager.whiteColor,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
+            blurRadius: 8,
             offset: const Offset(0, -2),
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Row(
         children: [
-          Builder(
-            builder: (context) => Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[300],
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(23),
-                      ),
-                      elevation: 2,
-                    ),
-                    child: Text(
-                      tr(LocaleKeys.previous),
-                      style: getBoldStyle(
-                        color: ColorManager.primaryColor,
-                        fontSize: FontSize.s14,
-                      ),
-                    ),
-                  ),
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorManager.greyShade,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => _confirmRental(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorManager.primaryColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(23),
-                      ),
-                      elevation: 2,
-                    ),
-                    child: Text(
-                      tr(LocaleKeys.confirmBooking),
-                      style: getBoldStyle(
-                        color: Colors.white,
-                        fontSize: FontSize.s14,
-                      ),
-                    ),
-                  ),
+                elevation: 2,
+              ),
+              child: Text(
+                tr(LocaleKeys.previous),
+                style: getBoldStyle(
+                  color: ColorManager.primaryColor,
+                  fontSize: FontSize.s16,
                 ),
-              ],
+              ),
             ),
-          )
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () => _confirmRental(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorManager.primaryColor,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                elevation: 2,
+              ),
+              child: Text(
+                tr(LocaleKeys.confirmBooking),
+                style: getBoldStyle(
+                  color: Colors.white,
+                  fontSize: FontSize.s15,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -155,58 +155,45 @@ class _RentVehicleMainScreenState extends State<RentVehicleMainScreen> {
     );
   }
 
-  Widget _buildPageIndicator() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: [
-          _buildStepIndicator(1, LocaleKeys.informationStep.tr(), _currentPage >= 0),
-          _buildStepLine(_currentPage > 0),
-          _buildStepIndicator(2, LocaleKeys.paymentStep.tr(), _currentPage >= 1),
-        ],
-      ),
-    );
-  }
+  final _animationTime = const Duration(milliseconds: 500);
 
-  Widget _buildStepIndicator(int stepNumber, String stepTitle, bool isActive) {
-    return Expanded(
-      child: Column(
-        children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: isActive ? ColorManager.primaryColor : ColorManager.grey2,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                stepNumber.toString(),
+  Widget _buildPageIndicator() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(2, (index) {
+          final bool isActive = index <= _currentPage;
+          return Column(
+            children: [
+              Text(
+                index == 0
+                    ? LocaleKeys.informationStep.tr()
+                    : LocaleKeys.paymentStep.tr(),
                 style: getBoldStyle(
-                  color: isActive ? ColorManager.whiteColor : ColorManager.blackColor,
-                  fontSize: FontSize.s12,
+                  color: isActive
+                      ? ColorManager.primaryColor
+                      : ColorManager.blackColor,
+                  fontSize: FontSize.s11,
                 ),
               ),
-            ),
-          ),
-          SizedBox(height: 4),
-          Text(
-            stepTitle,
-            style: getMediumStyle(
-              color: isActive ? ColorManager.primaryColor : ColorManager.grey2,
-              fontSize: FontSize.s10,
-            ),
-          ),
-        ],
+              SizedBox(height: context.scale(8)),
+              AnimatedContainer(
+                duration: _animationTime,
+                margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                width: context.scale(173.0),
+                height: context.scale(4),
+                decoration: BoxDecoration(
+                  color: isActive
+                      ? ColorManager.primaryColor
+                      : const Color(0xFFD9D9D9),
+                  borderRadius: BorderRadius.circular(2.0),
+                ),
+              ),
+            ],
+          );
+        }),
       ),
-    );
-  }
-
-  Widget _buildStepLine(bool isActive) {
-    return Container(
-      width: 40,
-      height: 2,
-      color: isActive ? ColorManager.primaryColor : ColorManager.grey2,
     );
   }
 

@@ -14,6 +14,7 @@ import '../../data/models/vehicle_deal_request.dart';
 import '../../domain/entities/vehicle_entity.dart';
 import 'payment_screen.dart';
 import 'pdf_contract_viewer_screen.dart';
+import '../components/vehicle_booking_stepper.dart';
 
 class RentalContractScreen extends StatefulWidget {
   final VehicleEntity vehicle;
@@ -167,6 +168,7 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
       ),
       body: Column(
         children: [
+          const VehicleBookingStepper(currentStep: 2),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -434,14 +436,17 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
 
   Widget _buildFooter() {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorManager.whiteColor,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
+            blurRadius: 8,
             offset: const Offset(0, -2),
           ),
         ],
@@ -452,25 +457,24 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
             child: ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[200],
-                foregroundColor: Colors.black,
+                backgroundColor: ColorManager.greyShade,
+                foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 13),
-                elevation: 0,
+                elevation: 2,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(25)),
               ),
               child: Text(
                 LocaleKeys.backButton.tr(),
                 style: getBoldStyle(
-                    color: ColorManager.primaryColor, fontSize: FontSize.s14),
+                    color: ColorManager.primaryColor, fontSize: FontSize.s16),
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: ElevatedButton(
-              onPressed:
-                  _isContractAccepted ? _proceedToPayment : null,
+              onPressed: _isContractAccepted ? _proceedToPayment : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: _isContractAccepted
                     ? ColorManager.primaryColor
@@ -479,7 +483,7 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 13),
                 elevation: _isContractAccepted ? 2 : 0,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(25)),
               ),
               child: Text(
                 LocaleKeys.proceedToPayment.tr(),
@@ -487,7 +491,7 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
                     color: _isContractAccepted
                         ? Colors.white
                         : Colors.grey[500]!,
-                    fontSize: FontSize.s14),
+                    fontSize: FontSize.s16),
               ),
             ),
           ),
