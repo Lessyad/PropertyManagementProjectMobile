@@ -65,7 +65,7 @@ class _RentVehicleDataScreenState extends State<RentVehicleDataScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           NumberedTextHeaderComponent(
-            number: '٢',
+            number: '2',
             text: LocaleKeys.tenantInformation.tr(),
           ),
           SizedBox(height: context.scale(20)),

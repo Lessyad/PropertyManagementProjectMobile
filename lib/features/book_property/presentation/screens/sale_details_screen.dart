@@ -29,7 +29,7 @@ class SaleDetailsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
               NumberedTextHeaderComponent(
-              number: '١',
+              number: '1',
               text: LocaleKeys.saleDetailsHeader.tr(), // Using tr() for translation
             ),
             SizedBox(height: context.scale(20)),

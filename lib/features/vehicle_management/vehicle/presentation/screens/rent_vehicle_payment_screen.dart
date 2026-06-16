@@ -80,7 +80,7 @@ class _RentVehiclePaymentScreenState extends State<RentVehiclePaymentScreen> {
                         ),
                         child: Center(
                           child: Text(
-                            '٣',
+                            '3',
                             style: getBoldStyle(
                               color: ColorManager.whiteColor,
                               fontSize: FontSize.s16,

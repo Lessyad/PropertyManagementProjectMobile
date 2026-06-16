@@ -27,6 +27,7 @@ import '../../domain/entities/vehicle_entity.dart';
 import '../../data/models/vehicle_deal_request.dart';
 import '../controller/global_rental_options_controller.dart';
 import 'rental_contract_screen.dart';
+import '../components/vehicle_booking_stepper.dart';
 
 import 'package:easy_localization/easy_localization.dart';
 
@@ -542,6 +543,7 @@ class _RentVehicleDataScreenEnhancedState
       ),
       body: Column(
         children: [
+          const VehicleBookingStepper(currentStep: 1),
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.all(AppPadding.p16),
@@ -1894,18 +1896,20 @@ class _RentVehicleDataScreenEnhancedState
 
   Widget _buildFooter() {
     double extraCost = 0;
-    if (_hasSecondDriver)
-      extraCost +=
-          _getSecondDriverAmount(); // Frais deuxième chauffeur dynamique
+    if (_hasSecondDriver) extraCost += _getSecondDriverAmount();
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorManager.whiteColor,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
+            blurRadius: 8,
             offset: const Offset(0, -2),
           ),
         ],
@@ -1935,28 +1939,54 @@ class _RentVehicleDataScreenEnhancedState
             ),
             const SizedBox(height: 8),
           ],
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _isFormValid ? _submitForm : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    _isFormValid ? ColorManager.primaryColor : Colors.grey[300],
-                foregroundColor: _isFormValid ? Colors.white : Colors.grey[600],
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorManager.greyShade,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    elevation: 2,
+                  ),
+                  child: Text(
+                    tr(LocaleKeys.previousButton),
+                    style: getBoldStyle(
+                      color: ColorManager.primaryColor,
+                      fontSize: FontSize.s16,
+                    ),
+                  ),
                 ),
-                elevation: _isFormValid ? 2 : 0,
               ),
-              child: Text(
-                tr(LocaleKeys.next),
-                style: getBoldStyle(
-                  color: _isFormValid ? Colors.white : Colors.grey[600]!,
-                  fontSize: FontSize.s16,
+              const SizedBox(width: 10),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _isFormValid ? _submitForm : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _isFormValid
+                        ? ColorManager.primaryColor
+                        : Colors.grey[300],
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    elevation: _isFormValid ? 2 : 0,
+                  ),
+                  child: Text(
+                    tr(LocaleKeys.next),
+                    style: getBoldStyle(
+                      color: _isFormValid ? Colors.white : Colors.grey[600]!,
+                      fontSize: FontSize.s16,
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
         ],
       ),

@@ -25,6 +25,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
+import '../components/vehicle_booking_stepper.dart';
 
 class PaymentScreen extends StatefulWidget {
   final VehicleEntity vehicle;
@@ -157,6 +158,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ),
       body: Column(
         children: [
+          const VehicleBookingStepper(currentStep: 3),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -640,19 +642,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Widget _buildPaymentFooter() {
-    // Vérifier si le bouton doit être désactivé
     bool isButtonDisabled = _isProcessing ||
         _selectedPaymentMethod.isEmpty ||
         (_selectedPaymentMethod == 'bankily' && _passcodeController.text.trim().isEmpty);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorManager.whiteColor,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
+            blurRadius: 8,
             offset: const Offset(0, -2),
           ),
         ],
@@ -677,20 +682,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+                  onPressed: () => Navigator.of(context).pop(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[300],
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    backgroundColor: ColorManager.greyShade,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 13),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(25),
                     ),
                     elevation: 2,
                   ),
@@ -698,42 +701,42 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     tr(LocaleKeys.backButton),
                     style: getBoldStyle(
                       color: ColorManager.primaryColor,
-                      fontSize: FontSize.s14,
+                      fontSize: FontSize.s16,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
                 child: ElevatedButton(
                   onPressed: isButtonDisabled ? null : _processPayment,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isButtonDisabled
-                        ? Colors.grey
+                        ? Colors.grey[300]
                         : ColorManager.primaryColor,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 13),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(25),
                     ),
                     elevation: 2,
                   ),
                   child: _isProcessing
                       ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
                       : Text(
-                    tr(LocaleKeys.payNow),
-                    style: getBoldStyle(
-                      color: Colors.white,
-                      fontSize: FontSize.s14,
-                    ),
-                  ),
+                          tr(LocaleKeys.payNow),
+                          style: getBoldStyle(
+                            color: Colors.white,
+                            fontSize: FontSize.s16,
+                          ),
+                        ),
                 ),
               ),
             ],

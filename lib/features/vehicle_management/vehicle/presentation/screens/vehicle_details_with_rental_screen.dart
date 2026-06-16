@@ -109,25 +109,22 @@ class _VehicleDetailsWithRentalScreenState extends State<VehicleDetailsWithRenta
   }
 
   Widget _buildLoadedScreen(BuildContext context, vehicle) {
-    return Stack(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: EdgeInsets.only(bottom: context.scale(88)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Bannière avec images du véhicule
-              VehicleImagesSlider(imageUrls: vehicle.imageUrls),
+        // Bannière avec images du véhicule
+        VehicleImagesSlider(imageUrls: vehicle.imageUrls),
 
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(context.scale(16)),
-                  child: SingleChildScrollView(
-                    child: SafeArea(
-                      top: false,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.all(context.scale(16)),
+            child: SingleChildScrollView(
+              child: SafeArea(
+                top: false,
+                bottom: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                           // En-tête avec titre, prix et statut
                           VehicleDetailsHeader(
                             vehicleDetailsTitle: '${vehicle.makeName} ${vehicle.modelName}',
@@ -163,8 +160,6 @@ class _VehicleDetailsWithRentalScreenState extends State<VehicleDetailsWithRenta
                           // Options de location
                           _buildRentalOptions(vehicle),
 
-                          SizedBox(height: context.scale(24)),
-
                           // Localisation du véhicule
                           // if (vehicle.latitude != null && vehicle.longitude != null) ...[
                           //   Text(
@@ -188,9 +183,6 @@ class _VehicleDetailsWithRentalScreenState extends State<VehicleDetailsWithRenta
                   ),
                 ),
               ),
-            ],
-          ),
-        ),
 
         // Footer avec bouton "Suivant"
         _buildRentalFooter(vehicle),
@@ -366,11 +358,7 @@ class _VehicleDetailsWithRentalScreenState extends State<VehicleDetailsWithRenta
   }
 
   Widget _buildRentalFooter(vehicle) {
-    return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
-      child: Container(
+    return Container(
         height: context.scale(55),
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: context.scale(16)),
@@ -461,7 +449,6 @@ class _VehicleDetailsWithRentalScreenState extends State<VehicleDetailsWithRenta
             ),
           ],
         ),
-      ),
     );
   }
 
