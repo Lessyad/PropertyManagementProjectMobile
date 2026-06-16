@@ -1,27 +1,24 @@
+import 'package:easy_localization/easy_localization.dart';
+
+import '../translation/locale_keys.dart';
 import '../utils/enums.dart';
 
 extension FurnishedStatusExtension on FurnishingStatus {
-  /// Get the Arabic translation of the furnished status
-  String get toArabic {
+  /// Furnished status label in current locale (use this for display).
+  String get toName {
     switch (this) {
       case FurnishingStatus.furnished:
-        return 'مفروشة';
+        return LocaleKeys.furnished.tr();
       case FurnishingStatus.notFurnished:
-        return 'غير مفروشة';
-
+        return LocaleKeys.notFurnished.tr();
     }
   }
 
-  /// Get the English translation of the furnished status
-  String get toEnglish {
-    switch (this) {
-      case FurnishingStatus.furnished:
-        return 'Furnished';
-      case FurnishingStatus.notFurnished:
-        return 'Not Furnished';
+  /// Furnished status label in current locale (same as toName).
+  String get toArabic => toName;
 
-    }
-  }
+  /// Furnished status label in current locale (same as toName).
+  String get toEnglish => toName;
 
   bool get isFurnished => this == FurnishingStatus.furnished;
   bool get isUnfurnished => this == FurnishingStatus.notFurnished;

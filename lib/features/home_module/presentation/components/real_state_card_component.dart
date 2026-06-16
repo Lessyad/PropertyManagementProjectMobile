@@ -281,7 +281,7 @@ class RealStateCardComponent extends StatelessWidget {
               _buildDetailItem(
                 context,
                 isFurnishing.isFurnished ? AppAssets.furnishedIcon : AppAssets.emptyIcon,
-                isFurnishing.toArabic.tr(),
+                isFurnishing.toName,
               ),
             if (isScreenWidth) _buildVerticalDivider(context),
             if (isScreenWidth)
@@ -323,7 +323,7 @@ class RealStateCardComponent extends StatelessWidget {
           _buildDetailItem(context, AppAssets.areaIcon, currentProperty.area.toString()),
           _buildVerticalDivider(context),
           if (isScreenWidth)
-            _buildDetailItem(context, isFurnishing.isFurnished ? AppAssets.furnishedIcon : AppAssets.emptyIcon, isFurnishing.toArabic.tr()),
+            _buildDetailItem(context, isFurnishing.isFurnished ? AppAssets.furnishedIcon : AppAssets.emptyIcon, isFurnishing.toName),
           if (isScreenWidth) _buildVerticalDivider(context),
           if (isScreenWidth)
             _buildDetailItem(context, AppAssets.landIcon, '${LocaleKeys.floorsLabel.tr()} $floor'),
