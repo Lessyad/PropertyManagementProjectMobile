@@ -45,16 +45,17 @@ class RentalHistoryDetailScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: ColorManager.greyShade,
         appBar: AppBar(
-          backgroundColor: ColorManager.primaryColor,
-          foregroundColor: ColorManager.whiteColor,
+          backgroundColor: ColorManager.whiteColor,
+          foregroundColor: ColorManager.navyColor,
           title: Text(
             _detailTitle(context),
             style: getBoldStyle(
-              color: ColorManager.whiteColor,
+              color: ColorManager.navyColor,
               fontSize: FontSize.s16,
             ),
           ),
           centerTitle: true,
+          elevation: 0,
         ),
         body: BlocBuilder<RentalHistoryCubit, RentalHistoryState>(
           builder: (context, state) {

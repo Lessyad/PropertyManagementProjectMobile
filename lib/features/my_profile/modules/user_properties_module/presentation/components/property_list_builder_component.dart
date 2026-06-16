@@ -101,9 +101,9 @@ class UserPropertiesListBuilderComponent extends StatelessWidget {
                   height: context.scale(290),
                   currentProperty: propertyItem,
                   showWishlistButton: false,
-                  cardActions: MyPropertiesCardActions (
-                    propertyItem: propertyItem,
-                  ),
+                  cardActions: propertyItem.status.toLowerCase() == 'sold'
+                      ? null
+                      : MyPropertiesCardActions(propertyItem: propertyItem),
                 ),
               );
             },

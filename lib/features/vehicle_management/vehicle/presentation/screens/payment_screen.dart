@@ -152,8 +152,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
       backgroundColor: ColorManager.greyShade,
       appBar: AppBar(
         title: Text(tr(LocaleKeys.paymentTitle)),
-        backgroundColor: ColorManager.primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: ColorManager.whiteColor,
+        foregroundColor: ColorManager.navyColor,
         elevation: 0,
       ),
       body: Column(

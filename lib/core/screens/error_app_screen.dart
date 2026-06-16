@@ -58,8 +58,8 @@ class ErrorAppScreen extends StatelessWidget {
                     children: [
                       SvgImageComponent(
                         iconPath: AppAssets.errorImage,
-                        width: constraints.maxWidth,
-                        height: constraints.maxHeight * 0.5,
+                        width: context.scale(90),
+                        height: context.scale(90),
                       ),
                       SizedBox(height: context.scale(24)),
                       Text(

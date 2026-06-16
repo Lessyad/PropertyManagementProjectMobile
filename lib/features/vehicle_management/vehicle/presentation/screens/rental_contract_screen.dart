@@ -162,8 +162,8 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
       backgroundColor: ColorManager.greyShade,
       appBar: AppBar(
         title: Text(LocaleKeys.rentalContract.tr()),
-        backgroundColor: ColorManager.primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: ColorManager.whiteColor,
+        foregroundColor: ColorManager.navyColor,
         elevation: 0,
       ),
       body: Column(

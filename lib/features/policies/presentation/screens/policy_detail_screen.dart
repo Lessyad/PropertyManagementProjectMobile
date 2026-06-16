@@ -97,7 +97,8 @@ class PolicyDetailScreen extends StatelessWidget {
     return SliverAppBar(
       expandedHeight: context.scale(150),
       pinned: true,
-      backgroundColor: ColorManager.primaryColor,
+      backgroundColor: ColorManager.whiteColor,
+      foregroundColor: ColorManager.navyColor,
       leading: Padding(
         padding: EdgeInsets.all(context.scale(8)),
         child: InkWell(
@@ -105,12 +106,12 @@ class PolicyDetailScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(context.scale(12)),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: ColorManager.greyShade,
               borderRadius: BorderRadius.circular(context.scale(12)),
             ),
             child: Icon(
               Icons.arrow_back_ios_new,
-              color: ColorManager.whiteColor,
+              color: ColorManager.navyColor,
               size: context.scale(18),
             ),
           ),
@@ -120,7 +121,7 @@ class PolicyDetailScreen extends StatelessWidget {
         title: Text(
           title,
           style: getBoldStyle(
-            color: ColorManager.whiteColor,
+            color: ColorManager.navyColor,
             fontSize: FontSize.s15,
           ),
         ),
@@ -130,7 +131,7 @@ class PolicyDetailScreen extends StatelessWidget {
           right: context.scale(16),
         ),
         background: Container(
-          color: ColorManager.primaryColor,
+          color: ColorManager.whiteColor,
           child: Align(
             alignment: Alignment.bottomLeft,
             child: Padding(

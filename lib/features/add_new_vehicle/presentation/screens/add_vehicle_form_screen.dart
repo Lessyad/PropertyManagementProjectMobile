@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import '../../../../../configuration/managers/color_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/services/service_locator.dart';
 import '../../../../../core/services/dio_service.dart';
@@ -92,8 +93,9 @@ class _AddVehicleFormScreenState extends State<AddVehicleFormScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ajouter un véhicule'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
+        backgroundColor: ColorManager.whiteColor,
+        foregroundColor: ColorManager.navyColor,
+        elevation: 0,
       ),
       body: BlocConsumer<AddNewVehicleCubit, AddNewVehicleState>(
         listener: (context, state) {

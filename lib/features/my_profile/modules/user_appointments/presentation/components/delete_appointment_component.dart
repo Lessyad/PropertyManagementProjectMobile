@@ -1,5 +1,3 @@
-import 'package:enmaa/core/components/svg_image_component.dart';
-import 'package:enmaa/core/constants/app_assets.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
 import 'package:enmaa/features/my_profile/modules/user_appointments/presentation/controller/user_appointments_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,14 +17,6 @@ class DeleteAppointmentComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SvgImageComponent(
-          width: 80,
-          height: 80,
-          iconPath: AppAssets.removeImage,
-        ),
-        SizedBox(
-          height: context.scale(20),
-        ),
         Text(
           'هل أنت متأكد من إلغاء موعد المعاينة؟',
           style: getBoldStyle(

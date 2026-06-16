@@ -26,6 +26,7 @@ class ProfileScreen extends StatelessWidget {
             appBarTextMessage: LocaleKeys.myProfile.tr(),
             showNotificationIcon: false,
             showLocationIcon: false,
+            showBackIcon: true,
             centerText: true,
           ),
           Expanded(

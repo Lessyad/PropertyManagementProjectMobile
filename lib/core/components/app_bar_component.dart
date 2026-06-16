@@ -145,22 +145,15 @@ class _AppBarComponentState extends State<AppBarComponent> {
               ),
             )
           else if (widget.centerText)
-            SizedBox(width: context.scale(64)),
+            const SizedBox.shrink(),
           if (widget.centerText)
             Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (!widget.showBackIcon) const SizedBox(width: 32),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: context.scale(16)),
-                    child: Text(
-                      widget.appBarTextMessage,
-                      style: getBoldStyle(color: ColorManager.navyColor),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+              child: Center(
+                child: Text(
+                  widget.appBarTextMessage,
+                  style: getBoldStyle(color: ColorManager.navyColor),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             )
           else if (userName != null)
@@ -377,7 +370,7 @@ class _AppBarComponentState extends State<AppBarComponent> {
                 ),
               ),
             )
-          else if (widget.centerText)
+          else if (widget.centerText && widget.showBackIcon)
             SizedBox(width: context.scale(64)),
         ],
       ),

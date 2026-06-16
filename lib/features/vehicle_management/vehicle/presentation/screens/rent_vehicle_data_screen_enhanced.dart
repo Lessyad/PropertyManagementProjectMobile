@@ -537,8 +537,8 @@ class _RentVehicleDataScreenEnhancedState
       backgroundColor: ColorManager.greyShade,
       appBar: AppBar(
         title: Text(tr(LocaleKeys.tenantInfo)),
-        backgroundColor: ColorManager.primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: ColorManager.whiteColor,
+        foregroundColor: ColorManager.navyColor,
         elevation: 0,
       ),
       body: Column(

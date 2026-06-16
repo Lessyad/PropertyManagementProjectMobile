@@ -25,10 +25,25 @@ class MyPropertiesCardActions extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
-        customButton: const Icon(
-          Icons.more_horiz_rounded,
-          size: 30,
-          color: Colors.black,
+        customButton: Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: ColorManager.whiteColor,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.12),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.more_horiz_rounded,
+            size: 18,
+            color: Color(0xFF102D58),
+          ),
         ),
         items: [
           DropdownMenuItem<String>(

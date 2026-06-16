@@ -74,8 +74,8 @@ class RentalSummaryScreen extends StatelessWidget {
       backgroundColor: ColorManager.greyShade,
       appBar: AppBar(
         title: Text(tr(LocaleKeys.rentalSummary)),
-        backgroundColor: ColorManager.primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: ColorManager.whiteColor,
+        foregroundColor: ColorManager.navyColor,
         elevation: 0,
       ),
       body: Column(

@@ -195,10 +195,10 @@ class _PdfContractViewerScreenState extends State<PdfContractViewerScreen> {
       appBar: AppBar(
         title: Text(
           LocaleKeys.rentalContractTitle.tr(),
-          style: getBoldStyle(color: Colors.white, fontSize: FontSize.s16),
+          style: getBoldStyle(color: ColorManager.navyColor, fontSize: FontSize.s16),
         ),
-        backgroundColor: ColorManager.primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: ColorManager.whiteColor,
+        foregroundColor: ColorManager.navyColor,
         elevation: 0,
         actions: [
           if (!_isLoading && _error == null)
