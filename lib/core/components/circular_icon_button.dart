@@ -12,6 +12,7 @@ class CircularIconButton extends StatelessWidget {
     this.backgroundColor = Colors.white,
     this.onPressed,
     this.padding,
+    this.iconColor,
   });
 
   final String iconPath;
@@ -20,6 +21,7 @@ class CircularIconButton extends StatelessWidget {
   final Color backgroundColor;
   final VoidCallback? onPressed;
   final EdgeInsets? padding;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +48,7 @@ class CircularIconButton extends StatelessWidget {
               iconPath: iconPath,
               width: iconSize,
               height: iconSize,
+              color: iconColor,
             ),
           ),
         ),

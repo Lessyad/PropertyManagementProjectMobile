@@ -73,17 +73,17 @@ class _AppBarComponentState extends State<AppBarComponent> {
       print('❌ Utilisateur non authentifié - pas de récupération du count');
       return;
     }
-    
+
     try {
       print('🔔 Début de récupération du count de notifications non lues...');
       final dioService = ServiceLocator.getIt<DioService>();
       final response = await dioService.get(
         url: '${ApiConstants.notifications}unread-count',
       );
-      
+
       print('🔔 Réponse API: ${response.statusCode}');
       print('🔔 Data reçue: ${response.data}');
-      
+
       if (response.statusCode == 200 && mounted) {
         final count = response.data['unreadCount'] ?? 0;
         print('✅ Count de notifications non lues: $count');
@@ -92,7 +92,8 @@ class _AppBarComponentState extends State<AppBarComponent> {
         });
       }
     } catch (e) {
-      print('❌ Erreur lors de la récupération du nombre de notifications non lues: $e');
+      print(
+          '❌ Erreur lors de la récupération du nombre de notifications non lues: $e');
     }
   }
 
@@ -112,7 +113,7 @@ class _AppBarComponentState extends State<AppBarComponent> {
         color: ColorManager.whiteColor,
         boxShadow: [
           BoxShadow(
-            color: ColorManager.blackColor.withOpacity(0.1),
+            color: ColorManager.blackColor.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 3),
@@ -123,8 +124,10 @@ class _AppBarComponentState extends State<AppBarComponent> {
           bottomRight: Radius.circular(context.scale(16)),
         ),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+      child: Padding(
+        padding: EdgeInsets.only(top: context.scale(20)),
+        child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (widget.showBackIcon && widget.centerText)
             Padding(
@@ -137,6 +140,7 @@ class _AppBarComponentState extends State<AppBarComponent> {
                   containerSize: context.scale(32),
                   iconPath: AppAssets.backIcon,
                   backgroundColor: ColorManager.greyShade,
+                  iconColor: ColorManager.navyColor,
                 ),
               ),
             )
@@ -152,7 +156,7 @@ class _AppBarComponentState extends State<AppBarComponent> {
                     padding: EdgeInsets.symmetric(vertical: context.scale(16)),
                     child: Text(
                       widget.appBarTextMessage,
-                      style: getBoldStyle(color: ColorManager.blackColor),
+                      style: getBoldStyle(color: ColorManager.navyColor),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -162,19 +166,14 @@ class _AppBarComponentState extends State<AppBarComponent> {
           else if (userName != null)
             Expanded(
               child: Padding(
-                padding: EdgeInsets.all(context.scale(10)),
+                padding: EdgeInsets.symmetric(horizontal: context.scale(10)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       '${LocaleKeys.hello.tr()} ${userName}،', // "أهلا"
-                      style: getBoldStyle(color: ColorManager.blackColor),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      widget.appBarTextMessage,
-                      style: getLightStyle(color: ColorManager.blackColor),
+                      style: getBoldStyle(color: ColorManager.navyColor),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -193,19 +192,21 @@ class _AppBarComponentState extends State<AppBarComponent> {
                     children: [
                       Text(
                         LocaleKeys.welcome.tr(), // "مرحباً بك،"
-                        style: getBoldStyle(color: ColorManager.blackColor),
+                        style: getBoldStyle(color: ColorManager.navyColor),
                         overflow: TextOverflow.ellipsis,
                       ),
                       InkWell(
                         onTap: () {
                           Navigator.of(context, rootNavigator: true)
                               .pushReplacementNamed(
-                              RoutersNames.authenticationFlow);
+                                  RoutersNames.authenticationFlow);
                         },
                         child: Text(
-                          LocaleKeys.createAccountForFeatures.tr(), // "أنشئ حساباً لتحصل علي المميزات"
+                          LocaleKeys.createAccountForFeatures
+                              .tr(), // "أنشئ حساباً لتحصل علي المميزات"
                           style: getUnderlineRegularStyle(
-                              color: ColorManager.grey, fontSize: FontSize.s14),
+                              color: ColorManager.navyColor,
+                              fontSize: FontSize.s14),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -220,7 +221,6 @@ class _AppBarComponentState extends State<AppBarComponent> {
                 return Padding(
                   padding: EdgeInsets.only(
                     right: context.scale(16),
-                    bottom: context.scale(16),
                   ),
                   child: InkWell(
                     onTap: () {
@@ -258,7 +258,7 @@ class _AppBarComponentState extends State<AppBarComponent> {
                           decoration: BoxDecoration(
                             color: ColorManager.greyShade,
                             borderRadius:
-                            BorderRadius.circular(context.scale(16)),
+                                BorderRadius.circular(context.scale(16)),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -270,7 +270,7 @@ class _AppBarComponentState extends State<AppBarComponent> {
                                     location,
                                     overflow: TextOverflow.ellipsis,
                                     style: getRegularStyle(
-                                      color: ColorManager.primaryColor,
+                                      color: ColorManager.navyColor,
                                       fontSize: FontSize.s10,
                                     ),
                                   ),
@@ -280,7 +280,8 @@ class _AppBarComponentState extends State<AppBarComponent> {
                                   AppAssets.locationIcon,
                                   width: context.scale(16),
                                   height: context.scale(16),
-                                  color: ColorManager.primaryColor,
+                                  colorFilter: ColorFilter.mode(
+                                      ColorManager.navyColor, BlendMode.srcIn),
                                 ),
                               ],
                             ),
@@ -300,17 +301,18 @@ class _AppBarComponentState extends State<AppBarComponent> {
                 }
               },
               child: Padding(
-                padding: EdgeInsets.all(context.scale(16)),
+                padding: EdgeInsets.symmetric(horizontal: context.scale(16)),
                 child: InkWell(
                   onTap: () {
                     if (isAuth) {
-                    final accessToken = SharedPreferencesService().accessToken;
-                    Navigator.of(context, rootNavigator: true)
-                        .pushNamed(RoutersNames.notificationsScreen,
-                        arguments: unreadNotificationsCount)
-                        .then((_) {
-                      _updateNotificationsCount();
-                    });
+                      final accessToken =
+                          SharedPreferencesService().accessToken;
+                      Navigator.of(context, rootNavigator: true)
+                          .pushNamed(RoutersNames.notificationsScreen,
+                              arguments: unreadNotificationsCount)
+                          .then((_) {
+                        _updateNotificationsCount();
+                      });
                     } else {
                       // Afficher LoginBottomSheet pour se connecter
                       LoginBottomSheet.show();
@@ -323,6 +325,7 @@ class _AppBarComponentState extends State<AppBarComponent> {
                         containerSize: context.scale(32),
                         iconPath: AppAssets.notificationIcon,
                         backgroundColor: ColorManager.greyShade,
+                        iconColor: ColorManager.navyColor,
                       ),
                       if (unreadNotificationsCount > 0)
                         Positioned(
@@ -339,14 +342,15 @@ class _AppBarComponentState extends State<AppBarComponent> {
                             ),
                             decoration: BoxDecoration(
                               color: Colors.red,
-                              borderRadius: BorderRadius.circular(context.scale(12)),
+                              borderRadius:
+                                  BorderRadius.circular(context.scale(12)),
                               border: Border.all(
                                 color: ColorManager.whiteColor,
                                 width: 2,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
+                                  color: Colors.black.withValues(alpha: 0.2),
                                   blurRadius: 4,
                                   offset: Offset(0, 2),
                                 ),
@@ -354,8 +358,8 @@ class _AppBarComponentState extends State<AppBarComponent> {
                             ),
                             child: Center(
                               child: Text(
-                                unreadNotificationsCount > 99 
-                                    ? '99+' 
+                                unreadNotificationsCount > 99
+                                    ? '99+'
                                     : unreadNotificationsCount.toString(),
                                 style: TextStyle(
                                   color: ColorManager.whiteColor,
@@ -377,9 +381,9 @@ class _AppBarComponentState extends State<AppBarComponent> {
             SizedBox(width: context.scale(64)),
         ],
       ),
+      ),
     );
   }
-
 }
 
 void _showLocationPickerBottomSheet(BuildContext context, HomeBloc homeBloc) {

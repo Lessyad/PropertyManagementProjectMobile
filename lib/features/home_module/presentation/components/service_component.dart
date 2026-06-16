@@ -23,8 +23,8 @@ class ServiceComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconColor = isEnabled ? null : ColorManager.grey2;
-    final textColor = isEnabled ? ColorManager.blackColor : ColorManager.grey2;
+    final iconColor = isEnabled ? ColorManager.navyColor : ColorManager.grey2;
+    final textColor = isEnabled ? ColorManager.navyColor : ColorManager.grey2;
 
     return InkWell(
       onTap: isEnabled ? onTap : null,

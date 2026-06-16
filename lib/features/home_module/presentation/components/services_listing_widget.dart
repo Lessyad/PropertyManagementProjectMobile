@@ -30,13 +30,13 @@ class ServicesListingWidget extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: getBoldStyle(color: ColorManager.blackColor),
+                style: getBoldStyle(color: ColorManager.navyColor),
               ),
               InkWell(
                 onTap: seeMoreAction,
                 child: Text(
                   LocaleKeys.servicesSeeAll.tr(),
-                  style: getUnderlineRegularStyle(color: ColorManager.blackColor),
+                  style: getUnderlineRegularStyle(color: ColorManager.navyColor),
                 ),
               ),
             ],
