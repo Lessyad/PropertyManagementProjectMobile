@@ -103,6 +103,8 @@ class BookPropertyCubit extends Cubit<BookPropertyState> {
   }
 
   void _fillBuyerDataFromCache() {
+    if (state.buyerType != BuyerType.iAmBuyer) return;
+
     final sharedPrefs = SharedPreferencesService();
     final idNumber = _stringValue(sharedPrefs.getValue(LocalKeys.userIdNumber));
 
@@ -119,6 +121,36 @@ class BookPropertyCubit extends Cubit<BookPropertyState> {
       idExpirationDate:
           _parseStoredDate(sharedPrefs.getValue(LocalKeys.userIdExpirationDate)),
       countryCode: currentCountryCode,
+    ));
+  }
+
+  void _clearBuyerData() {
+    nameController.clear();
+    phoneNumberController.clear();
+    iDNumberController.clear();
+
+    emit(BookPropertyState(
+      selectedImages: state.selectedImages,
+      selectImagesState: state.selectImagesState,
+      validateImages: state.validateImages,
+      getPropertySaleDetailsState: state.getPropertySaleDetailsState,
+      propertySaleDetailsEntity: state.propertySaleDetailsEntity,
+      getPropertySaleDetailsError: state.getPropertySaleDetailsError,
+      bookPropertyState: state.bookPropertyState,
+      bookPropertyError: state.bookPropertyError,
+      bookPropertyResponse: state.bookPropertyResponse,
+      buyerType: state.buyerType,
+      phoneNumber: '',
+      countryCode: currentCountryCode,
+      userName: '',
+      userID: '',
+      showBirthDatePicker: state.showBirthDatePicker,
+      birthDate: null,
+      showIDExpirationDatePicker: state.showIDExpirationDatePicker,
+      idExpirationDate: null,
+      currentPaymentMethod: state.currentPaymentMethod,
+      bankilyPassCode: state.bankilyPassCode,
+      clientBankilyPhoneNumber: state.clientBankilyPhoneNumber,
     ));
   }
 
@@ -186,7 +218,15 @@ class BookPropertyCubit extends Cubit<BookPropertyState> {
 
 
   void changeBuyerType(BuyerType buyerType) {
+    if (buyerType == state.buyerType) return;
+
     emit(state.copyWith(buyerType: buyerType));
+
+    if (buyerType == BuyerType.iAmBuyer) {
+      _fillBuyerDataFromCache();
+    } else {
+      _clearBuyerData();
+    }
   }
 
   void setUserName(String userName) {
