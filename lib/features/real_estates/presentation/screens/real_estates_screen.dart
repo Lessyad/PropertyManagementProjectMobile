@@ -10,6 +10,7 @@ import 'package:enmaa/features/real_estates/presentation/controller/filter_prope
 import 'package:enmaa/features/real_estates/presentation/controller/real_estate_cubit.dart';
 import 'package:enmaa/features/real_estates/presentation/screens/real_estate_filter_screen.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -48,8 +49,6 @@ class _RealStateScreenState extends State<RealStateScreen>
   late TabController _tabController;
   final ScrollController _saleScrollController = ScrollController();
   final ScrollController _rentScrollController = ScrollController();
-  bool _salePaginationVisible = false;
-  bool _rentPaginationVisible = false;
   bool _saleChangingPage = false;
   bool _rentChangingPage = false;
 
@@ -71,28 +70,6 @@ class _RealStateScreenState extends State<RealStateScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<RealEstateCubit>().loadTabData(currentOperationType);
     });
-
-    _setupScrollControllers();
-  }
-
-  void _setupScrollControllers() {
-    _saleScrollController.addListener(() {
-      if (!_saleScrollController.hasClients) return;
-      final atBottom = _saleScrollController.position.pixels >=
-          _saleScrollController.position.maxScrollExtent - 60;
-      if (atBottom && !_salePaginationVisible) {
-        setState(() => _salePaginationVisible = true);
-      }
-    });
-
-    _rentScrollController.addListener(() {
-      if (!_rentScrollController.hasClients) return;
-      final atBottom = _rentScrollController.position.pixels >=
-          _rentScrollController.position.maxScrollExtent - 60;
-      if (atBottom && !_rentPaginationVisible) {
-        setState(() => _rentPaginationVisible = true);
-      }
-    });
   }
 
   void _goToPage(PropertyOperationType type, int page) {
@@ -100,10 +77,8 @@ class _RealStateScreenState extends State<RealStateScreen>
     // Shimmer immédiat + cache pagination avant tout appel API
     setState(() {
       if (isSale) {
-        _salePaginationVisible = false;
         _saleChangingPage = true;
       } else {
-        _rentPaginationVisible = false;
         _rentChangingPage = true;
       }
     });
@@ -180,7 +155,8 @@ class _RealStateScreenState extends State<RealStateScreen>
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Text(
-                '$totalCount résultat${totalCount > 1 ? 's' : ''}',
+                LocaleKeys.propertyResultCount.tr(namedArgs: {'count': '$totalCount'}),
+                textDirection: ui.TextDirection.ltr,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -513,7 +489,6 @@ class _RealStateScreenState extends State<RealStateScreen>
           totalCount: state.saleTotalCount,
           currentPage: state.saleCurrentPage,
           limit: state.limit,
-          showPagination: _salePaginationVisible,
           isChangingPage: _saleChangingPage,
         );
       },
@@ -538,7 +513,6 @@ class _RealStateScreenState extends State<RealStateScreen>
           totalCount: state.rentTotalCount,
           currentPage: state.rentCurrentPage,
           limit: state.limit,
-          showPagination: _rentPaginationVisible,
           isChangingPage: _rentChangingPage,
         );
       },
@@ -555,7 +529,6 @@ class _RealStateScreenState extends State<RealStateScreen>
     required int totalCount,
     required int currentPage,
     required int limit,
-    required bool showPagination,
     bool isChangingPage = false,
   }) {
     // Shimmer immédiat dès le clic sur une page (isChangingPage)
@@ -588,13 +561,6 @@ class _RealStateScreenState extends State<RealStateScreen>
                     filters: filterData,
                     refresh: true,
                   );
-              setState(() {
-                if (type == PropertyOperationType.forSale) {
-                  _salePaginationVisible = false;
-                } else {
-                  _rentPaginationVisible = false;
-                }
-              });
             },
             child: ListView.builder(
               controller: scrollController,
@@ -614,27 +580,14 @@ class _RealStateScreenState extends State<RealStateScreen>
             ),
           ),
         ),
-        // Pagination : visible uniquement après scroll jusqu'au dernier item
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          transitionBuilder: (child, animation) => SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 1),
-              end: Offset.zero,
-            ).animate(
-                CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-            child: FadeTransition(opacity: animation, child: child),
+        if (limit > 0 && (totalCount / limit).ceil() > 1)
+          _buildPaginationBar(
+            currentPage: currentPage,
+            totalCount: totalCount,
+            limit: limit,
+            hasMore: hasMore,
+            type: type,
           ),
-          child: showPagination
-              ? _buildPaginationBar(
-                  currentPage: currentPage,
-                  totalCount: totalCount,
-                  limit: limit,
-                  hasMore: hasMore,
-                  type: type,
-                )
-              : const SizedBox.shrink(),
-        ),
       ],
     );
   }

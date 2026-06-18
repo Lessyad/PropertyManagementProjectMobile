@@ -1,12 +1,15 @@
 import 'package:enmaa/core/screens/property_empty_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'dart:ui' as ui;
 import 'package:enmaa/core/extensions/context_extension.dart';
 import 'package:enmaa/core/utils/enums.dart';
 import 'package:enmaa/core/components/app_bar_component.dart';
 import 'package:enmaa/core/components/card_listing_shimmer.dart';
 import 'package:enmaa/configuration/managers/color_manager.dart';
 import 'package:enmaa/core/components/custom_snack_bar.dart';
+import 'package:enmaa/core/translation/locale_keys.dart';
 import 'package:enmaa/features/home_module/presentation/components/real_state_card_component.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../home_module/presentation/controller/home_bloc.dart';
@@ -245,7 +248,8 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Text(
-                '$_totalCount résultat${_totalCount > 1 ? 's' : ''}',
+                LocaleKeys.propertyResultCount.tr(namedArgs: {'count': '$_totalCount'}),
+                textDirection: ui.TextDirection.ltr,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,

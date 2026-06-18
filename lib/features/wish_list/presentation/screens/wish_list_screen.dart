@@ -67,17 +67,16 @@ class _WishListScreenState extends State<WishListScreen> {
                     }
                     return ListView.builder(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
+                          horizontal: 14, vertical: 8),
                       physics: const AlwaysScrollableScrollPhysics(),
                       itemCount: state.propertyWishList.length,
                       itemBuilder: (context, index) {
                         final wishListItem = state.propertyWishList[index];
                         return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            padding: const EdgeInsets.symmetric(vertical: 6),
                             child: WishListPropertyCard(
                               wishListItem: wishListItem,
                               width: MediaQuery.of(context).size.width,
-                              height: context.scale(290),
                             ));
                       },
                     );
@@ -90,7 +89,7 @@ class _WishListScreenState extends State<WishListScreen> {
                     return CardShimmerList(
                       scrollDirection: Axis.vertical,
                       cardWidth: MediaQuery.of(context).size.width,
-                      cardHeight: context.scale(290),
+                      cardHeight: context.scale(200),
                     );
                   }
                 },

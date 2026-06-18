@@ -892,7 +892,8 @@ class CodegenLoader extends AssetLoader{
   "cancelPreview": "إلغاء الزيارة",
   "previewCompletedOnDate": "تمت الزيارة في",
   "previewCancelled": "تم إلغاء الزيارة",
-  "comingSoon": "قريباً"
+  "comingSoon": "قريباً",
+  "property_results_count": "{count} نتيجة"
 };
 static const Map<String,dynamic> _en = {
   "somethingWentWrong": "Something went wrong",
@@ -1772,7 +1773,8 @@ static const Map<String,dynamic> _en = {
   "cancelPreview": "Cancel preview",
   "previewCompletedOnDate": "Preview completed on",
   "previewCancelled": "Preview cancelled",
-  "comingSoon": "Coming soon"
+  "comingSoon": "Coming soon",
+  "property_results_count": "{count} result(s)"
 };
 static const Map<String,dynamic> _fr = {
   "somethingWentWrong": "Quelque chose s'est mal passé",
@@ -2652,7 +2654,8 @@ static const Map<String,dynamic> _fr = {
   "cancelPreview": "Annuler la visite",
   "previewCompletedOnDate": "Visite effectuée le",
   "previewCancelled": "Visite annulée",
-  "comingSoon": "Bientôt disponible"
+  "comingSoon": "Bientôt disponible",
+  "property_results_count": "{count} résultat(s)"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ar": _ar, "en": _en, "fr": _fr};
 }
