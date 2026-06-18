@@ -1135,6 +1135,9 @@ abstract class LocaleKeys {
   static const String previewCancelled = 'previewCancelled';
   static const String filterPriceSection = 'filter_price_section';
 
+  // Pagination
+  static const String propertyResultCount = 'property_results_count';
+
   // Map & Property Type Selector
   static const String comingSoon = 'comingSoon';
   static const String mapLabel = 'mapLabel';
