@@ -2,6 +2,7 @@ import 'package:enmaa/configuration/routers/route_names.dart';
 import 'package:enmaa/core/components/svg_image_component.dart';
 import 'package:enmaa/core/extensions/context_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:enmaa/core/services/error_handler_service.dart';
 import 'package:enmaa/core/translation/locale_keys.dart';
 import '../../configuration/managers/color_manager.dart';
 import '../../configuration/managers/font_manager.dart';
@@ -18,13 +19,18 @@ class ErrorAppScreen extends StatelessWidget {
     this.showActionButton = true,
     this.backgroundColor,
     this.onRetry,
-
+    this.errorMessage,
   });
 
   final bool showBackButton;
   final bool showActionButton;
   final Color? backgroundColor;
   final VoidCallback? onRetry;
+
+  /// Message d'erreur brut (ex: issu de [Failure.message]) utilisé uniquement
+  /// pour détecter une erreur de connexion et adapter le titre affiché ;
+  /// le message technique lui-même n'est jamais montré à l'utilisateur.
+  final String? errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +69,9 @@ class ErrorAppScreen extends StatelessWidget {
                       ),
                       SizedBox(height: context.scale(24)),
                       Text(
-                        LocaleKeys.errorScreenTitle.tr(),
+                        ErrorHandlerService.isConnectionError(errorMessage)
+                            ? LocaleKeys.noInternet.tr()
+                            : LocaleKeys.errorScreenTitle.tr(),
                         style: getBoldStyle(
                           color: ColorManager.blackColor,
                           fontSize: FontSize.s18,

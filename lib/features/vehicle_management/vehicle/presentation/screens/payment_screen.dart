@@ -842,7 +842,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
       if (_multipartController.hasError.value) {
         print('❌ PaymentScreen Multipart Error: ${_multipartController.errorMessage.value}');
-        throw Exception(_multipartController.errorMessage.value);
+        setState(() {
+          _isProcessing = false;
+        });
+        ErrorHandlerService.showError(
+          context: context,
+          errorResponse: _multipartController.errorMessage.value,
+        );
+        return;
       }
 
       setState(() {

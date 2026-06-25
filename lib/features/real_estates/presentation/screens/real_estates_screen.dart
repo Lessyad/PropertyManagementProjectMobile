@@ -546,6 +546,7 @@ class _RealStateScreenState extends State<RealStateScreen>
         showBackButton: false,
         showActionButton: false,
         backgroundColor: ColorManager.greyShade,
+        errorMessage: errorMessage,
       );
     }
 

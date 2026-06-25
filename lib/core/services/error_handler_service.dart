@@ -60,9 +60,49 @@ class ErrorHandlerService {
         return LocaleKeys.errorUserNotFound.tr();
       case 'INTERNAL_SERVER_ERROR':
         return LocaleKeys.internalServerError.tr();
+      case 'PAYMENT_GATEWAY_ERROR':
+        return LocaleKeys.bankilyErrorPaymentFailed.tr();
       default:
         return LocaleKeys.somethingWentWrong.tr();
     }
+  }
+
+  /// Détecte si le message correspond à une erreur réseau/connexion (pas de
+  /// réponse du serveur) plutôt qu'à une erreur applicative. Ces erreurs
+  /// (SocketException, ClientException, TimeoutException...) sont levées par
+  /// Dart/le package http et n'ont jamais de errorCode du backend, car la
+  /// requête n'a jamais atteint le serveur.
+  ///
+  /// Exposée publiquement pour permettre aux écrans (ex: ErrorAppScreen)
+  /// d'afficher un état "pas de connexion" distinct d'une erreur générique.
+  static bool isConnectionError(String? message) {
+    if (message == null || message.isEmpty) return false;
+    return _isConnectionError(message.toLowerCase());
+  }
+
+  static bool _isConnectionError(String message) {
+    const connectionKeywords = [
+      'socketexception',
+      'clientexception',
+      'httpexception',
+      'failed host lookup',
+      'connection refused',
+      'connection reset',
+      'connection abort',
+      'connection closed',
+      'network is unreachable',
+      'no address associated',
+      'no route to host',
+      'handshake',
+      'failed to fetch',
+      'errno = 7',
+      'errno = 111',
+      'os error',
+      'timeout',
+      'no internet',
+      'pas de connexion',
+    ];
+    return connectionKeywords.any(message.contains);
   }
 
   /// Mappe les messages d'erreur du backend vers les clés de traduction et retourne le message traduit
@@ -72,6 +112,16 @@ class ErrorHandlerService {
     }
 
     final message = errorMessage.toLowerCase();
+
+    // Priorité absolue : une erreur de connexion n'a pas de sens métier à
+    // analyser plus loin (ex: "Connection refused" est court et serait
+    // sinon écrasé par le fallback générique "Quelque chose s'est mal passé").
+    if (_isConnectionError(message)) {
+      if (message.contains('timeout')) {
+        return LocaleKeys.connectionTimeout.tr();
+      }
+      return LocaleKeys.noInternet.tr();
+    }
 
     // Erreurs de location de véhicule
     if (message.contains('cannot rent your own vehicle') ||
@@ -434,15 +484,22 @@ class ErrorHandlerService {
       final errorInfo = _extractErrorInfo(errorResponse);
       final errorCode = errorInfo['code'];
       final errorMessage = errorInfo['message'];
-      
-      // Si on a un message spécifique du backend, on essaie de le traduire
-      // Sinon on utilise le code d'erreur ou un message générique
-      if (errorMessage != null && errorMessage.isNotEmpty && 
+
+      // Un errorCode connu (ex: PAYMENT_GATEWAY_ERROR) est plus fiable qu'un texte
+      // libre non reconnu : on le priorise pour éviter d'afficher le message brut
+      // technique (ex: l'erreur HTTP renvoyée par Bankily) à l'utilisateur.
+      final codeTranslation = (errorCode != null && errorCode.isNotEmpty)
+          ? _getErrorTranslationFromCode(errorCode)
+          : null;
+
+      if (codeTranslation != null && codeTranslation != LocaleKeys.somethingWentWrong.tr()) {
+        message = codeTranslation;
+      } else if (errorMessage != null && errorMessage.isNotEmpty &&
           !errorMessage.toLowerCase().contains('internal server error') &&
           !errorMessage.toLowerCase().contains('erreur interne')) {
         // Essayer de traduire le message spécifique
         final translatedMessage = _getErrorTranslationFromMessage(errorMessage);
-        
+
         // Si la traduction retourne un message différent (pas le message par défaut),
         // on l'utilise. Sinon, on affiche le message original du backend
         if (translatedMessage != LocaleKeys.somethingWentWrong.tr() ||

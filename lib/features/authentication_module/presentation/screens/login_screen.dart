@@ -30,7 +30,16 @@ class _LoginScreenState extends State<LoginScreen> {
   bool navigateToNextScreen = true;
 
   String? _validatePhone(String? value) {
-    if (value == null || value.isEmpty) {
+    final phone = value?.trim() ?? '';
+    final countryCode = context
+        .read<RemoteAuthenticationCubit>()
+        .state
+        .currentCountryCode
+        .trim();
+
+    // The field is initialized with the country dial code (for example +222).
+    // A dial code by itself does not constitute a phone number.
+    if (phone.isEmpty || phone == countryCode) {
       return LocaleKeys.phoneRequired.tr();
     }
     return null;
@@ -58,11 +67,13 @@ class _LoginScreenState extends State<LoginScreen> {
         buildWhen: (previous, current) {
           if (previous.loginRequestState != current.loginRequestState &&
               current.loginRequestState != RequestState.loading) {
-            if (current.loginRequestState == RequestState.loaded && navigateToNextScreen) {
+            if (current.loginRequestState == RequestState.loaded &&
+                navigateToNextScreen) {
               navigateToNextScreen = false;
-              Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
+              Navigator.of(context, rootNavigator: true)
+                  .pushNamedAndRemoveUntil(
                 RoutersNames.layoutScreen,
-                    (route) => false,
+                (route) => false,
               );
             } else if (current.loginRequestState == RequestState.error) {
               CustomSnackBar.show(
@@ -91,7 +102,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         iconSize: 16,
                         padding: const EdgeInsets.all(8),
                         onPressed: () {
-                          Navigator.of(context, rootNavigator: true).pushNamed(RoutersNames.layoutScreen);
+                          Navigator.of(context, rootNavigator: true)
+                              .pushNamed(RoutersNames.layoutScreen);
                         },
                       ),
                     ),
@@ -100,14 +112,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       end: 0,
                       start: 0,
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: context.scale(16)),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: context.scale(16)),
                         child: _buildLoginContent(),
                       ),
                     ),
                   ],
                 ),
               ),
-              if (state.loginRequestState == RequestState.loading) const LoadingOverlayComponent(),
+              if (state.loginRequestState == RequestState.loading)
+                const LoadingOverlayComponent(),
             ],
           );
         },
@@ -142,7 +156,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   phone: _phoneController.text.trim(),
                   password: _passwordController.text.trim(),
                 );
-                context.read<RemoteAuthenticationCubit>().remoteLogin(loginRequestBody);
+                context
+                    .read<RemoteAuthenticationCubit>()
+                    .remoteLogin(loginRequestBody);
               }
             },
           ),

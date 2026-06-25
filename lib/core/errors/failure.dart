@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:enmaa/core/constants/api_constants.dart';
 import 'package:equatable/equatable.dart';
 import '../translation/locale_keys.dart';
 
@@ -27,6 +28,12 @@ class ServerFailure extends Failure {
         return ServerFailure(LocaleKeys.receiveTimeout.tr());
 
       case DioExceptionType.badResponse:
+        if (_isLoginRequest(dioException.requestOptions.path) &&
+            (dioException.response?.statusCode == 400 ||
+                dioException.response?.statusCode == 401)) {
+          return ServerFailure(LocaleKeys.errorInvalidCredentials.tr());
+        }
+
         return ServerFailure.fromResponse(
           dioException.response?.statusCode,
           dioException.response?.data,
@@ -36,6 +43,7 @@ class ServerFailure extends Failure {
       case DioExceptionType.sendTimeout:
         return ServerFailure(LocaleKeys.sendTimeout.tr());
 
+      case DioExceptionType.connectionError:
       case DioExceptionType.unknown:
         return ServerFailure(LocaleKeys.noInternet.tr());
 
@@ -64,7 +72,7 @@ class ServerFailure extends Failure {
         }
       }
     } else if (messageError is String) {
-      final messageStr = messageError as String;
+      final messageStr = messageError;
       errorMessage = messageStr;
 
       if (messageStr.contains('Un utilisateur avec ce numéro existe déjà') ||
@@ -76,9 +84,11 @@ class ServerFailure extends Failure {
     String msg(dynamic fallback) {
       if (messageError is Map<String, dynamic>) {
         final m = messageError['message'];
-        if (m != null) return m.toString();
+        if (m != null) {
+          return ServerFailure._friendlyServerMessage(m.toString());
+        }
       }
-      return fallback;
+      return ServerFailure._friendlyServerMessage(fallback.toString());
     }
 
     switch (statusCode) {
@@ -100,7 +110,9 @@ class ServerFailure extends Failure {
 
       case 422:
         final joinMsg = messageError is Map
-            ? messageError.values.join(' , ').replaceAll(RegExp(r'[^\w\s]+'), '')
+            ? messageError.values
+                .join(' , ')
+                .replaceAll(RegExp(r'[^\w\s]+'), '')
             : '';
         return ServerFailure(msg(joinMsg.isEmpty ? errorMessage : joinMsg));
 
@@ -146,14 +158,52 @@ class ServerFailure extends Failure {
       return LocaleKeys.bankilyErrorInsufficientBalance.tr();
     }
     if (lower.contains('operation') &&
-        (lower.contains('exist') || lower.contains('deja') || lower.contains('already'))) {
+        (lower.contains('exist') ||
+            lower.contains('deja') ||
+            lower.contains('already'))) {
       return LocaleKeys.bankilyErrorOperationExists.tr();
     }
-    if (lower.contains('paiement') || lower.contains('payment') ||
-        lower.contains('echoue') || lower.contains('échoué')) {
+    if (lower.contains('paiement') ||
+        lower.contains('payment') ||
+        lower.contains('echoue') ||
+        lower.contains('échoué')) {
       return '${LocaleKeys.bankilyPaymentError.tr()} : $detail';
     }
     return detail;
+  }
+
+  static bool _isLoginRequest(String path) {
+    return path == ApiConstants.login || path.endsWith('/auth/login/');
+  }
+
+  static String _friendlyServerMessage(String message) {
+    final lower = message.toLowerCase();
+
+    if (lower.contains('invalid credentials') ||
+        lower.contains('incorrect credentials') ||
+        lower.contains('invalid phone') ||
+        lower.contains('invalid password') ||
+        lower.contains('identifiants invalides') ||
+        lower.contains('mot de passe incorrect')) {
+      return LocaleKeys.errorInvalidCredentials.tr();
+    }
+
+    if (lower.contains('phone number already exists') ||
+        (lower.contains('utilisateur avec ce') && lower.contains('existe'))) {
+      return LocaleKeys.errorPhoneNumberAlreadyExists.tr();
+    }
+
+    if (lower.contains('invalid otp') ||
+        lower.contains('otp invalid') ||
+        lower.contains('code otp invalide')) {
+      return LocaleKeys.errorInvalidOtp.tr();
+    }
+
+    if (lower.contains('token expired') || lower.contains('token expir')) {
+      return LocaleKeys.errorTokenExpired.tr();
+    }
+
+    return message;
   }
 }
 

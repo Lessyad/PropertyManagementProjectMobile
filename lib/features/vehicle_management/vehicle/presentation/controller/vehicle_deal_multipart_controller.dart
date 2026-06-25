@@ -68,7 +68,10 @@ class VehicleDealMultipartController extends GetxController {
     } catch (e) {
       print('❌ VehicleDealMultipartController Error: $e');
       hasError.value = true;
-      errorMessage.value = e.toString();
+      // Retire le préfixe "Exception: " ajouté par Dart pour ne garder que le
+      // contenu utile (JSON {errorCode, message} ou texte), évitant un empilement
+      // de préfixes lorsque ce message est réaffiché plus haut dans l'UI.
+      errorMessage.value = e.toString().replaceFirst('Exception: ', '');
       isLoading.value = false;
     }
   }

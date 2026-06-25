@@ -250,8 +250,13 @@ class VehicleDealMultipartCorrected {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return json.decode(response.body);
       } else {
-        throw Exception('Failed to create vehicle deal: ${response.statusCode} - ${response.body}');
+        print('❌ Failed to create vehicle deal: ${response.statusCode} - ${response.body}');
+        // On propage le corps brut (JSON {errorCode, message}) tel quel, sans le
+        // préfixer de texte libre, pour que ErrorHandlerService puisse le décoder.
+        throw Exception(response.body);
       }
+    } on Exception {
+      rethrow;
     } catch (e) {
       print('❌ Erreur dans multipart corrigé: $e');
       throw Exception('Error creating vehicle deal: $e');
