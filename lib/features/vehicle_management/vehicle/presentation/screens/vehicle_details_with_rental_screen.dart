@@ -208,13 +208,13 @@ class _VehicleDetailsWithRentalScreenState extends State<VehicleDetailsWithRenta
         children: [
           _buildDetailRow(tr(LocaleKeys.brand), '${vehicle.makeName}'),
           _buildDetailRow(tr(LocaleKeys.model), vehicle.modelName),
-          _buildDetailRow(tr(LocaleKeys.color), vehicle.color),
-          _buildDetailRow(tr(LocaleKeys.mileage), '${vehicle.mileage} ${tr(LocaleKeys.km)}'),
+          // _buildDetailRow(tr(LocaleKeys.color), vehicle.color),
+          // _buildDetailRow(tr(LocaleKeys.mileage), '${vehicle.mileage} ${tr(LocaleKeys.km)}'),
           _buildDetailRow(tr(LocaleKeys.fuelType), vehicle.fuelType),
           _buildDetailRow(tr(LocaleKeys.transmission), vehicle.transmission),
           _buildDetailRow(tr(LocaleKeys.seatsNumber), '${vehicle.seats}'),
           _buildDetailRow(tr(LocaleKeys.year), '${vehicle.year}'),
-          _buildDetailRow(tr(LocaleKeys.licensePlate), vehicle.licensePlate),
+          // _buildDetailRow(tr(LocaleKeys.licensePlate), vehicle.licensePlate),
         ],
       ),
     );

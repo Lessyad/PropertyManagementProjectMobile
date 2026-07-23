@@ -1,3 +1,5 @@
+import '../utils/localized_name.dart';
+
 class VehicleCategory {
   final int id;
   final String name;
@@ -22,7 +24,11 @@ class VehicleCategory {
   factory VehicleCategory.fromJson(Map<String, dynamic> json) {
     return VehicleCategory(
       id: json['id'] ?? 0,
-      name: json['name'] ?? '',
+      name: resolveLocalizedName(
+        nameFr: json['nameFr'],
+        nameAr: json['nameAr'],
+        nameEn: json['nameEn'],
+      ),
       description: json['description'],
       age: json['age'] ?? 18, // Valeur par défaut : 18
       deleted: json['deleted'] ?? false,

@@ -132,14 +132,14 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
         children: [
           _buildDetailRow('Marque', '${vehicle.makeName}'),
           _buildDetailRow('Modèle', vehicle.modelName),
-          _buildDetailRow('Couleur', vehicle.color),
+          // _buildDetailRow('Couleur', vehicle.color),
           _buildDetailRow('Carburant', vehicle.fuelType),
           _buildDetailRow('Transmission', vehicle.transmission),
           _buildDetailRow('Climatisation', vehicle.hasAirConditioning ? 'Oui' : 'Non'),
           _buildDetailRow('Nombre de sièges', '${vehicle.seats}'),
-          _buildDetailRow('Année', '${vehicle.year}'),
+          // _buildDetailRow('Année', '${vehicle.year}'),
           _buildDetailRow('Plaque d\'immatriculation', vehicle.licensePlate),
-          _buildDetailRow('VIN', vehicle.vin),
+          // _buildDetailRow('VIN', vehicle.vin),
         ],
       ),
     );

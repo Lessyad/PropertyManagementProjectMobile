@@ -68,7 +68,8 @@ class RentalSummaryScreen extends StatelessWidget {
     // Calculer le prix de base avec la nouvelle logique basée sur les heures
     final basePrice = _calculateRentalPrice(vehicle.dailyPrice);
     final extraCosts = _calculateExtraCosts(optionsController);
-    final totalPrice = basePrice + extraCosts;
+    final taxAmount = optionsController.calculateTaxAmount();
+    final totalPrice = basePrice + extraCosts + taxAmount;
 
     return Scaffold(
       backgroundColor: ColorManager.greyShade,
@@ -100,7 +101,7 @@ class RentalSummaryScreen extends StatelessWidget {
                   const SizedBox(height: 16),
 
                   // Résumé des coûts
-                  _buildCostSummaryCard(basePrice, extraCosts, totalPrice, optionsController),
+                  _buildCostSummaryCard(basePrice, extraCosts, taxAmount, totalPrice, optionsController),
                 ],
               ),
             ),
@@ -384,7 +385,7 @@ class RentalSummaryScreen extends StatelessWidget {
   }
 
 
-  Widget _buildCostSummaryCard(double basePrice, double extraCosts, double totalPrice, GlobalRentalOptionsController optionsController) {
+  Widget _buildCostSummaryCard(double basePrice, double extraCosts, double taxAmount, double totalPrice, GlobalRentalOptionsController optionsController) {
     final rentalDurationInfo = _getRentalDurationInfo();
     return Container(
       padding: const EdgeInsets.all(16),
@@ -419,6 +420,14 @@ class RentalSummaryScreen extends StatelessWidget {
 
           // Détail des options supplémentaires sélectionnées
           ..._buildExtraOptionsCostRows(rentalDurationInfo['fullDays'] as int, optionsController),
+
+          // Taxe : montant fixe ajouté au total, si configuré pour le pays
+          if (optionsController.taxPercent > 0)
+            _buildCostRow(
+              tr(LocaleKeys.tax),
+              '',
+              '${taxAmount.toStringAsFixed(0)} MRU',
+            ),
           const Divider(height: 24),
           _buildCostRow(
             tr(LocaleKeys.total),
@@ -895,7 +904,8 @@ class RentalSummaryScreen extends StatelessWidget {
     final optionsController = Get.find<GlobalRentalOptionsController>();
     final basePrice = _calculateRentalPrice(vehicle.dailyPrice);
     final extraCosts = _calculateExtraCosts(optionsController);
-    final totalPrice = basePrice + extraCosts; // Recalcul explicite
+    final taxAmount = optionsController.calculateTaxAmount();
+    final totalPrice = basePrice + extraCosts + taxAmount; // Recalcul explicite
     // Navigation vers l'écran de données du locataire
     Navigator.of(context).push(
       MaterialPageRoute(

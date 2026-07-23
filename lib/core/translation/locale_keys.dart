@@ -33,6 +33,7 @@ abstract class LocaleKeys {
 
   static const chooseYourIdealPropertyEasily = 'chooseYourIdealPropertyEasily';
   static const String baseRental = 'base_rental';
+  static const String tax = 'tax';
   // static const String previous = 'previous';
   static const String confirmBooking = 'confirm_booking';
   static const forSale = 'forSale';
@@ -706,6 +707,16 @@ abstract class LocaleKeys {
   static const String backButton = 'back_button';
   static const String payNow = 'pay_now';
   static const String paymentSuccess = 'payment_success';
+  static const String payWithPaypalSecurely = 'pay_with_paypal_securely';
+  static const String payWithBankily = 'pay_with_bankily';
+  static const String paypalRedirectMessage = 'paypal_redirect_message';
+  static const String amount = 'amount';
+  static const String bankilyPhoneNumberLabel = 'bankily_phone_number_label';
+  static const String bankilyPhoneNumberHint = 'bankily_phone_number_hint';
+  static const String bankilyPasscodeHint = 'bankily_passcode_hint';
+  static const String paypalCompletePaymentMessage = 'paypal_complete_payment_message';
+  static const String bankilyPhoneRequiredError = 'bankily_phone_required_error';
+  static const String bankilyPasscodeRequiredError = 'bankily_passcode_required_error';
 
   static const String tenantInfo = 'tenant_info';
   static const String mainTenant = 'main_tenant';

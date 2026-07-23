@@ -1,3 +1,4 @@
+import '../../../../../core/utils/localized_name.dart';
 import '../../domain/entities/vehicle_entity.dart';
 
 class VehicleModel {
@@ -91,10 +92,22 @@ class VehicleModel {
       hasAirConditioning: _key(json, 'hasAirConditioning', 'HasAirConditioning') == true,
       seats: _intFromJson(_key(json, 'seats', 'Seats')),
       vin: _stringFromJson(_key(json, 'vin', 'Vin')),
-      modelName: _stringFromJson(_key(json, 'modelName', 'ModelName')),
+      modelName: resolveLocalizedName(
+        nameFr: _key(json, 'modelNameFr', 'ModelNameFr'),
+        nameAr: _key(json, 'modelNameAr', 'ModelNameAr'),
+        nameEn: _key(json, 'modelNameEn', 'ModelNameEn'),
+      ),
       modelId: _intFromJson(_key(json, 'modelId', 'ModelId')),
-      makeName: _stringFromJson(_key(json, 'makeName', 'MakeName')),
-      categoryName: _stringFromJson(_key(json, 'categoryName', 'CategoryName')),
+      makeName: resolveLocalizedName(
+        nameFr: _key(json, 'makeNameFr', 'MakeNameFr'),
+        nameAr: _key(json, 'makeNameAr', 'MakeNameAr'),
+        nameEn: _key(json, 'makeNameEn', 'MakeNameEn'),
+      ),
+      categoryName: resolveLocalizedName(
+        nameFr: _key(json, 'categoryNameFr', 'CategoryNameFr'),
+        nameAr: _key(json, 'categoryNameAr', 'CategoryNameAr'),
+        nameEn: _key(json, 'categoryNameEn', 'CategoryNameEn'),
+      ),
       categoryId: _intFromJson(_key(json, 'categoryId', 'CategoryId')),
       imageUrls: _stringListFromJson(_key(json, 'imageUrls', 'ImageUrls')),
       createdAt: _dateTimeFromJson(_key(json, 'createdAt', 'CreatedAt')),
