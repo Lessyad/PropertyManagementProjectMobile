@@ -654,6 +654,8 @@ abstract class LocaleKeys {
   static const String deliveryDate = 'delivery_date';
   static const String deliveryTime = 'delivery_time';
   static const String deliveryPlace = 'delivery_place';
+  static const String returnSameLocation = 'return_same_location';
+  static const String returnSameLocationHint = 'return_same_location_hint';
   static const String vehicleDetailsSection = 'vehicle_details_section';
   static const String vehicleCategory = 'vehicle_category';
   static const String driverInfoSection = 'driver_info_section';
@@ -809,6 +811,9 @@ abstract class LocaleKeys {
   static const String viewContract = 'view_contract';
   static const String contractReadRequired = 'contract_read_required';
   static const String iHaveReadContract = 'i_have_read_contract';
+  static const String draftBadge = 'draft_badge';
+  static const String contractDraftNotice = 'contract_draft_notice';
+  static const String contractReadOptional = 'contract_read_optional';
   static const String contractParties = 'contract_parties';
   static const String lessor = 'lessor';
   static const String lessee = 'lessee';
