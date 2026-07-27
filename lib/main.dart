@@ -34,6 +34,7 @@ import 'features/my_profile/modules/user_appointments/presentation/controller/us
 import 'features/my_profile/modules/user_appointments/user_appointments_DI.dart';
 import 'features/real_estates/presentation/controller/real_estate_cubit.dart';
 import 'features/real_estates/real_estates_DI.dart';
+import 'features/policies/policies_di.dart';
 import 'features/wish_list/domain/use_cases/add_new_property_to_wish_list_use_case.dart';
 import 'features/wish_list/domain/use_cases/add_vehicle_to_wish_list_use_case.dart';
 import 'features/wish_list/domain/use_cases/check_vehicle_in_wish_list_use_case.dart';
@@ -74,6 +75,7 @@ void main() async {
   await VehicleDependencies.init();
   await SharedPreferencesService().init();
   await setupServiceLocator();
+  await PoliciesDi().setup();
 
   SystemChrome.setPreferredOrientations(
     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],

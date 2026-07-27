@@ -838,6 +838,7 @@
   "policiesScreenTitle": "السياسات",
   "policyTypePrivacy": "سياسة الخصوصية",
   "policyTypeTerms": "شروط الاستخدام",
+  "policyTypeConditionInput": "شروط الإيجار",
   "policiesLoadError": "تعذر تحميل السياسات",
   "policiesEmpty": "لا توجد سياسات متاحة",
   "returnDateMustBeAfterPickup": "يجب أن يكون تاريخ ووقت الإرجاع بعد تاريخ ووقت الاستلام",

@@ -829,6 +829,7 @@
   "policiesScreenTitle": "Politiques",
   "policyTypePrivacy": "Politique de confidentialité",
   "policyTypeTerms": "Conditions générales d'utilisation",
+  "policyTypeConditionInput": "Conditions de location",
   "policiesLoadError": "Impossible de charger les politiques",
   "policiesEmpty": "Aucune politique disponible",
   "returnDateMustBeAfterPickup": "La date et l'heure de retour doivent être après la date et l'heure de réception",

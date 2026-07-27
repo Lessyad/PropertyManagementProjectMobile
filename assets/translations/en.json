@@ -846,6 +846,7 @@
   "policiesScreenTitle": "Policies",
   "policyTypePrivacy": "Privacy Policy",
   "policyTypeTerms": "Terms of Use",
+  "policyTypeConditionInput": "Rental conditions",
   "policiesLoadError": "Unable to load policies",
   "policiesEmpty": "No policies available",
   "returnDateMustBeAfterPickup": "The return date and time must be after the pickup date and time",
