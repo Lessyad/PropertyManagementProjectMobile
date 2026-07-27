@@ -298,7 +298,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             'paypal',
             'PayPal',
             Icons.payment,
-            'Payer avec PayPal de manière sécurisée',
+            tr(LocaleKeys.payWithPaypalSecurely),
             imageAsset: 'assets/images/PayPalImage.png',
           ),
 
@@ -307,7 +307,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             'bankily',
             'Bankily',
             Icons.phone_android,
-            'Payer avec Bankily',
+            tr(LocaleKeys.payWithBankily),
             imageAsset: 'assets/images/BankilyImage.png',
           ),
 
@@ -422,7 +422,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Paiement sécurisé avec PayPal',
+                  tr(LocaleKeys.paypalDescription),
                   textAlign: TextAlign.center,
                   style: getBoldStyle(
                     color: ColorManager.blackColor,
@@ -431,7 +431,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Vous serez redirigé vers PayPal pour finaliser votre paiement de manière sécurisée.',
+                  tr(LocaleKeys.paypalRedirectMessage),
                   textAlign: TextAlign.center,
                   style: getRegularStyle(
                     color: ColorManager.grey,
@@ -443,7 +443,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Montant: ',
+                      '${tr(LocaleKeys.amount)}: ',
                       style: getBoldStyle(
                         color: ColorManager.primaryColor,
                         fontSize: FontSize.s16,
@@ -494,8 +494,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
           // Champ Numéro de téléphone Bankily
           _buildTextField(
             controller: _bankilyPhoneController,
-            label: 'Numéro de téléphone Bankily',
-            hint: 'Entrez votre numéro Bankily ',
+            label: tr(LocaleKeys.bankilyPhoneNumberLabel),
+            hint: tr(LocaleKeys.bankilyPhoneNumberHint),
             icon: Icons.phone_android,
             keyboardType: TextInputType.phone,
             onChanged: (_) => _updatePaymentButtonState(),
@@ -506,8 +506,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
           // Champ Passcode Bankily
           _buildTextField(
             controller: _passcodeController,
-            label: 'Passcode',
-            hint: 'Entrez votre passcode Bankily',
+            label: tr(LocaleKeys.passCode),
+            hint: tr(LocaleKeys.bankilyPasscodeHint),
             icon: Icons.lock,
             keyboardType: TextInputType.number,
             obscureText: true,
@@ -779,12 +779,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
         // Validation des champs Bankily
         if (bankilyPhoneNumber.isEmpty) {
-          throw Exception('Veuillez entrer votre numéro de téléphone Bankily');
+          throw Exception(tr(LocaleKeys.bankilyPhoneRequiredError));
         }
 
         // Validation du champ Passcode
         if (passcode.isEmpty) {
-          throw Exception('Veuillez entrer votre passcode Bankily');
+          throw Exception(tr(LocaleKeys.bankilyPasscodeRequiredError));
         }
       } else if (_selectedPaymentMethod == 'wallet') {
         paymentMethod = 'wallet';
@@ -978,7 +978,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Complétez le paiement sur PayPal. Votre réservation sera confirmée automatiquement.',
+              tr(LocaleKeys.paypalCompletePaymentMessage),
               style: getRegularStyle(color: Colors.white, fontSize: FontSize.s14),
             ),
             backgroundColor: Colors.blue,

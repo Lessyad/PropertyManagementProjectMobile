@@ -212,15 +212,37 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
                 size: 32, color: ColorManager.primaryColor),
           ),
           const SizedBox(height: 12),
-          Text(
-            LocaleKeys.rentalContractTitle.tr(),
-            textAlign: TextAlign.center,
-            style:
-                getBoldStyle(color: ColorManager.blackColor, fontSize: FontSize.s18),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Text(
+                  LocaleKeys.rentalContractTitle.tr(),
+                  textAlign: TextAlign.center,
+                  style: getBoldStyle(
+                      color: ColorManager.blackColor, fontSize: FontSize.s18),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: ColorManager.primaryColor.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  LocaleKeys.draftBadge.tr(),
+                  style: getBoldStyle(
+                      color: ColorManager.primaryColor,
+                      fontSize: FontSize.s11),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           Text(
-            LocaleKeys.readTermsCarefully.tr(),
+            LocaleKeys.contractDraftNotice.tr(),
             textAlign: TextAlign.center,
             style:
                 getRegularStyle(color: ColorManager.grey, fontSize: FontSize.s13),
@@ -356,7 +378,7 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
                   Text(
                     _hasViewedContract
                         ? LocaleKeys.iHaveReadContract.tr()
-                        : LocaleKeys.contractReadRequired.tr(),
+                        : LocaleKeys.contractReadOptional.tr(),
                     style: getRegularStyle(
                       color: _hasViewedContract
                           ? Colors.green.shade600
@@ -396,38 +418,28 @@ class _RentalContractScreenState extends State<RentalContractScreen> {
             offset: const Offset(0, 2),
           ),
         ],
-        border: !_hasViewedContract
-            ? Border.all(color: const Color(0xFFEEEEEE), width: 1)
-            : null,
       ),
-      child: Opacity(
-        opacity: _hasViewedContract ? 1.0 : 0.45,
-        child: Row(
-          children: [
-            Checkbox(
-              value: _isContractAccepted,
-              onChanged: _hasViewedContract
-                  ? (value) {
-                      setState(() => _isContractAccepted = value ?? false);
-                    }
-                  : null,
-              activeColor: ColorManager.primaryColor,
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: _hasViewedContract
-                    ? () => setState(
-                        () => _isContractAccepted = !_isContractAccepted)
-                    : null,
-                child: Text(
-                  LocaleKeys.acceptTerms.tr(),
-                  style: getRegularStyle(
-                      color: ColorManager.blackColor, fontSize: FontSize.s14),
-                ),
+      child: Row(
+        children: [
+          Checkbox(
+            value: _isContractAccepted,
+            onChanged: (value) {
+              setState(() => _isContractAccepted = value ?? false);
+            },
+            activeColor: ColorManager.primaryColor,
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => setState(
+                  () => _isContractAccepted = !_isContractAccepted),
+              child: Text(
+                LocaleKeys.acceptTerms.tr(),
+                style: getRegularStyle(
+                    color: ColorManager.blackColor, fontSize: FontSize.s14),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

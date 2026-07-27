@@ -219,7 +219,9 @@ class _VehicleCardComponentState extends State<VehicleCardComponent> {
           InkWell(
             borderRadius: BorderRadius.circular(10),
             onTap: _handleCardTap,
-            child: Column(
+            child: SingleChildScrollView(
+              physics: const NeverScrollableScrollPhysics(),
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -304,6 +306,7 @@ class _VehicleCardComponentState extends State<VehicleCardComponent> {
                   ),
                 ),
               ],
+            ),
             ),
           ),
           if (widget.showWishlistButton)

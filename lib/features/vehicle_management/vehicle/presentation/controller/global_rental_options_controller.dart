@@ -10,6 +10,7 @@ class GlobalRentalOptionsController extends GetxController {
     allRiskCarInsuranceAmount: 0.2,
     kilometerIllimitedPerDayAmount: 0.2,
     secondDriverAmount: 100.0,
+    taxPercent: 0.0,
   );
 
   // État des options globales
@@ -30,6 +31,7 @@ class GlobalRentalOptionsController extends GetxController {
   double get allRiskCarInsuranceAmount => _options.value.allRiskCarInsuranceAmount;
   double get kilometerIllimitedPerDayAmount => _options.value.kilometerIllimitedPerDayAmount;
   double get secondDriverAmount => _options.value.secondDriverAmount;
+  double get taxPercent => _options.value.taxPercent;
 
   @override
   void onInit() {
@@ -143,5 +145,11 @@ class GlobalRentalOptionsController extends GetxController {
     }
 
     return total;
+  }
+
+  // TaxPercent est un montant fixe en devise (malgré son nom) à ajouter au total,
+  // pas un pourcentage à appliquer : la valeur vient telle quelle de la base de données.
+  double calculateTaxAmount() {
+    return taxPercent;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:enmaa/core/services/select_location_service/domain/entities/country_entity.dart';
+import 'package:enmaa/core/utils/localized_name.dart';
 
 class CountryModel extends CountryEntity {
   const CountryModel({
@@ -8,7 +9,11 @@ class CountryModel extends CountryEntity {
 
   factory CountryModel.fromJson(Map<String, dynamic> json) {
     return CountryModel(
-      name: json['name'],
+      name: resolveLocalizedName(
+        nameFr: json['nameFr'],
+        nameAr: json['nameAr'],
+        nameEn: json['nameEn'],
+      ),
       id: json['id'].toString(),
     );
   }

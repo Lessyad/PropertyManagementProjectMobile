@@ -28,6 +28,7 @@ import '../../data/models/vehicle_deal_request.dart';
 import '../controller/global_rental_options_controller.dart';
 import 'rental_contract_screen.dart';
 import '../components/vehicle_booking_stepper.dart';
+import '../../../../policies/presentation/components/condition_input_policies_widget.dart';
 
 import 'package:easy_localization/easy_localization.dart';
 
@@ -550,6 +551,10 @@ class _RentVehicleDataScreenEnhancedState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Conditions de location (policies de type ConditionInput),
+                  // affichées dans la langue de l'app. Masqué s'il n'y en a pas.
+                  const ConditionInputPoliciesWidget(),
+
                   NumberedTextHeaderComponent(
                     number: '1',
                     text: tr(LocaleKeys.mainTenant),

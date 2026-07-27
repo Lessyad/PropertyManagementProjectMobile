@@ -60,6 +60,8 @@
 // }
 
 // Dans vehicle_make_model.dart
+import '../../../../core/utils/localized_name.dart';
+
 class VehicleMake {
   final int id;
   final String name;
@@ -78,7 +80,11 @@ class VehicleMake {
   factory VehicleMake.fromJson(Map<String, dynamic> json) {
     return VehicleMake(
       id: json['id'] ?? 0,
-      name: json['name'] ?? '',
+      name: resolveLocalizedName(
+        nameFr: json['nameFr'],
+        nameAr: json['nameAr'],
+        nameEn: json['nameEn'],
+      ),
       logoUrl: json['logoUrl'],
       modelCount: json['modelCount'] ?? 0,
       models: (json['models'] as List<dynamic>?)
@@ -106,9 +112,18 @@ class VehicleModelMake {
   factory VehicleModelMake.fromJson(Map<String, dynamic> json) {
     return VehicleModelMake(
       id: json['id'] ?? 0,
-      name: json['name'] ?? '',
+      name: resolveLocalizedName(
+        nameFr: json['nameFr'],
+        nameAr: json['nameAr'],
+        nameEn: json['nameEn'],
+      ),
       makeId: json['makeId'] ?? 0,
-      makeName: json['makeName'],
+      makeName: json['makeName'] ??
+          resolveLocalizedName(
+            nameFr: json['makeNameFr'],
+            nameAr: json['makeNameAr'],
+            nameEn: json['makeNameEn'],
+          ),
       vehicleCount: json['vehicleCount'] ?? 0,
     );
   }

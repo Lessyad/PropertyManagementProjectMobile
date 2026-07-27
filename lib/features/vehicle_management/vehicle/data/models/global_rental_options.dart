@@ -3,12 +3,14 @@ class GlobalRentalOptions {
   final double allRiskCarInsuranceAmount;
   final double kilometerIllimitedPerDayAmount;
   final double secondDriverAmount;
+  final double taxPercent;
 
   GlobalRentalOptions({
     required this.addChildsChairAmount,
     required this.allRiskCarInsuranceAmount,
     required this.kilometerIllimitedPerDayAmount,
     required this.secondDriverAmount,
+    this.taxPercent = 0.0,
   });
 
   factory GlobalRentalOptions.fromJson(Map<String, dynamic> json) {
@@ -17,6 +19,7 @@ class GlobalRentalOptions {
       allRiskCarInsuranceAmount: json['allRiskCarInsuranceAmount']?.toDouble() ?? 0.0,
       kilometerIllimitedPerDayAmount: json['kilometerIllimitedPerDayAmount']?.toDouble() ?? 0.0,
       secondDriverAmount: json['secondDriverAmount']?.toDouble() ?? 100.0,
+      taxPercent: json['taxPercent']?.toDouble() ?? 0.0,
     );
   }
 
@@ -26,6 +29,7 @@ class GlobalRentalOptions {
       'allRiskCarInsuranceAmount': allRiskCarInsuranceAmount,
       'kilometerIllimitedPerDayAmount': kilometerIllimitedPerDayAmount,
       'secondDriverAmount': secondDriverAmount,
+      'taxPercent': taxPercent,
     };
   }
 
@@ -34,12 +38,14 @@ class GlobalRentalOptions {
     double? allRiskCarInsuranceAmount,
     double? kilometerIllimitedPerDayAmount,
     double? secondDriverAmount,
+    double? taxPercent,
   }) {
     return GlobalRentalOptions(
       addChildsChairAmount: addChildsChairAmount ?? this.addChildsChairAmount,
       allRiskCarInsuranceAmount: allRiskCarInsuranceAmount ?? this.allRiskCarInsuranceAmount,
       kilometerIllimitedPerDayAmount: kilometerIllimitedPerDayAmount ?? this.kilometerIllimitedPerDayAmount,
       secondDriverAmount: secondDriverAmount ?? this.secondDriverAmount,
+      taxPercent: taxPercent ?? this.taxPercent,
     );
   }
 }

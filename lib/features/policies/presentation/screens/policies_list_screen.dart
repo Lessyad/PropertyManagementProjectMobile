@@ -32,6 +32,8 @@ class _PoliciesListScreenState extends State<PoliciesListScreen> {
         return LocaleKeys.policyTypePrivacy.tr();
       case 'terms':
         return LocaleKeys.policyTypeTerms.tr();
+      case 'conditioninput':
+        return LocaleKeys.policyTypeConditionInput.tr();
       default:
         return type;
     }

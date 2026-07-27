@@ -9,6 +9,7 @@ import '../../../../core/extensions/context_extension.dart';
 import '../../../../core/extensions/request_states_extension.dart';
 import '../../../../core/translation/locale_keys.dart';
 import '../../domain/entities/policy_entity.dart';
+import '../components/collapsible_policy_card.dart';
 import '../controller/policies_cubit.dart';
 
 class PoliciesContentScreen extends StatefulWidget {
@@ -31,6 +32,8 @@ class _PoliciesContentScreenState extends State<PoliciesContentScreen> {
         return LocaleKeys.policyTypePrivacy.tr();
       case 'terms':
         return LocaleKeys.policyTypeTerms.tr();
+      case 'conditioninput':
+        return LocaleKeys.policyTypeConditionInput.tr();
       default:
         return type;
     }
@@ -102,109 +105,12 @@ class _PoliciesContentScreenState extends State<PoliciesContentScreen> {
       ),
       child: Column(
         children: grouped.entries.map((entry) {
-          final type = entry.key;
-          final allLines = entry.value;
-          return Padding(
-            padding: EdgeInsets.only(bottom: context.scale(16)),
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: ColorManager.whiteColor,
-                borderRadius: BorderRadius.circular(context.scale(20)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // En-tête bleu — une seule fois par type
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.scale(20),
-                      vertical: context.scale(14),
-                    ),
-                    decoration: BoxDecoration(
-                      color: ColorManager.primaryColor,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(context.scale(20)),
-                        topRight: Radius.circular(context.scale(20)),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          _iconForType(type),
-                          color: ColorManager.whiteColor,
-                          size: context.scale(18),
-                        ),
-                        SizedBox(width: context.scale(10)),
-                        Expanded(
-                          child: Text(
-                            _localizedType(type),
-                            softWrap: true,
-                            overflow: TextOverflow.visible,
-                            style: getBoldStyle(
-                              color: ColorManager.whiteColor,
-                              fontSize: FontSize.s15,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Tous les points regroupés
-                  Padding(
-                    padding: EdgeInsets.all(context.scale(20)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: allLines.map((line) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: context.scale(14)),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(top: context.scale(6)),
-                                child: Container(
-                                  width: context.scale(7),
-                                  height: context.scale(7),
-                                  decoration: BoxDecoration(
-                                    color: ColorManager.primaryColor,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: context.scale(12)),
-                              Expanded(
-                                child: Text(
-                                  line,
-                                  softWrap: true,
-                                  overflow: TextOverflow.visible,
-                                  style: TextStyle(
-                                    color: ColorManager.grey,
-                                    fontSize: FontSize.s14,
-                                    height: 1.6,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          // Même carte repliable (aperçu par caractères + "Lire plus")
+          // que dans l'écran des informations du locataire.
+          return CollapsiblePolicyCard(
+            title: _localizedType(entry.key),
+            icon: _iconForType(entry.key),
+            content: entry.value.join('\n'),
           );
         }).toList(),
       ),

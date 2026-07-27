@@ -1,3 +1,5 @@
+import '../utils/localized_name.dart';
+
 class Country {
   final int id;
   final String name;
@@ -12,7 +14,11 @@ class Country {
   factory Country.fromJson(Map<String, dynamic> json) {
     return Country(
       id: json['id'] ?? 0,
-      name: json['name'] ?? '',
+      name: resolveLocalizedName(
+        nameFr: json['nameFr'],
+        nameAr: json['nameAr'],
+        nameEn: json['nameEn'],
+      ),
       code: json['code'],
     );
   }
@@ -42,7 +48,11 @@ class City {
   factory City.fromJson(Map<String, dynamic> json) {
     return City(
       id: json['id'] ?? 0,
-      name: json['name'] ?? '',
+      name: resolveLocalizedName(
+        nameFr: json['nameFr'],
+        nameAr: json['nameAr'],
+        nameEn: json['nameEn'],
+      ),
       stateId: json['stateId'] ?? 0,
       stateName: json['stateName'],
     );
@@ -74,7 +84,11 @@ class Area {
   factory Area.fromJson(Map<String, dynamic> json) {
     return Area(
       id: json['id'] ?? 0,
-      name: json['name'] ?? '',
+      name: resolveLocalizedName(
+        nameFr: json['nameFr'],
+        nameAr: json['nameAr'],
+        nameEn: json['nameEn'],
+      ),
       cityId: json['cityId'] ?? 0,
       cityName: json['cityName'],
     );

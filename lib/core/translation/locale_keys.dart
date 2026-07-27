@@ -33,6 +33,7 @@ abstract class LocaleKeys {
 
   static const chooseYourIdealPropertyEasily = 'chooseYourIdealPropertyEasily';
   static const String baseRental = 'base_rental';
+  static const String tax = 'tax';
   // static const String previous = 'previous';
   static const String confirmBooking = 'confirm_booking';
   static const forSale = 'forSale';
@@ -653,6 +654,8 @@ abstract class LocaleKeys {
   static const String deliveryDate = 'delivery_date';
   static const String deliveryTime = 'delivery_time';
   static const String deliveryPlace = 'delivery_place';
+  static const String returnSameLocation = 'return_same_location';
+  static const String returnSameLocationHint = 'return_same_location_hint';
   static const String vehicleDetailsSection = 'vehicle_details_section';
   static const String vehicleCategory = 'vehicle_category';
   static const String driverInfoSection = 'driver_info_section';
@@ -706,6 +709,16 @@ abstract class LocaleKeys {
   static const String backButton = 'back_button';
   static const String payNow = 'pay_now';
   static const String paymentSuccess = 'payment_success';
+  static const String payWithPaypalSecurely = 'pay_with_paypal_securely';
+  static const String payWithBankily = 'pay_with_bankily';
+  static const String paypalRedirectMessage = 'paypal_redirect_message';
+  static const String amount = 'amount';
+  static const String bankilyPhoneNumberLabel = 'bankily_phone_number_label';
+  static const String bankilyPhoneNumberHint = 'bankily_phone_number_hint';
+  static const String bankilyPasscodeHint = 'bankily_passcode_hint';
+  static const String paypalCompletePaymentMessage = 'paypal_complete_payment_message';
+  static const String bankilyPhoneRequiredError = 'bankily_phone_required_error';
+  static const String bankilyPasscodeRequiredError = 'bankily_passcode_required_error';
 
   static const String tenantInfo = 'tenant_info';
   static const String mainTenant = 'main_tenant';
@@ -798,6 +811,9 @@ abstract class LocaleKeys {
   static const String viewContract = 'view_contract';
   static const String contractReadRequired = 'contract_read_required';
   static const String iHaveReadContract = 'i_have_read_contract';
+  static const String draftBadge = 'draft_badge';
+  static const String contractDraftNotice = 'contract_draft_notice';
+  static const String contractReadOptional = 'contract_read_optional';
   static const String contractParties = 'contract_parties';
   static const String lessor = 'lessor';
   static const String lessee = 'lessee';
@@ -1152,6 +1168,7 @@ abstract class LocaleKeys {
   static const String policiesScreenTitle = 'policiesScreenTitle';
   static const String policyTypePrivacy = 'policyTypePrivacy';
   static const String policyTypeTerms = 'policyTypeTerms';
+  static const String policyTypeConditionInput = 'policyTypeConditionInput';
   static const String policiesLoadError = 'policiesLoadError';
   static const String policiesEmpty = 'policiesEmpty';
   static const String returnDateMustBeAfterPickup = 'returnDateMustBeAfterPickup';

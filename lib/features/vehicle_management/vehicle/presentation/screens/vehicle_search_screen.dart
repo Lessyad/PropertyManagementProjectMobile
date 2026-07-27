@@ -52,6 +52,16 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
   bool _isDriverAgeValid = false;
   bool _showAgeValidation = false;
 
+  // Le lieu de retour (ville + zone) est identique au lieu de réception par défaut.
+  // Désactivé : l'utilisateur saisit un lieu de retour différent.
+  bool _returnAtSameLocation = true;
+
+  // Lieu de livraison effectif : réception si "même endroit", sinon la saisie dédiée.
+  City? get _effectiveDeliveryCity =>
+      _returnAtSameLocation ? _selectedReceptionCity : _selectedDeliveryCity;
+  Area? get _effectiveDeliveryArea =>
+      _returnAtSameLocation ? _selectedReceptionArea : _selectedDeliveryArea;
+
   // Listes pour les dropdowns (chargées depuis le backend)
   List<Country> _countries = [];
   List<City> _receptionCities = [];
@@ -268,6 +278,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
       _receptionTime = null;
       _deliveryDate = null;
       _deliveryTime = null;
+      _returnAtSameLocation = true;
       _isDriverAgeValid = false;
       _showAgeValidation = false;
     });
@@ -472,171 +483,200 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
 
   Widget _buildUnifiedFiltersForm() {
     return Container(
-      color: ColorManager.whiteColor,
+      color: ColorManager.greyShade,
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionTitle(tr(LocaleKeys.locationSection)),
-            const SizedBox(height: 12),
-            // Pays
-            SearchableSelectField<Country>(
-              label: tr(LocaleKeys.country),
-              selectedValue: _selectedCountry,
-              items: _countries,
-              displayValue: (c) => c.name,
-              isLoading: _isLoadingCountries,
-              prefixIcon: Icons.public_rounded,
-              modalTitle: tr(LocaleKeys.country),
-              searchHint: tr(LocaleKeys.searchCriteriaHint),
-              onChanged: (Country? country) {
-                setState(() {
-                  _selectedCountry = country;
-                  _selectedReceptionCity = null;
-                  _selectedDeliveryCity = null;
-                  _selectedReceptionArea = null;
-                  _selectedDeliveryArea = null;
-                  _receptionCities = [];
-                  _deliveryCities = [];
-                  _receptionAreas = [];
-                  _deliveryAreas = [];
-                  if (country != null) {
-                    _loadReceptionCities(country.id);
-                    _loadDeliveryCities(country.id);
-                  }
-                });
-              },
-            ),
-            const SizedBox(height: 16),
+            // ── Carte : Départ (pays + réception) ──
+            _buildCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionTitle(tr(LocaleKeys.locationSection)),
+                  const SizedBox(height: 12),
+                  // Pays
+                  SearchableSelectField<Country>(
+                    label: tr(LocaleKeys.country),
+                    selectedValue: _selectedCountry,
+                    items: _countries,
+                    displayValue: (c) => c.name,
+                    isLoading: _isLoadingCountries,
+                    prefixIcon: Icons.public_rounded,
+                    modalTitle: tr(LocaleKeys.country),
+                    searchHint: tr(LocaleKeys.searchCriteriaHint),
+                    onChanged: (Country? country) {
+                      setState(() {
+                        _selectedCountry = country;
+                        _selectedReceptionCity = null;
+                        _selectedDeliveryCity = null;
+                        _selectedReceptionArea = null;
+                        _selectedDeliveryArea = null;
+                        _receptionCities = [];
+                        _deliveryCities = [];
+                        _receptionAreas = [];
+                        _deliveryAreas = [];
+                        if (country != null) {
+                          _loadReceptionCities(country.id);
+                          _loadDeliveryCities(country.id);
+                        }
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20),
 
-            _buildSectionTitle(tr(LocaleKeys.receptionInfoSection)),
-            const SizedBox(height: 12),
-            // Ville de réception
-            SearchableSelectField<City>(
-              label: tr(LocaleKeys.receptionCity),
-              selectedValue: _selectedReceptionCity,
-              items: _receptionCities,
-              displayValue: (c) => c.name,
-              isLoading: _isLoadingReceptionCities,
-              isDisabled: _selectedCountry == null,
-              prefixIcon: Icons.location_city_rounded,
-              modalTitle: tr(LocaleKeys.receptionCity),
-              searchHint: tr(LocaleKeys.searchCriteriaHint),
-              onChanged: (City? city) {
-                setState(() {
-                  _selectedReceptionCity = city;
-                  _selectedReceptionArea = null;
-                  _receptionAreas = [];
-                  if (city != null) _loadReceptionAreas(city.id);
-                });
-              },
+                  _buildSectionTitle(tr(LocaleKeys.receptionInfoSection)),
+                  const SizedBox(height: 12),
+                  // Ville de réception
+                  SearchableSelectField<City>(
+                    label: tr(LocaleKeys.receptionCity),
+                    selectedValue: _selectedReceptionCity,
+                    items: _receptionCities,
+                    displayValue: (c) => c.name,
+                    isLoading: _isLoadingReceptionCities,
+                    isDisabled: _selectedCountry == null,
+                    prefixIcon: Icons.location_city_rounded,
+                    modalTitle: tr(LocaleKeys.receptionCity),
+                    searchHint: tr(LocaleKeys.searchCriteriaHint),
+                    onChanged: (City? city) {
+                      setState(() {
+                        _selectedReceptionCity = city;
+                        _selectedReceptionArea = null;
+                        _receptionAreas = [];
+                        if (city != null) _loadReceptionAreas(city.id);
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _buildDateTimeRow(
+                    tr(LocaleKeys.receptionDate),
+                    tr(LocaleKeys.receptionTime),
+                    _receptionDate,
+                    _receptionTime,
+                    () => _selectDate(context, isReception: true),
+                    () => _selectTime(context, isReception: true),
+                  ),
+                  const SizedBox(height: 12),
+                  // Zone de réception
+                  SearchableSelectField<Area>(
+                    label: tr(LocaleKeys.receptionPlace),
+                    selectedValue: _selectedReceptionArea,
+                    items: _receptionAreas,
+                    displayValue: (a) => a.name,
+                    isLoading: _isLoadingReceptionAreas,
+                    isDisabled: _selectedReceptionCity == null,
+                    prefixIcon: Icons.place_rounded,
+                    modalTitle: tr(LocaleKeys.receptionPlace),
+                    searchHint: tr(LocaleKeys.searchCriteriaHint),
+                    onChanged: (Area? area) {
+                      setState(() => _selectedReceptionArea = area);
+                    },
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 12),
-            _buildDateTimeRow(
-              tr(LocaleKeys.receptionDate),
-              tr(LocaleKeys.receptionTime),
-              _receptionDate,
-              _receptionTime,
-              () => _selectDate(context, isReception: true),
-              () => _selectTime(context, isReception: true),
-            ),
-            const SizedBox(height: 12),
-            // Zone de réception
-            SearchableSelectField<Area>(
-              label: tr(LocaleKeys.receptionPlace),
-              selectedValue: _selectedReceptionArea,
-              items: _receptionAreas,
-              displayValue: (a) => a.name,
-              isLoading: _isLoadingReceptionAreas,
-              isDisabled: _selectedReceptionCity == null,
-              prefixIcon: Icons.place_rounded,
-              modalTitle: tr(LocaleKeys.receptionPlace),
-              searchHint: tr(LocaleKeys.searchCriteriaHint),
-              onChanged: (Area? area) {
-                setState(() => _selectedReceptionArea = area);
-              },
-            ),
-            const SizedBox(height: 16),
 
-            _buildSectionTitle(tr(LocaleKeys.deliveryInfoSection)),
-            const SizedBox(height: 12),
-            // Ville de livraison
-            SearchableSelectField<City>(
-              label: tr(LocaleKeys.deliveryCity),
-              selectedValue: _selectedDeliveryCity,
-              items: _deliveryCities,
-              displayValue: (c) => c.name,
-              isLoading: _isLoadingDeliveryCities,
-              isDisabled: _selectedCountry == null,
-              prefixIcon: Icons.location_city_rounded,
-              modalTitle: tr(LocaleKeys.deliveryCity),
-              searchHint: tr(LocaleKeys.searchCriteriaHint),
-              onChanged: (City? city) {
-                setState(() {
-                  _selectedDeliveryCity = city;
-                  _selectedDeliveryArea = null;
-                  _deliveryAreas = [];
-                  if (city != null) _loadDeliveryAreas(city.id);
-                });
-              },
+            // ── Carte : Retour (livraison) ──
+            _buildCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionTitle(tr(LocaleKeys.deliveryInfoSection)),
+                  const SizedBox(height: 12),
+                  // Date/heure de retour (toujours visible)
+                  _buildDateTimeRow(
+                    tr(LocaleKeys.deliveryDate),
+                    tr(LocaleKeys.deliveryTime),
+                    _deliveryDate,
+                    _deliveryTime,
+                    () => _selectDate(context, isReception: false),
+                    () => _selectTime(context, isReception: false),
+                  ),
+                  const SizedBox(height: 12),
+                  // Interrupteur : retour au même endroit que la réception
+                  _buildSameLocationToggle(),
+                  // Lieu de retour dédié (uniquement si différent)
+                  if (!_returnAtSameLocation) ...[
+                    const SizedBox(height: 12),
+                    SearchableSelectField<City>(
+                      label: tr(LocaleKeys.deliveryCity),
+                      selectedValue: _selectedDeliveryCity,
+                      items: _deliveryCities,
+                      displayValue: (c) => c.name,
+                      isLoading: _isLoadingDeliveryCities,
+                      isDisabled: _selectedCountry == null,
+                      prefixIcon: Icons.location_city_rounded,
+                      modalTitle: tr(LocaleKeys.deliveryCity),
+                      searchHint: tr(LocaleKeys.searchCriteriaHint),
+                      onChanged: (City? city) {
+                        setState(() {
+                          _selectedDeliveryCity = city;
+                          _selectedDeliveryArea = null;
+                          _deliveryAreas = [];
+                          if (city != null) _loadDeliveryAreas(city.id);
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    SearchableSelectField<Area>(
+                      label: tr(LocaleKeys.deliveryPlace),
+                      selectedValue: _selectedDeliveryArea,
+                      items: _deliveryAreas,
+                      displayValue: (a) => a.name,
+                      isLoading: _isLoadingDeliveryAreas,
+                      isDisabled: _selectedDeliveryCity == null,
+                      prefixIcon: Icons.place_rounded,
+                      modalTitle: tr(LocaleKeys.deliveryPlace),
+                      searchHint: tr(LocaleKeys.searchCriteriaHint),
+                      onChanged: (Area? area) {
+                        setState(() => _selectedDeliveryArea = area);
+                      },
+                    ),
+                  ],
+                ],
+              ),
             ),
-            const SizedBox(height: 12),
-            _buildDateTimeRow(
-              tr(LocaleKeys.deliveryDate),
-              tr(LocaleKeys.deliveryTime),
-              _deliveryDate,
-              _deliveryTime,
-              () => _selectDate(context, isReception: false),
-              () => _selectTime(context, isReception: false),
-            ),
-            const SizedBox(height: 12),
-            // Zone de livraison
-            SearchableSelectField<Area>(
-              label: tr(LocaleKeys.deliveryPlace),
-              selectedValue: _selectedDeliveryArea,
-              items: _deliveryAreas,
-              displayValue: (a) => a.name,
-              isLoading: _isLoadingDeliveryAreas,
-              isDisabled: _selectedDeliveryCity == null,
-              prefixIcon: Icons.place_rounded,
-              modalTitle: tr(LocaleKeys.deliveryPlace),
-              searchHint: tr(LocaleKeys.searchCriteriaHint),
-              onChanged: (Area? area) {
-                setState(() => _selectedDeliveryArea = area);
-              },
-            ),
-            const SizedBox(height: 16),
 
-            _buildSectionTitle(tr(LocaleKeys.vehicleDetailsSection)),
-            const SizedBox(height: 12),
-            // Catégorie de véhicule
-            SearchableSelectField<VehicleCategory>(
-              label: tr(LocaleKeys.vehicleCategory),
-              selectedValue: _selectedVehicleCategory,
-              items: _vehicleCategories,
-              displayValue: (cat) => cat.name,
-              isLoading: _isLoadingVehicleCategories,
-              prefixIcon: Icons.directions_car_rounded,
-              modalTitle: tr(LocaleKeys.vehicleCategory),
-              searchHint: tr(LocaleKeys.searchCriteriaHint),
-              onChanged: (VehicleCategory? cat) {
-                setState(() {
-                  _selectedVehicleCategory = cat;
-                  if (_driverAgeController.text.isNotEmpty) _validateDriverAge();
-                });
-              },
-            ),
-            const SizedBox(height: 16),
+            // ── Carte : Véhicule & conducteur ──
+            _buildCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionTitle(tr(LocaleKeys.vehicleDetailsSection)),
+                  const SizedBox(height: 12),
+                  // Catégorie de véhicule
+                  SearchableSelectField<VehicleCategory>(
+                    label: tr(LocaleKeys.vehicleCategory),
+                    selectedValue: _selectedVehicleCategory,
+                    items: _vehicleCategories,
+                    displayValue: (cat) => cat.name,
+                    isLoading: _isLoadingVehicleCategories,
+                    prefixIcon: Icons.directions_car_rounded,
+                    modalTitle: tr(LocaleKeys.vehicleCategory),
+                    searchHint: tr(LocaleKeys.searchCriteriaHint),
+                    onChanged: (VehicleCategory? cat) {
+                      setState(() {
+                        _selectedVehicleCategory = cat;
+                        if (_driverAgeController.text.isNotEmpty) {
+                          _validateDriverAge();
+                        }
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20),
 
-            _buildSectionTitle(tr(LocaleKeys.driverInfoSection)),
-            const SizedBox(height: 12),
-            _buildDriverAgeField(),
-            const SizedBox(height: 8),
-            _buildAgeValidationMessage(),
-            const SizedBox(height: 16),
+                  _buildSectionTitle(tr(LocaleKeys.driverInfoSection)),
+                  const SizedBox(height: 12),
+                  _buildDriverAgeField(),
+                  const SizedBox(height: 8),
+                  _buildAgeValidationMessage(),
+                ],
+              ),
+            ),
 
             _buildActionButtons(),
+            const SizedBox(height: 8),
           ],
         ),
       ),
@@ -686,16 +726,103 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
     );
   }
 
+  // Carte blanche regroupant une section du formulaire.
+  Widget _buildCard({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: ColorManager.whiteColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: ColorManager.grey3.withOpacity(0.4),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  // Interrupteur : lieu de retour identique au lieu de réception.
+  Widget _buildSameLocationToggle() {
+    final bool active = _returnAtSameLocation;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: active
+            ? ColorManager.primaryColor.withOpacity(0.06)
+            : ColorManager.greyShade,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: active ? ColorManager.primaryColor : ColorManager.grey3,
+          width: 1.2,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.swap_horiz_rounded,
+            color: active ? ColorManager.primaryColor : ColorManager.grey,
+            size: 20,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  tr(LocaleKeys.returnSameLocation),
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: ColorManager.blackColor,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  tr(LocaleKeys.returnSameLocationHint),
+                  style: TextStyle(fontSize: 10, color: ColorManager.grey),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: active,
+            activeColor: ColorManager.primaryColor,
+            onChanged: (value) {
+              setState(() {
+                _returnAtSameLocation = value;
+                if (value) {
+                  // Retour au lieu de réception : on nettoie la saisie dédiée.
+                  _selectedDeliveryArea = null;
+                  _selectedDeliveryCity = null;
+                }
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   bool _isFormValid() {
     final bool isCountryValid = _selectedCountry != null;
     final bool isReceptionCityValid = _selectedReceptionCity != null;
-    final bool isDeliveryCityValid = _selectedDeliveryCity != null;
+    final bool isDeliveryCityValid = _effectiveDeliveryCity != null;
     final bool isReceptionDateValid = _receptionDate != null;
     final bool isReceptionTimeValid = _receptionTime != null;
     final bool isReceptionAreaValid = _selectedReceptionArea != null;
     final bool isDeliveryDateValid = _deliveryDate != null;
     final bool isDeliveryTimeValid = _deliveryTime != null;
-    final bool isDeliveryAreaValid = _selectedDeliveryArea != null;
+    final bool isDeliveryAreaValid = _effectiveDeliveryArea != null;
     final bool isDriverAgeValid = _isDriverAgeValid;
     final bool idCatagoryValid = _selectedVehicleCategory != null;
 
@@ -789,10 +916,10 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
                       // deliveryDate: _deliveryDate,
                       deliveryDate: completeDeliveryDateTime!,
                       deliveryTime: _deliveryTime,
-                      deliveryCity: _selectedDeliveryCity?.name,
-                      deliveryLocation: _selectedDeliveryArea?.name,
+                      deliveryCity: _effectiveDeliveryCity?.name,
+                      deliveryLocation: _effectiveDeliveryArea?.name,
                       receptionZoneId: _selectedReceptionArea?.id,
-                      deliveryZoneId: _selectedDeliveryArea?.id,
+                      deliveryZoneId: _effectiveDeliveryArea?.id,
                       vehicleCategoryId: _selectedVehicleCategory?.id,
                       userAge: int.tryParse(_driverAgeController.text),
                       userCountryId: _selectedCountry?.id, // Passer l'ID du pays sélectionné
