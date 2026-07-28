@@ -461,6 +461,8 @@ abstract class LocaleKeys {
   // Labels
   static const bookingDepositLabel = 'bookingDepositLabel';
   static const finalPriceLabel = 'finalPriceLabel';
+  static const taxLabel = 'taxLabel';
+  static const totalWithTaxLabel = 'totalWithTaxLabel';
 
   // Warning Messages
   static const bookingProcedureWarning = 'bookingProcedureWarning';

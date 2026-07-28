@@ -68,7 +68,8 @@ class RentalSummaryScreen extends StatelessWidget {
     // Calculer le prix de base avec la nouvelle logique basée sur les heures
     final basePrice = _calculateRentalPrice(vehicle.dailyPrice);
     final extraCosts = _calculateExtraCosts(optionsController);
-    final taxAmount = optionsController.calculateTaxAmount();
+    // TVA = pourcentage appliqué à la somme des coûts (base + options)
+    final taxAmount = optionsController.calculateTaxAmount(basePrice + extraCosts);
     final totalPrice = basePrice + extraCosts + taxAmount;
 
     return Scaffold(
@@ -421,12 +422,12 @@ class RentalSummaryScreen extends StatelessWidget {
           // Détail des options supplémentaires sélectionnées
           ..._buildExtraOptionsCostRows(rentalDurationInfo['fullDays'] as int, optionsController),
 
-          // Taxe : montant fixe ajouté au total, si configuré pour le pays
+          // TVA : pourcentage appliqué à la somme des coûts, si configurée pour le pays
           if (optionsController.taxPercent > 0)
             _buildCostRow(
-              tr(LocaleKeys.tax),
+              '${tr(LocaleKeys.tax)} (${optionsController.taxPercent.toStringAsFixed(optionsController.taxPercent % 1 == 0 ? 0 : 2)}%)',
               '',
-              '${taxAmount.toStringAsFixed(0)} MRU',
+              '${taxAmount.toStringAsFixed(2)} MRU',
             ),
           const Divider(height: 24),
           _buildCostRow(
@@ -904,7 +905,8 @@ class RentalSummaryScreen extends StatelessWidget {
     final optionsController = Get.find<GlobalRentalOptionsController>();
     final basePrice = _calculateRentalPrice(vehicle.dailyPrice);
     final extraCosts = _calculateExtraCosts(optionsController);
-    final taxAmount = optionsController.calculateTaxAmount();
+    // TVA = pourcentage appliqué à la somme des coûts (base + options)
+    final taxAmount = optionsController.calculateTaxAmount(basePrice + extraCosts);
     final totalPrice = basePrice + extraCosts + taxAmount; // Recalcul explicite
     // Navigation vers l'écran de données du locataire
     Navigator.of(context).push(

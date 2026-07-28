@@ -147,9 +147,9 @@ class GlobalRentalOptionsController extends GetxController {
     return total;
   }
 
-  // TaxPercent est un montant fixe en devise (malgré son nom) à ajouter au total,
-  // pas un pourcentage à appliquer : la valeur vient telle quelle de la base de données.
-  double calculateTaxAmount() {
-    return taxPercent;
+  // TaxPercent est une TVA : un pourcentage à appliquer à la somme des coûts
+  // (location de base + options), et non un montant fixe.
+  double calculateTaxAmount(double amount) {
+    return amount * taxPercent / 100;
   }
 }

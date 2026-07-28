@@ -388,6 +388,8 @@
   "saleConditions": "Conditions de vente",
   "bookingDepositLabel": "Acompte de réservation : ",
   "finalPriceLabel": "Prix final : ",
+  "taxLabel": "TVA",
+  "totalWithTaxLabel": "Total TTC : ",
   "bookingProcedureWarning": "Toutes les procédures de réservation sont traitées directement par le bureau Enmaa pour garantir la transparence et la sécurité. Si vous avez des questions, n'hésitez pas à nous contacter.",
   "bookingConfirmationWarning": "Une fois votre réservation confirmée, un représentant du bureau vous contactera pour finaliser les démarches.",
 

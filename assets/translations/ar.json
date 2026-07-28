@@ -397,6 +397,8 @@
   "saleConditions": "شروط البيع",
   "bookingDepositLabel": "عربون الحجز : ",
   "finalPriceLabel": "السعر النهائي : ",
+  "taxLabel": "ضريبة القيمة المضافة",
+  "totalWithTaxLabel": "الإجمالي شامل الضريبة : ",
   "bookingProcedureWarning": "جميع إجراءات الحجز تتم مباشرة من خلال مكتب إنماء لضمان الشفافية والأمان. إذا كان لديك أي استفسار، لا تتردد في التواصل معنا",
   "bookingConfirmationWarning": "بمجرد تأكيد حجزك، سيتواصل معك أحد ممثلي المكتب لإتمام الإجراءات",
   "booked": "محجوز",
