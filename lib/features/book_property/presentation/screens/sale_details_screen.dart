@@ -41,7 +41,6 @@ class SaleDetailsScreen extends StatelessWidget {
             SizedBox(height: context.scale(20)),
             Container(
               width: double.infinity,
-              height: context.scale(100),
               decoration: BoxDecoration(
                 color: ColorManager.whiteColor,
                 borderRadius: BorderRadius.circular(12),
@@ -50,109 +49,48 @@ class SaleDetailsScreen extends StatelessWidget {
               child: BlocBuilder<BookPropertyCubit, BookPropertyState>(
                 builder: (context, state) {
                   if (state.getPropertySaleDetailsState.isLoaded) {
+                    final details = state.propertySaleDetailsEntity!;
                     return Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            SvgImageComponent(
-                              width: 16,
-                              height: 16,
-                              iconPath: AppAssets.priceToBePaidIcon,
-                            ),
-                            SizedBox(width: context.scale(8)),
-                            Flexible(
-                              child: Text(
-                                LocaleKeys.bookingDepositLabel.tr(), // Using tr() for translation
-                                style: getSemiBoldStyle(
-                                  color: ColorManager.blackColor,
-                                  fontSize: FontSize.s14,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Flexible(
-                              child: BoldCurrencyDisplayWidget(
-                                amount: double.tryParse(state.propertySaleDetailsEntity!.bookingDeposit) ?? 0.0,
-                                textColor: ColorManager.blackColor,
-                                fontSize: FontSize.s16,
-                              ),
-                            ),
-                          ],
+                        _priceRow(
+                          context,
+                          LocaleKeys.bookingDepositLabel.tr(),
+                          double.tryParse(details.bookingDeposit) ?? 0.0,
                         ),
-                        Row(
-                          children: [
-                            SvgImageComponent(
-                              width: 16,
-                              height: 16,
-                              iconPath: AppAssets.priceToBePaidIcon,
-                            ),
-                            SizedBox(width: context.scale(8)),
-                            Flexible(
-                              child: Text(
-                                LocaleKeys.finalPriceLabel.tr(), // Using tr() for translation
-                                style: getSemiBoldStyle(
-                                  color: ColorManager.blackColor,
-                                  fontSize: FontSize.s14,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Flexible(
-                              child: BoldCurrencyDisplayWidget(
-                                amount: double.tryParse(state.propertySaleDetailsEntity!.propertyPrice) ?? 0.0,
-                                textColor: ColorManager.blackColor,
-                                fontSize: FontSize.s16,
-                              ),
-                            ),
-                          ],
+                        SizedBox(height: context.scale(12)),
+                        _priceRow(
+                          context,
+                          LocaleKeys.finalPriceLabel.tr(),
+                          double.tryParse(details.propertyPrice) ?? 0.0,
+                        ),
+                        SizedBox(height: context.scale(12)),
+                        // TVA : pourcentage appliqué au prix de la propriété + sa valeur
+                        _priceRow(
+                          context,
+                          '${LocaleKeys.taxLabel.tr()} (${details.taxPercent}%) : ',
+                          double.tryParse(details.taxAmount) ?? 0.0,
+                        ),
+                        SizedBox(height: context.scale(12)),
+                        // Total TTC = prix de la propriété + TVA
+                        _priceRow(
+                          context,
+                          LocaleKeys.totalWithTaxLabel.tr(),
+                          double.tryParse(details.totalPriceWithTax) ?? 0.0,
                         ),
                       ],
                     );
                   } else {
                     return Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            SvgImageComponent(
-                              width: 16,
-                              height: 16,
-                              iconPath: AppAssets.priceToBePaidIcon,
-                            ),
-                            SizedBox(width: context.scale(8)),
-                            Text(
-                              LocaleKeys.bookingDepositLabel.tr(), // Using tr() for translation
-                              style: getSemiBoldStyle(
-                                color: ColorManager.blackColor,
-                                fontSize: FontSize.s14,
-                              ),
-                            ),
-                            ShimmerComponent(
-                                height: context.scale(10),
-                                width: context.scale(100))
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            SvgImageComponent(
-                              width: 16,
-                              height: 16,
-                              iconPath: AppAssets.priceToBePaidIcon,
-                            ),
-                            SizedBox(width: context.scale(8)),
-                            Text(
-                              LocaleKeys.finalPriceLabel.tr(), // Using tr() for translation
-                              style: getSemiBoldStyle(
-                                color: ColorManager.blackColor,
-                                fontSize: FontSize.s14,
-                              ),
-                            ),
-                            ShimmerComponent(
-                                height: context.scale(10),
-                                width: context.scale(100))
-                          ],
-                        ),
+                        _shimmerRow(context, LocaleKeys.bookingDepositLabel.tr()),
+                        SizedBox(height: context.scale(12)),
+                        _shimmerRow(context, LocaleKeys.finalPriceLabel.tr()),
+                        SizedBox(height: context.scale(12)),
+                        _shimmerRow(context, LocaleKeys.taxLabel.tr()),
+                        SizedBox(height: context.scale(12)),
+                        _shimmerRow(context, LocaleKeys.totalWithTaxLabel.tr()),
                       ],
                     );
                   }
@@ -169,5 +107,56 @@ class SaleDetailsScreen extends StatelessWidget {
             ),
           ],
         ));
+  }
+
+  Widget _priceRow(BuildContext context, String label, double amount) {
+    return Row(
+      children: [
+        SvgImageComponent(
+          width: 16,
+          height: 16,
+          iconPath: AppAssets.priceToBePaidIcon,
+        ),
+        SizedBox(width: context.scale(8)),
+        Flexible(
+          child: Text(
+            label,
+            style: getSemiBoldStyle(
+              color: ColorManager.blackColor,
+              fontSize: FontSize.s14,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        Flexible(
+          child: BoldCurrencyDisplayWidget(
+            amount: amount,
+            textColor: ColorManager.blackColor,
+            fontSize: FontSize.s16,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _shimmerRow(BuildContext context, String label) {
+    return Row(
+      children: [
+        SvgImageComponent(
+          width: 16,
+          height: 16,
+          iconPath: AppAssets.priceToBePaidIcon,
+        ),
+        SizedBox(width: context.scale(8)),
+        Text(
+          label,
+          style: getSemiBoldStyle(
+            color: ColorManager.blackColor,
+            fontSize: FontSize.s14,
+          ),
+        ),
+        ShimmerComponent(height: context.scale(10), width: context.scale(100)),
+      ],
+    );
   }
 }

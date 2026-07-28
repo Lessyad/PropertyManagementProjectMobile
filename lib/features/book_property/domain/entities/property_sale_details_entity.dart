@@ -8,6 +8,9 @@ class PropertySaleDetailsEntity extends Equatable {
 
   final String bookingDepositPercentage;
 
+  // TVA appliquée au prix de la propriété
+  final String taxPercent, taxAmount, totalPriceWithTax;
+
   const PropertySaleDetailsEntity(
       {required this.propertyPrice,
       required this.viewingRequestPrice,
@@ -15,6 +18,9 @@ class PropertySaleDetailsEntity extends Equatable {
       required this.remainingAmount,
       required this.bookingDepositPercentage,
       required this.userBalance,
+      required this.taxPercent,
+      required this.taxAmount,
+      required this.totalPriceWithTax,
       });
 
   @override
@@ -25,5 +31,8 @@ class PropertySaleDetailsEntity extends Equatable {
         remainingAmount,
         bookingDepositPercentage,
         userBalance,
+        taxPercent,
+        taxAmount,
+        totalPriceWithTax,
       ];
 }

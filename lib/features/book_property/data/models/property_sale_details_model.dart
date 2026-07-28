@@ -2,7 +2,7 @@ import 'package:enmaa/features/book_property/domain/entities/property_sale_detai
 import 'package:enmaa/core/utils/number_parser.dart';
 
 class PropertySaleDetailsModel extends PropertySaleDetailsEntity {
-  const PropertySaleDetailsModel({required super.propertyPrice, required super.viewingRequestPrice, required super.bookingDeposit, required super.remainingAmount, required super.bookingDepositPercentage, required super.userBalance});
+  const PropertySaleDetailsModel({required super.propertyPrice, required super.viewingRequestPrice, required super.bookingDeposit, required super.remainingAmount, required super.bookingDepositPercentage, required super.userBalance, required super.taxPercent, required super.taxAmount, required super.totalPriceWithTax});
 
   factory PropertySaleDetailsModel.fromJson(Map<String, dynamic> json) {
     return PropertySaleDetailsModel(
@@ -12,6 +12,9 @@ class PropertySaleDetailsModel extends PropertySaleDetailsEntity {
       remainingAmount: NumberParser.formatDecimal(NumberParser.parseDecimalString(json['balance']?.toString() ?? '0')),
       bookingDepositPercentage: NumberParser.formatDecimal(NumberParser.parseDecimalString(json['booking_deposit_percent']?.toString() ?? '0')),
       userBalance: NumberParser.formatDecimal(NumberParser.parseDecimalString(json['user_balance']?.toString() ?? '0')),
+      taxPercent: NumberParser.formatDecimal(NumberParser.parseDecimalString(json['tax_percent']?.toString() ?? '0')),
+      taxAmount: NumberParser.formatDecimal(NumberParser.parseDecimalString(json['tax_amount']?.toString() ?? '0')),
+      totalPriceWithTax: NumberParser.formatDecimal(NumberParser.parseDecimalString(json['total_price_with_tax']?.toString() ?? '0')),
     );
   }
 }

@@ -391,6 +391,8 @@
   "saleConditions": "Sale Conditions",
   "bookingDepositLabel": "Booking Deposit: ",
   "finalPriceLabel": "Final Price: ",
+  "taxLabel": "VAT",
+  "totalWithTaxLabel": "Total incl. tax: ",
   "bookingProcedureWarning": "All booking procedures are handled directly through Enmaa Office to ensure transparency and security. If you have any inquiries, feel free to contact us.",
   "bookingConfirmationWarning": "Once your booking is confirmed, a representative from the office will contact you to complete the procedures.",
 
