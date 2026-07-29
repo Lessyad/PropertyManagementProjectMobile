@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../configuration/managers/color_manager.dart';
+import '../../../../../configuration/routers/route_names.dart';
 import '../../../../../core/components/need_to_login_component.dart';
 import '../../../../../core/components/searchable_select_field.dart';
 import '../../../../../core/translation/locale_keys.dart';
@@ -69,7 +70,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
   List<Area> _receptionAreas = [];
   List<Area> _deliveryAreas = [];
   List<VehicleCategory> _vehicleCategories = [];
-  
+
   bool _isLoadingCountries = true;
   bool _isLoadingReceptionCities = false;
   bool _isLoadingDeliveryCities = false;
@@ -89,7 +90,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
     setState(() {
       _isLoadingCountries = true;
     });
-    
+
     try {
       print('Loading countries...');
       final countries = await _geoService.getCountries();
@@ -103,7 +104,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
       setState(() {
         _isLoadingCountries = false;
       });
-      
+
       // Afficher un message d'erreur à l'utilisateur
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -120,7 +121,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
     setState(() {
       _isLoadingVehicleCategories = true;
     });
-    
+
     try {
       print('Loading vehicle categories...');
       final categories = await _geoService.getVehicleCategories();
@@ -134,7 +135,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
       setState(() {
         _isLoadingVehicleCategories = false;
       });
-      
+
       // Afficher un message d'erreur à l'utilisateur
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -155,7 +156,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
       _receptionAreas = [];
       _selectedReceptionArea = null;
     });
-    
+
     try {
       final cities = await _geoService.getCitiesByCountry(countryId);
       setState(() {
@@ -178,7 +179,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
       _deliveryAreas = [];
       _selectedDeliveryArea = null;
     });
-    
+
     try {
       final cities = await _geoService.getCitiesByCountry(countryId);
       setState(() {
@@ -199,7 +200,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
       _selectedReceptionArea = null;
       _receptionAreas = [];
     });
-    
+
     try {
       final areas = await _geoService.getAreasByCity(cityId);
       setState(() {
@@ -220,7 +221,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
       _selectedDeliveryArea = null;
       _deliveryAreas = [];
     });
-    
+
     try {
       final areas = await _geoService.getAreasByCity(cityId);
       setState(() {
@@ -285,7 +286,8 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
     _vehicleController.resetFilters();
   }
 
-  Future<void> _selectDate(BuildContext context, {required bool isReception}) async {
+  Future<void> _selectDate(BuildContext context,
+      {required bool isReception}) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -330,7 +332,8 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
     }
   }
 
-  Future<void> _selectTime(BuildContext context, {required bool isReception}) async {
+  Future<void> _selectTime(BuildContext context,
+      {required bool isReception}) async {
     final TimeOfDay? picked = await showDialog<TimeOfDay>(
       context: context,
       builder: (BuildContext context) {
@@ -424,10 +427,12 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
 
     // Appliquer le filtre
     if (filterType == 'gasoline' || filterType == 'diesel') {
-      final fuelType = _activeFilters[filterType]! ? filterValue.toUpperCase() : null;
+      final fuelType =
+          _activeFilters[filterType]! ? filterValue.toUpperCase() : null;
       _vehicleController.applyFilters(fuelType: fuelType);
     } else if (filterType == 'automatic' || filterType == 'manual') {
-      final transmission = _activeFilters[filterType]! ? filterValue.toUpperCase() : null;
+      final transmission =
+          _activeFilters[filterType]! ? filterValue.toUpperCase() : null;
       _vehicleController.applyFilters(transmission: transmission);
     }
   }
@@ -470,7 +475,7 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
       ),
       child: Center(
         child: Text(
-            tr(LocaleKeys.startRental),
+          tr(LocaleKeys.startRental),
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -839,10 +844,6 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
         isDriverAgeValid;
   }
 
-
-
-
-
   Widget _buildActionButtons() {
     final bool isFormValid = _isFormValid();
     DateTime? completeReceptionDateTime;
@@ -903,33 +904,55 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
           child: SizedBox(
             height: 45,
             child: ElevatedButton(
-              onPressed: isFormValid ? () {
-    if (isAuth) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => VehicleSearchResultsScreen(
-                      // receptionDate: _receptionDate,
-                      receptionDate: completeReceptionDateTime!,
-                      receptionTime: _receptionTime, // Passer receptionTime séparément
-                      receptionCity: _selectedReceptionCity?.name,
-                      receptionLocation: _selectedReceptionArea?.name,
-                      // deliveryDate: _deliveryDate,
-                      deliveryDate: completeDeliveryDateTime!,
-                      deliveryTime: _deliveryTime,
-                      deliveryCity: _effectiveDeliveryCity?.name,
-                      deliveryLocation: _effectiveDeliveryArea?.name,
-                      receptionZoneId: _selectedReceptionArea?.id,
-                      deliveryZoneId: _effectiveDeliveryArea?.id,
-                      vehicleCategoryId: _selectedVehicleCategory?.id,
-                      userAge: int.tryParse(_driverAgeController.text),
-                      userCountryId: _selectedCountry?.id, // Passer l'ID du pays sélectionné
-                    ),
-                  ),
-                );
-    } else {
-      LoginBottomSheet.show();
-    }
-              } : null,
+              onPressed: isFormValid
+                  ? () {
+                      if (isAuth) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => VehicleSearchResultsScreen(
+                              // receptionDate: _receptionDate,
+                              receptionDate: completeReceptionDateTime!,
+                              receptionTime:
+                                  _receptionTime, // Passer receptionTime séparément
+                              receptionCity: _selectedReceptionCity?.name,
+                              receptionLocation: _selectedReceptionArea?.name,
+                              // deliveryDate: _deliveryDate,
+                              deliveryDate: completeDeliveryDateTime!,
+                              deliveryTime: _deliveryTime,
+                              deliveryCity: _effectiveDeliveryCity?.name,
+                              deliveryLocation: _effectiveDeliveryArea?.name,
+                              receptionZoneId: _selectedReceptionArea?.id,
+                              deliveryZoneId: _effectiveDeliveryArea?.id,
+                              vehicleCategoryId: _selectedVehicleCategory?.id,
+                              userAge: int.tryParse(_driverAgeController.text),
+                              userCountryId: _selectedCountry
+                                  ?.id, // Passer l'ID du pays sélectionné
+                            ),
+                          ),
+                        );
+                      } else {
+                        LoginBottomSheet.show(
+                          pendingRouteName:
+                              RoutersNames.vehicleSearchResultsScreen,
+                          pendingArguments: {
+                            'receptionDate': completeReceptionDateTime!,
+                            'receptionTime': _receptionTime,
+                            'receptionCity': _selectedReceptionCity?.name,
+                            'receptionLocation': _selectedReceptionArea?.name,
+                            'deliveryDate': completeDeliveryDateTime!,
+                            'deliveryTime': _deliveryTime,
+                            'deliveryCity': _effectiveDeliveryCity?.name,
+                            'deliveryLocation': _effectiveDeliveryArea?.name,
+                            'receptionZoneId': _selectedReceptionArea?.id,
+                            'deliveryZoneId': _effectiveDeliveryArea?.id,
+                            'vehicleCategoryId': _selectedVehicleCategory?.id,
+                            'userAge': int.tryParse(_driverAgeController.text),
+                            'userCountryId': _selectedCountry?.id,
+                          },
+                        );
+                      }
+                    }
+                  : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorManager.primaryColor,
                 foregroundColor: Colors.white,
@@ -983,15 +1006,14 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
     return ColorManager.grey3;
   }
 
-
   Widget _buildDateTimeRow(
-      String dateLabel,
-      String timeLabel,
-      DateTime? selectedDate,
-      TimeOfDay? selectedTime,
-      VoidCallback onDateTap,
-      VoidCallback onTimeTap,
-      ) {
+    String dateLabel,
+    String timeLabel,
+    DateTime? selectedDate,
+    TimeOfDay? selectedTime,
+    VoidCallback onDateTap,
+    VoidCallback onTimeTap,
+  ) {
     bool hasDateValue = selectedDate != null;
     bool hasTimeValue = selectedTime != null;
 
@@ -1014,7 +1036,9 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
                 children: [
                   Icon(
                     Icons.calendar_today,
-                    color: hasDateValue ? ColorManager.primaryColor : ColorManager.grey,
+                    color: hasDateValue
+                        ? ColorManager.primaryColor
+                        : ColorManager.grey,
                     size: 16,
                   ),
                   const SizedBox(width: 8),
@@ -1028,7 +1052,9 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
                           dateLabel,
                           style: TextStyle(
                             fontSize: 10,
-                            color: hasDateValue ? ColorManager.primaryColor : ColorManager.grey,
+                            color: hasDateValue
+                                ? ColorManager.primaryColor
+                                : ColorManager.grey,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -1073,7 +1099,9 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
                 children: [
                   Icon(
                     Icons.access_time,
-                    color: hasTimeValue ? ColorManager.primaryColor : ColorManager.grey,
+                    color: hasTimeValue
+                        ? ColorManager.primaryColor
+                        : ColorManager.grey,
                     size: 16,
                   ),
                   const SizedBox(width: 8),
@@ -1087,7 +1115,9 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
                           timeLabel,
                           style: TextStyle(
                             fontSize: 10,
-                            color: hasTimeValue ? ColorManager.primaryColor : ColorManager.grey,
+                            color: hasTimeValue
+                                ? ColorManager.primaryColor
+                                : ColorManager.grey,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -1127,7 +1157,9 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
 
           Color borderColor;
           if (_showAgeValidation) {
-            borderColor = _isDriverAgeValid ? ColorManager.primaryColor : ColorManager.redColor;
+            borderColor = _isDriverAgeValid
+                ? ColorManager.primaryColor
+                : ColorManager.redColor;
           } else {
             borderColor = _getBorderColor(hasFocus, hasValue);
           }
@@ -1150,21 +1182,28 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
               decoration: InputDecoration(
                 hintText: tr(LocaleKeys.driverAge),
                 hintStyle: TextStyle(
-                  color: hasFocus || hasValue ? ColorManager.primaryColor : ColorManager.grey,
+                  color: hasFocus || hasValue
+                      ? ColorManager.primaryColor
+                      : ColorManager.grey,
                 ),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 prefixIcon: Icon(
                   Icons.person,
-                  color: hasFocus || hasValue ? ColorManager.primaryColor : ColorManager.grey,
+                  color: hasFocus || hasValue
+                      ? ColorManager.primaryColor
+                      : ColorManager.grey,
                   size: 20,
                 ),
                 suffixIcon: _showAgeValidation
                     ? Icon(
-                  _isDriverAgeValid ? Icons.check_circle : Icons.error,
-                  color: _isDriverAgeValid ? ColorManager.primaryColor : ColorManager.redColor,
-                  size: 20,
-                )
+                        _isDriverAgeValid ? Icons.check_circle : Icons.error,
+                        color: _isDriverAgeValid
+                            ? ColorManager.primaryColor
+                            : ColorManager.redColor,
+                        size: 20,
+                      )
                     : null,
               ),
               style: TextStyle(color: ColorManager.blackColor, fontSize: 14),
@@ -1186,7 +1225,9 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
             : ColorManager.redColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: _isDriverAgeValid ? ColorManager.primaryColor : ColorManager.redColor,
+          color: _isDriverAgeValid
+              ? ColorManager.primaryColor
+              : ColorManager.redColor,
           width: 1,
         ),
       ),
@@ -1194,7 +1235,9 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
         children: [
           Icon(
             _isDriverAgeValid ? Icons.check_circle : Icons.error,
-            color: _isDriverAgeValid ? ColorManager.primaryColor : ColorManager.redColor,
+            color: _isDriverAgeValid
+                ? ColorManager.primaryColor
+                : ColorManager.redColor,
             size: 16,
           ),
           const SizedBox(width: 6),
@@ -1204,7 +1247,9 @@ class _VehicleSearchScreenState extends State<VehicleSearchScreen> {
                   ? tr(LocaleKeys.ageValidationSuccess)
                   : tr(LocaleKeys.ageValidationError),
               style: TextStyle(
-                color: _isDriverAgeValid ? ColorManager.primaryColor : ColorManager.redColor,
+                color: _isDriverAgeValid
+                    ? ColorManager.primaryColor
+                    : ColorManager.redColor,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),

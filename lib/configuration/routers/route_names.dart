@@ -35,6 +35,8 @@ class RoutersNames {
   static const String resetPasswordScreen = "/reset-password-screen";
 
   static const String vehiclesList = "/vehicles-list";
+  static const String vehicleSearchResultsScreen =
+      "/vehicle-search-results-screen";
   static const String vehicleDetails = "/vehicle-details";
   static const String vehicleDetailsScreen = "/vehicle_detail_screen";
   //pour terster les ecran

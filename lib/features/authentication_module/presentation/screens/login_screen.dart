@@ -11,6 +11,7 @@ import 'package:enmaa/features/authentication_module/presentation/controller/rem
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../configuration/routers/route_names.dart';
 import '../../../../core/components/custom_snack_bar.dart';
+import '../../../../core/services/pending_auth_navigation_service.dart';
 import '../../../../core/translation/locale_keys.dart';
 import '../../data/models/login_request_model.dart';
 import '../components/login_buttons_widget.dart';
@@ -70,11 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
             if (current.loginRequestState == RequestState.loaded &&
                 navigateToNextScreen) {
               navigateToNextScreen = false;
-              Navigator.of(context, rootNavigator: true)
-                  .pushNamedAndRemoveUntil(
-                RoutersNames.layoutScreen,
-                (route) => false,
-              );
+              PendingAuthNavigationService.navigateAfterAuth(context);
             } else if (current.loginRequestState == RequestState.error) {
               CustomSnackBar.show(
                 context: context,
@@ -102,6 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         iconSize: 16,
                         padding: const EdgeInsets.all(8),
                         onPressed: () {
+                          PendingAuthNavigationService.clear();
                           Navigator.of(context, rootNavigator: true)
                               .pushNamed(RoutersNames.layoutScreen);
                         },

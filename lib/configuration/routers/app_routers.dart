@@ -51,6 +51,7 @@ import 'package:enmaa/features/preview_property/presentation/controller/preview_
 import 'package:enmaa/features/real_estates/presentation/controller/real_estate_cubit.dart';
 import 'package:enmaa/features/real_estates/real_estates_DI.dart';
 import 'package:enmaa/features/vehicle_management/vehicle/presentation/screens/vehicle_details_screen.dart';
+import 'package:enmaa/features/vehicle_management/vehicle/presentation/screens/vehicle_search_results_screen.dart';
 import 'package:enmaa/features/vehicle_management/vehicle/presentation/screens/vehicles_screen.dart';
 import 'package:enmaa/features/vehicle_management/vehicle/presentation/screens/rent_vehicle_main_screen.dart';
 import 'package:enmaa/features/vehicle_management/vehicle/presentation/screens/location_picker_screen.dart';
@@ -92,6 +93,17 @@ class AppRouters {
         );
 
       case RoutersNames.layoutScreen:
+        final args = settings.arguments;
+        int initialIndex = 0;
+        dynamic layoutArguments;
+
+        if (args is int) {
+          initialIndex = args;
+        } else if (args is Map) {
+          initialIndex = args['initialIndex'] as int? ?? 0;
+          layoutArguments = args;
+        }
+
         return MaterialPageRoute(
           settings: RouteSettings(name: RoutersNames.layoutScreen),
           builder: (_) => BlocProvider(
@@ -127,7 +139,10 @@ class AppRouters {
                 ..add(FetchBanners())
                 ..add(FetchAppServices());
             },
-            child: const LayoutScreen(initialIndex: 0),
+            child: LayoutScreen(
+              initialIndex: initialIndex,
+              arguments: layoutArguments,
+            ),
           ),
         );
       case RoutersNames.seeAllPropertiesScreen:
@@ -370,6 +385,28 @@ class AppRouters {
         return MaterialPageRoute(
           settings: RouteSettings(name: RoutersNames.vehiclesList),
           builder: (_) => VehiclesScreen(),
+        );
+
+      case RoutersNames.vehicleSearchResultsScreen:
+        final args = settings.arguments as Map;
+        return MaterialPageRoute(
+          settings:
+              RouteSettings(name: RoutersNames.vehicleSearchResultsScreen),
+          builder: (_) => VehicleSearchResultsScreen(
+            receptionDate: args['receptionDate'] as DateTime?,
+            receptionTime: args['receptionTime'] as TimeOfDay?,
+            receptionCity: args['receptionCity'] as String?,
+            receptionLocation: args['receptionLocation'] as String?,
+            deliveryDate: args['deliveryDate'] as DateTime?,
+            deliveryTime: args['deliveryTime'] as TimeOfDay?,
+            deliveryCity: args['deliveryCity'] as String?,
+            deliveryLocation: args['deliveryLocation'] as String?,
+            receptionZoneId: args['receptionZoneId'] as int?,
+            deliveryZoneId: args['deliveryZoneId'] as int?,
+            vehicleCategoryId: args['vehicleCategoryId'] as int?,
+            userAge: args['userAge'] as int?,
+            userCountryId: args['userCountryId'] as int?,
+          ),
         );
 
       case RoutersNames.vehicleDetails:

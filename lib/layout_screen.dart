@@ -45,7 +45,6 @@ class _LayoutScreenState extends State<LayoutScreen> {
   late PageController _pageController;
   late int currentIndex;
 
-
   DateTime? lastPressedTime;
 
   @override
@@ -55,6 +54,30 @@ class _LayoutScreenState extends State<LayoutScreen> {
     storeFirebaseMessagingToken();
     _pageController = PageController(initialPage: currentIndex);
     AuthService.authStateNotifier.addListener(_onAuthChanged);
+    _openPendingRouteAfterFirstFrame();
+  }
+
+  void _openPendingRouteAfterFirstFrame() {
+    final args = widget.arguments;
+    if (args is! Map) {
+      return;
+    }
+
+    final routeName = args['pendingRouteName'] as String?;
+    if (routeName == null) {
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+
+      Navigator.of(context).pushNamed(
+        routeName,
+        arguments: args['pendingArguments'],
+      );
+    });
   }
 
   void _onAuthChanged() {
@@ -65,14 +88,15 @@ class _LayoutScreenState extends State<LayoutScreen> {
     }
   }
 
-  Future<void>storeFirebaseMessagingToken() async {
-    if(SharedPreferencesService().accessToken.isEmpty) {
-      return ;
+  Future<void> storeFirebaseMessagingToken() async {
+    if (SharedPreferencesService().accessToken.isEmpty) {
+      return;
     }
 
     await FireBaseMessaging().getToken();
     await FcmTokenUpdateService().updateFcmTokenAfterAuthentication();
   }
+
   Widget _buildScreen(int index) {
     switch (index) {
       case 0:
@@ -93,14 +117,15 @@ class _LayoutScreenState extends State<LayoutScreen> {
           create: (context) {
             WalletDi().setup();
 
-                  return WalletCubit(
-                      ServiceLocator.getIt<WithdrawRequestUseCase>(),
-                      ServiceLocator.getIt<GetWalletDataUseCase>(),
-                      ServiceLocator.getIt<GetTransactionHistoryDataUseCase>(),
-                      ServiceLocator.getIt<GetBanksUseCase>(),
-                      ServiceLocator.getIt<GetUserBalanceUseCase>(),
-                  )
-              ..getWalletData() ..getTransactionHistoryData();
+            return WalletCubit(
+              ServiceLocator.getIt<WithdrawRequestUseCase>(),
+              ServiceLocator.getIt<GetWalletDataUseCase>(),
+              ServiceLocator.getIt<GetTransactionHistoryDataUseCase>(),
+              ServiceLocator.getIt<GetBanksUseCase>(),
+              ServiceLocator.getIt<GetUserBalanceUseCase>(),
+            )
+              ..getWalletData()
+              ..getTransactionHistoryData();
           },
           child: ChargeWalletScreen(),
         );
@@ -132,17 +157,15 @@ class _LayoutScreenState extends State<LayoutScreen> {
     return true;
   }
 
-  List<FloatingNavBarItem> get items =>
-      [
-        FloatingNavBarItem(icon: AppAssets.homeIcon, text: LocaleKeys.home.tr()),
+  List<FloatingNavBarItem> get items => [
+        FloatingNavBarItem(
+            icon: AppAssets.homeIcon, text: LocaleKeys.home.tr()),
         FloatingNavBarItem(
             icon: AppAssets.bookingIcon, text: LocaleKeys.myBookings.tr()),
         FloatingNavBarItem(
-            icon: AppAssets.heartIcon,
-            text: LocaleKeys.favorites.tr()),
+            icon: AppAssets.heartIcon, text: LocaleKeys.favorites.tr()),
         FloatingNavBarItem(
-            icon: AppAssets.walletIcon,
-            text: LocaleKeys.transactions.tr()),
+            icon: AppAssets.walletIcon, text: LocaleKeys.transactions.tr()),
         FloatingNavBarItem(
             icon: AppAssets.personIcon, text: LocaleKeys.myProfile.tr()),
       ];
@@ -155,24 +178,21 @@ class _LayoutScreenState extends State<LayoutScreen> {
         currentIndex: currentIndex,
         onItemSelected: (index) {
           if (index == 0 && currentIndex == 0) {
-            AppRouters.homeNavigatorKey.currentState?.popUntil((route) =>
-            route.isFirst);
+            AppRouters.homeNavigatorKey.currentState
+                ?.popUntil((route) => route.isFirst);
           } else {
-            if(index == 0 || index == 4) {
+            if (index == 0 || index == 4) {
               setState(() {
                 currentIndex = index;
                 _pageController.jumpToPage(index);
               });
-            }
-            else {
-              if(isAuth){
+            } else {
+              if (isAuth) {
                 setState(() {
                   currentIndex = index;
                   _pageController.jumpToPage(index);
                 });
-              }
-              else {
-
+              } else {
                 LoginBottomSheet.show();
               }
             }
@@ -189,7 +209,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context){
+          create: (context) {
             MyBookingDi().setup();
 
             return MyBookingCubit(
@@ -197,7 +217,6 @@ class _LayoutScreenState extends State<LayoutScreen> {
             )..getMyBookings(status: 'pending', isRefresh: true);
           },
         ),
-
       ],
       child: PopScope(
         canPop: false,

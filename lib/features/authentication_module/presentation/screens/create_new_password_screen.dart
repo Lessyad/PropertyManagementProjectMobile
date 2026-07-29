@@ -14,6 +14,7 @@ import '../../../../core/components/circular_icon_button.dart';
 import '../../../../core/components/custom_snack_bar.dart';
 import '../../../../core/components/loading_overlay_component.dart';
 import '../../../../core/constants/app_assets.dart';
+import '../../../../core/services/pending_auth_navigation_service.dart';
 import '../../../../core/translation/locale_keys.dart';
 import '../../../home_module/home_imports.dart';
 import '../components/create_new_password_form_fields_widget.dart';
@@ -23,7 +24,8 @@ class CreateNewPasswordScreen extends StatefulWidget {
   final bool isFromResetPassword;
 
   @override
-  State<CreateNewPasswordScreen> createState() => _CreateNewPasswordScreenState();
+  State<CreateNewPasswordScreen> createState() =>
+      _CreateNewPasswordScreenState();
 }
 
 class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
@@ -46,7 +48,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
         buildWhen: (previous, current) {
           if (previous.signUpRequestState != current.signUpRequestState) {
             if (current.signUpRequestState.isLoaded) {
-              Navigator.of(context, rootNavigator: true).pushReplacementNamed(RoutersNames.layoutScreen);
+              PendingAuthNavigationService.navigateAfterAuth(context);
               CustomSnackBar.show(
                 context: context,
                 message: LocaleKeys.accountCreatedSuccessfully.tr(),
@@ -54,13 +56,16 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
               );
             } else if (current.signUpRequestState.isError) {
               String errorMessage = current.signUpErrorMessage;
-              
+
               // Message spécifique pour l'utilisateur déjà existant
-              if (errorMessage.contains('Un utilisateur avec ce numéro existe déjà') || 
-                  errorMessage.contains('User with this phone number already exists')) {
-                errorMessage = 'Un compte existe déjà avec ce numéro. Veuillez vous connecter.';
+              if (errorMessage
+                      .contains('Un utilisateur avec ce numéro existe déjà') ||
+                  errorMessage
+                      .contains('User with this phone number already exists')) {
+                errorMessage =
+                    'Un compte existe déjà avec ce numéro. Veuillez vous connecter.';
               }
-              
+
               CustomSnackBar.show(
                 context: context,
                 message: errorMessage,
@@ -69,9 +74,11 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
             }
           }
 
-          if (previous.resetPasswordRequestState != current.resetPasswordRequestState) {
+          if (previous.resetPasswordRequestState !=
+              current.resetPasswordRequestState) {
             if (current.resetPasswordRequestState.isLoaded) {
-              Navigator.of(context).pushReplacementNamed(RoutersNames.loginScreen);
+              Navigator.of(context)
+                  .pushReplacementNamed(RoutersNames.loginScreen);
               CustomSnackBar.show(
                 context: context,
                 message: LocaleKeys.passwordChangedSuccessfully.tr(),
@@ -87,7 +94,8 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
           }
 
           return previous.signUpRequestState != current.signUpRequestState ||
-              previous.resetPasswordRequestState != current.resetPasswordRequestState;
+              previous.resetPasswordRequestState !=
+                  current.resetPasswordRequestState;
         },
         builder: (context, state) {
           return Stack(
@@ -112,7 +120,8 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                       end: 0,
                       start: 0,
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: context.scale(16)),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: context.scale(16)),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -120,14 +129,17 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                               widget.isFromResetPassword
                                   ? LocaleKeys.resetPassword.tr()
                                   : LocaleKeys.createPassword.tr(),
-                              style: getBoldStyle(color: ColorManager.blackColor),
+                              style:
+                                  getBoldStyle(color: ColorManager.blackColor),
                             ),
                             SizedBox(height: context.scale(8)),
                             Text(
                               widget.isFromResetPassword
                                   ? LocaleKeys.createNewPasswordHint.tr()
                                   : LocaleKeys.createStrongPasswordHint.tr(),
-                              style: getMediumStyle(color: ColorManager.blackColor, fontSize: FontSize.s12),
+                              style: getMediumStyle(
+                                  color: ColorManager.blackColor,
+                                  fontSize: FontSize.s12),
                             ),
                             SizedBox(height: context.scale(24)),
                             Form(
@@ -140,7 +152,8 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                                     widget.isFromResetPassword
                                         ? LocaleKeys.newPassword.tr()
                                         : LocaleKeys.signUp.tr(),
-                                    style: getBoldStyle(color: ColorManager.blackColor),
+                                    style: getBoldStyle(
+                                        color: ColorManager.blackColor),
                                   ),
                                   SizedBox(height: context.scale(24)),
                                   CreateNewPasswordFormFieldsWidget(
@@ -162,12 +175,16 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                                     ),
                                     decoration: BoxDecoration(
                                       color: ColorManager.primaryColor,
-                                      borderRadius: BorderRadius.circular(context.scale(20)),
+                                      borderRadius: BorderRadius.circular(
+                                          context.scale(20)),
                                     ),
                                     onTap: () {
-                                      if (_formKey.currentState?.validate() ?? false) {
-                                        final authBloc = context.read<RemoteAuthenticationCubit>();
-                                        SignUpRequestModel signUpRequestModel = SignUpRequestModel(
+                                      if (_formKey.currentState?.validate() ??
+                                          false) {
+                                        final authBloc = context
+                                            .read<RemoteAuthenticationCubit>();
+                                        SignUpRequestModel signUpRequestModel =
+                                            SignUpRequestModel(
                                           password: _passwordController1.text,
                                           name: authBloc.state.userName,
                                           phone: authBloc.state.userPhoneNumber,
@@ -175,14 +192,19 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                                         );
 
                                         if (widget.isFromResetPassword) {
-                                          ResetPasswordRequestModel resetPasswordRequestModel =
-                                          ResetPasswordRequestModel(
-                                            password1: _passwordController1.text,
-                                            password2: _passwordController2.text,
-                                            phone: authBloc.state.userPhoneNumber,
+                                          ResetPasswordRequestModel
+                                              resetPasswordRequestModel =
+                                              ResetPasswordRequestModel(
+                                            password1:
+                                                _passwordController1.text,
+                                            password2:
+                                                _passwordController2.text,
+                                            phone:
+                                                authBloc.state.userPhoneNumber,
                                             code: state.enteredOTP,
                                           );
-                                          authBloc.resetPassword(resetPasswordRequestModel);
+                                          authBloc.resetPassword(
+                                              resetPasswordRequestModel);
                                         } else {
                                           authBloc.signUp(signUpRequestModel);
                                         }
@@ -199,7 +221,8 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                   ],
                 ),
               ),
-              if (state.signUpRequestState.isLoading || state.resetPasswordRequestState.isLoading)
+              if (state.signUpRequestState.isLoading ||
+                  state.resetPasswordRequestState.isLoading)
                 const LoadingOverlayComponent(),
             ],
           );

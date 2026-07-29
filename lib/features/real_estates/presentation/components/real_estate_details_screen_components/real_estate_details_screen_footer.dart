@@ -13,7 +13,7 @@ import '../../../../home_module/home_imports.dart';
 
 class RealEstateDetailsScreenFooter extends StatelessWidget {
   const RealEstateDetailsScreenFooter({
-    super.key, 
+    super.key,
     required this.propertyId,
     required this.officePhoneNUmber,
     required this.actionIsDimmed,
@@ -49,25 +49,30 @@ class RealEstateDetailsScreenFooter extends StatelessWidget {
             height: 46,
             padding: EdgeInsets.zero,
             decoration: BoxDecoration(
-              color: actionIsDimmed? ColorManager.grey2: ColorManager.whiteColor,
+              color:
+                  actionIsDimmed ? ColorManager.grey2 : ColorManager.whiteColor,
               borderRadius: BorderRadius.circular(context.scale(24)),
-              border:actionIsDimmed? null : Border.all(
-                color: ColorManager.primaryColor,
-                width: 1,
-              ),
+              border: actionIsDimmed
+                  ? null
+                  : Border.all(
+                      color: ColorManager.primaryColor,
+                      width: 1,
+                    ),
             ),
             buttonContent: Center(
               child: Text(
                 LocaleKeys.preview.tr(),
                 style: getBoldStyle(
-                  color:actionIsDimmed?ColorManager.blackColor : ColorManager.primaryColor,
+                  color: actionIsDimmed
+                      ? ColorManager.blackColor
+                      : ColorManager.primaryColor,
                   fontSize: FontSize.s12,
                 ),
               ),
             ),
             onTap: () async {
               if (isAuth) {
-                if(!actionIsDimmed){
+                if (!actionIsDimmed) {
                   final result = await Navigator.of(context).pushNamed(
                     RoutersNames.previewPropertyScreen,
                     arguments: {
@@ -80,15 +85,19 @@ class RealEstateDetailsScreenFooter extends StatelessWidget {
                       type: SnackBarType.success,
                     );
                   }
-                }
-                else {
+                } else {
                   CustomSnackBar.show(
                     message: LocaleKeys.previewError.tr(),
                     type: SnackBarType.error,
                   );
                 }
               } else {
-                LoginBottomSheet.show();
+                LoginBottomSheet.show(
+                  pendingRouteName: RoutersNames.previewPropertyScreen,
+                  pendingArguments: {
+                    'id': propertyId,
+                  },
+                );
               }
             },
           ),
@@ -97,21 +106,25 @@ class RealEstateDetailsScreenFooter extends StatelessWidget {
             height: 46,
             padding: EdgeInsets.zero,
             decoration: BoxDecoration(
-              color: actionIsDimmed? ColorManager.grey2: ColorManager.primaryColor,
+              color: actionIsDimmed
+                  ? ColorManager.grey2
+                  : ColorManager.primaryColor,
               borderRadius: BorderRadius.circular(context.scale(24)),
             ),
             buttonContent: Center(
               child: Text(
                 LocaleKeys.bookNow.tr(),
                 style: getBoldStyle(
-                  color:actionIsDimmed?ColorManager.blackColor : ColorManager.whiteColor,
+                  color: actionIsDimmed
+                      ? ColorManager.blackColor
+                      : ColorManager.whiteColor,
                   fontSize: FontSize.s12,
                 ),
               ),
             ),
             onTap: () async {
               if (isAuth) {
-                if(!actionIsDimmed){
+                if (!actionIsDimmed) {
                   // 🆕 Passer les informations complètes de la propriété
                   final result = await Navigator.of(context).pushNamed(
                     RoutersNames.bookPropertyScreen,
@@ -127,15 +140,21 @@ class RealEstateDetailsScreenFooter extends StatelessWidget {
                       type: SnackBarType.success,
                     );
                   }
-                }
-                else {
+                } else {
                   CustomSnackBar.show(
                     message: LocaleKeys.bookNowError.tr(),
                     type: SnackBarType.error,
                   );
                 }
               } else {
-                LoginBottomSheet.show();
+                LoginBottomSheet.show(
+                  pendingRouteName: RoutersNames.bookPropertyScreen,
+                  pendingArguments: {
+                    'propertyId': propertyId,
+                    'operation': operation,
+                    'monthlyRentPeriod': monthlyRentPeriod,
+                  },
+                );
               }
             },
           ),
