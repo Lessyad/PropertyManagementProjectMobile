@@ -18,7 +18,7 @@ class UserScreensWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: context.scale(158),
+      height: context.scale(206),
       decoration: BoxDecoration(
         color: ColorManager.whiteColor,
         borderRadius: BorderRadius.circular(20),
@@ -26,7 +26,6 @@ class UserScreensWidget extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Builder(
         builder: (context) {
-          final locale = context.locale;
           return Row(
             children: [
               Expanded(
@@ -121,6 +120,36 @@ class UserScreensWidget extends StatelessWidget {
                         ],
                       ),
                     ),
+                    InkWell(
+                      onTap: () {
+                        if (isAuth) {
+                          Navigator.pushNamed(
+                              context, RoutersNames.commercialManagementScreen);
+                        } else {
+                          LoginBottomSheet.show();
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.analytics_outlined,
+                            size: 20,
+                            color: ColorManager.grey,
+                          ),
+                          SizedBox(width: context.scale(8)),
+                          Expanded(
+                            child: Text(
+                              _commercialManagementLabel(context),
+                              maxLines: 1,
+                              style: getBoldStyle(
+                                  color: ColorManager.blackColor,
+                                  fontSize: FontSize.s16),
+                            ),
+                          ),
+                          Icon(Icons.arrow_forward_ios),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -139,6 +168,17 @@ class UserScreensWidget extends StatelessWidget {
         return 'سجل الإيجار';
       default:
         return 'Rental history';
+    }
+  }
+
+  String _commercialManagementLabel(BuildContext context) {
+    switch (context.locale.languageCode) {
+      case 'fr':
+        return 'Gestion commerciale';
+      case 'ar':
+        return 'الإدارة التجارية';
+      default:
+        return 'Commercial management';
     }
   }
 }

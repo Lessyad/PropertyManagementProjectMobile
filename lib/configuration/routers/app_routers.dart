@@ -1,6 +1,7 @@
 import 'package:enmaa/features/authentication_module/presentation/screens/bio_metric_screen.dart';
 
 import 'package:enmaa/features/book_property/presentation/screens/book_property_main_screen.dart';
+import 'package:enmaa/features/commercial_management/presentation/screens/commercial_management_screen.dart';
 import 'package:enmaa/features/home_module/presentation/controller/home_bloc.dart';
 
 import 'package:enmaa/features/home_module/presentation/screens/home_search_screen.dart';
@@ -195,6 +196,12 @@ class AppRouters {
             },
             child: const MyPropertiesScreen(),
           ),
+        );
+      case RoutersNames.commercialManagementScreen:
+        return MaterialPageRoute(
+          settings:
+              RouteSettings(name: RoutersNames.commercialManagementScreen),
+          builder: (_) => const CommercialManagementScreen(),
         );
       case RoutersNames.userAppointmentsScreen:
         return MaterialPageRoute(

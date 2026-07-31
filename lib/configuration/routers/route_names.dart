@@ -18,6 +18,8 @@ class RoutersNames {
   static const String vehicleSearchScreen = "/vehicle_Search_Screen";
 
   static const String myPropertiesScreen = "/my-properties-screen";
+  static const String commercialManagementScreen =
+      "/commercial-management-screen";
   static const String userAppointmentsScreen = "/user-appointments-screen";
   static const String userElectronicContracts = '/user-electronic-contracts';
   static const String userRentalHistory = '/user-rental-history';

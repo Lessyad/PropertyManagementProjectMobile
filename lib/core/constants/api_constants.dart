@@ -53,6 +53,10 @@ class ApiConstants {
   static const String contact = "${baseUrl}contact-us/";
   static const String notification = "${baseUrl}notifications/devices/";
   static const String updateFcmToken = "${baseUrl}auth/update-fcm-token/";
+  static const String propertySalesSummary =
+      "${baseUrl}admin/property-sales-summary";
+  static const String myPropertySalesSummary =
+      "${baseUrl}admin/property-sales-summary?mine=true";
 
   static const String vehicles = "${baseUrl}Vehicles";
   static const String vehicleDetails = "${baseUrl}Vehicles/";
