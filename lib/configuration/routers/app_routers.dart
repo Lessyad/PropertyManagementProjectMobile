@@ -7,6 +7,8 @@ import 'package:enmaa/features/home_module/presentation/controller/home_bloc.dar
 import 'package:enmaa/features/home_module/presentation/screens/home_search_screen.dart';
 import 'package:enmaa/features/home_module/presentation/screens/notifications_screen.dart';
 import 'package:enmaa/features/home_module/presentation/screens/see_all_screen.dart';
+import 'package:enmaa/features/my_profile/modules/user_appointments/domain/entities/appointment_entity.dart';
+import 'package:enmaa/features/my_profile/modules/user_appointments/presentation/screens/user_appointment_details_screen.dart';
 import 'package:enmaa/features/my_profile/modules/user_appointments/presentation/screens/user_appointments_screen.dart';
 import 'package:enmaa/features/my_profile/modules/user_data_module/user_data_DI.dart';
 import 'package:enmaa/features/my_profile/modules/user_properties_module/presentation/screens/user_properties_screen.dart';
@@ -207,6 +209,15 @@ class AppRouters {
         return MaterialPageRoute(
           settings: RouteSettings(name: RoutersNames.userAppointmentsScreen),
           builder: (_) => const UserAppointmentsScreen(),
+        );
+      case RoutersNames.userAppointmentDetailsScreen:
+        final appointment = settings.arguments as AppointmentEntity;
+        return MaterialPageRoute(
+          settings:
+              RouteSettings(name: RoutersNames.userAppointmentDetailsScreen),
+          builder: (_) => UserAppointmentDetailsScreen(
+            appointment: appointment,
+          ),
         );
       case RoutersNames.withdrawScreen:
         return MaterialPageRoute(

@@ -130,7 +130,14 @@ class _LayoutScreenState extends State<LayoutScreen> {
           child: ChargeWalletScreen(),
         );
       case 4:
-        return const ProfileScreen();
+        return ProfileScreen(
+          onBackPressed: () {
+            setState(() {
+              currentIndex = 0;
+              _pageController.jumpToPage(0);
+            });
+          },
+        );
       default:
         return const SizedBox.shrink();
     }

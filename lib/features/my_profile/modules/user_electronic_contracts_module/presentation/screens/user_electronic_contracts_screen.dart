@@ -121,7 +121,7 @@ class _UserElectronicContractsScreenState
             child: ElectronicContractCardComponent(
               contract: contract,
               width: context.screenWidth,
-              height: context.scale(74),
+              height: context.scale(104),
             ),
           );
         },

@@ -790,8 +790,8 @@ class _RentVehiclePaymentScreenState extends State<RentVehiclePaymentScreen> {
         currency: 'USD',
         orderId: orderId,
         description: 'Location de véhicule - ${widget.vehicleName}',
-        returnUrl: 'https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/payments/paypal/success',
-        cancelUrl: 'https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/payments/paypal/cancel',
+        returnUrl: 'https://smpntinmaapi-app-20260902110552.victoriouspebble-8dfc7d7e.australiaeast.azurecontainerapps.io/api/payments/paypal/success',
+        cancelUrl: 'https://smpntinmaapi-app-20260902110552.victoriouspebble-8dfc7d7e.australiaeast.azurecontainerapps.io/api/payments/paypal/cancel',
         authToken: authToken,
       );
 

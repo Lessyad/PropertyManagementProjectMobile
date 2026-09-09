@@ -33,6 +33,7 @@ class AppBarComponent extends StatefulWidget {
     this.showBackIcon = false,
     this.centerText = false,
     this.homeBloc,
+    this.onBackPressed,
   });
 
   final String appBarTextMessage;
@@ -41,6 +42,7 @@ class AppBarComponent extends StatefulWidget {
   final bool showBackIcon;
   final bool centerText;
   final HomeBloc? homeBloc;
+  final VoidCallback? onBackPressed;
 
   @override
   State<AppBarComponent> createState() => _AppBarComponentState();
@@ -134,7 +136,11 @@ class _AppBarComponentState extends State<AppBarComponent> {
               padding: EdgeInsets.all(context.scale(16)),
               child: InkWell(
                 onTap: () {
-                  Navigator.pop(context);
+                  if (widget.onBackPressed != null) {
+                    widget.onBackPressed!();
+                  } else {
+                    Navigator.pop(context);
+                  }
                 },
                 child: CircularIconButton(
                   containerSize: context.scale(32),

@@ -887,7 +887,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       final authToken = AuthHelper.getAuthToken();
       if (authToken.isEmpty) throw Exception('Token d\'authentification manquant');
 
-      const baseUrl = 'https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api';
+      const baseUrl = 'https://smpntinmaapi-app-20260902110552.victoriouspebble-8dfc7d7e.australiaeast.azurecontainerapps.io/api';
       final uri = Uri.parse('$baseUrl/Vehicles/deal/paypal/initiate');
       final userId = AuthHelper.getAuthenticatedUserId();
 

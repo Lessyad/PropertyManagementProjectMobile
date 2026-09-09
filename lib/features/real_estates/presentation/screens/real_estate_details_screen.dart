@@ -32,6 +32,15 @@ class RealEstateDetailsScreen extends StatefulWidget {
 }
 
 class _RealEstateDetailsScreenState extends State<RealEstateDetailsScreen> {
+  String _buildLocation(BasePropertyDetailsEntity property) {
+    final parts = [property.state, property.city].where((part) {
+      final value = part.trim();
+      return value.isNotEmpty && value.toLowerCase() != 'null';
+    });
+
+    return parts.join(', ');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,7 +89,7 @@ class _RealEstateDetailsScreenState extends State<RealEstateDetailsScreen> {
                                         realEstateDetailsPrice:
                                         currentProperty.price.toString(),
                                         realEstateDetailsLocation:
-                                            '${currentProperty.city}, ${currentProperty.state}',
+                                            _buildLocation(currentProperty),
                                       ),
                                       SizedBox(height: context.scale(24)),
                                       RealEstateDetailsDescription(

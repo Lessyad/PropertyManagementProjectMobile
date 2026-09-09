@@ -7,7 +7,7 @@
     static const String _keyRefreshToken = 'refresh_token';
     static const String _keyLanguage = 'language';
     static const String _keyFirstLaunch = 'first_launch';
-    static const String _keyTheme = 'theme'; // Added for theme preservation
+    static const String _keyTheme = 'theme'; 
 
     // Singleton instance
     static final SharedPreferencesService _instance = SharedPreferencesService._internal();

@@ -146,7 +146,6 @@ class CompleteThePurchaseScreen extends StatelessWidget {
                       return null;
                     },
                   ),
-                  SizedBox(height: context.scale(12)),
                   const BankilyMerchantCodeBox(),
                 ],
                 SizedBox(height: context.scale(20)),

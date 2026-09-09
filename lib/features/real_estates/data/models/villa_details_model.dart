@@ -2,6 +2,8 @@ import 'package:enmaa/core/models/amenity_model.dart';
 import 'package:enmaa/core/models/image_model.dart';
 import 'package:enmaa/features/real_estates/domain/entities/villa_details_entity.dart';
 
+import 'property_json_helpers.dart';
+
 class VillaDetailsModel extends VillaDetailsEntity {
   const VillaDetailsModel({
     required super.id,
@@ -93,14 +95,13 @@ class VillaDetailsModel extends VillaDetailsEntity {
       // city: propertyData['city']?['name']?.toString() ?? '',
       // state: propertyData['city']?['state']?['name']?.toString() ?? '',
       // country: propertyData['city']?['state']?['country']?['name']?.toString() ?? '',
-      city: propertyData['city']?['name']?.toString() ?? '',
-      state: propertyData['city']?['state']?['name']?.toString() ?? '',
-      country:
-          propertyData['city']?['state']?['country']?['name']?.toString() ?? '',
-      cityId: propertyData['city']?['id']?.toString() ?? '',
-      stateId: propertyData['city']?['state']?['id']?.toString() ?? '',
+      city: readLocalizedName(propertyData['city']),
+      state: readLocalizedName(propertyData['city']?['state']),
+      country: readLocalizedName(propertyData['city']?['state']?['country']),
+      cityId: readString(propertyData['city']?['id']),
+      stateId: readString(propertyData['city']?['state']?['id']),
       countryId:
-          propertyData['city']?['state']?['country']?['id']?.toString() ?? '',
+          readString(propertyData['city']?['state']?['country']?['id']),
       isInWishlist: json['isInWishlist'] ?? false,
       isFurnished: propertyData['isFurnitured'] ?? false,
       numberOfFloors: propertyData['numberOfFloors'] ?? 0,

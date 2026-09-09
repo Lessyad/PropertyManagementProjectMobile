@@ -129,7 +129,7 @@ class _AddNewRealEstateScreenState extends State<AddNewRealEstateScreen> {
                 message: LocaleKeys.propertyAddedSuccessfully.tr(),
                 type: SnackBarType.success,
               );
-              Navigator.pop(context);
+              Navigator.pop(context, true);
             }
 
             // Handle success for update
@@ -146,7 +146,7 @@ class _AddNewRealEstateScreenState extends State<AddNewRealEstateScreen> {
                 message: LocaleKeys.propertyUpdatedSuccessfully.tr(),
                 type: SnackBarType.success,
               );
-              Navigator.pop(context);
+              Navigator.pop(context, true);
             }
 
             if (state.getPropertyDetailsState.isLoaded &&

@@ -11,6 +11,14 @@ class AppointmentEntity extends Equatable {
   final String propertyState;
   final String propertyCountry;
   final String orderStatus;
+  final String propertyTitle;
+  final String propertyImage;
+  final String clientName;
+  final String clientPhone;
+  final String ownerName;
+  final String ownerPhone;
+  final String partnerName;
+  final String partnerPhone;
 
   const AppointmentEntity({
     required this.id,
@@ -23,6 +31,14 @@ class AppointmentEntity extends Equatable {
     required this.propertyState,
     required this.propertyCountry,
     required this.orderStatus,
+    this.propertyTitle = '',
+    this.propertyImage = '',
+    this.clientName = '',
+    this.clientPhone = '',
+    this.ownerName = '',
+    this.ownerPhone = '',
+    this.partnerName = '',
+    this.partnerPhone = '',
   });
 
   // Add copyWith method
@@ -37,6 +53,14 @@ class AppointmentEntity extends Equatable {
     String? propertyState,
     String? propertyCountry,
     String? orderStatus,
+    String? propertyTitle,
+    String? propertyImage,
+    String? clientName,
+    String? clientPhone,
+    String? ownerName,
+    String? ownerPhone,
+    String? partnerName,
+    String? partnerPhone,
   }) {
     return AppointmentEntity(
       id: id ?? this.id,
@@ -49,6 +73,14 @@ class AppointmentEntity extends Equatable {
       propertyState: propertyState ?? this.propertyState,
       propertyCountry: propertyCountry ?? this.propertyCountry,
       orderStatus: orderStatus ?? this.orderStatus,
+      propertyTitle: propertyTitle ?? this.propertyTitle,
+      propertyImage: propertyImage ?? this.propertyImage,
+      clientName: clientName ?? this.clientName,
+      clientPhone: clientPhone ?? this.clientPhone,
+      ownerName: ownerName ?? this.ownerName,
+      ownerPhone: ownerPhone ?? this.ownerPhone,
+      partnerName: partnerName ?? this.partnerName,
+      partnerPhone: partnerPhone ?? this.partnerPhone,
     );
   }
 
@@ -64,5 +96,13 @@ class AppointmentEntity extends Equatable {
     propertyState,
     propertyCountry,
     orderStatus,
+    propertyTitle,
+    propertyImage,
+    clientName,
+    clientPhone,
+    ownerName,
+    ownerPhone,
+    partnerName,
+    partnerPhone,
   ];
 }

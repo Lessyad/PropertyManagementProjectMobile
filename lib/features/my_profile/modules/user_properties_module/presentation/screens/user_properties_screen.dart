@@ -121,7 +121,12 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen>
             tabController: _tabController,
             tabStatuses: _tabStatuses,
             onTabChanged: (index) {
-              _tabController.animateTo(index);
+              final status = _tabStatuses[index].toJson();
+              context.read<UserPropertiesCubit>().getMyProperties(
+                    status: status,
+                    isRefresh: true,
+                  );
+              setState(() {});
             },
           ),
           Expanded(

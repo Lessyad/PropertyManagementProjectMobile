@@ -30,9 +30,9 @@ class VillaModel extends VillaEntity {
     final propertyType = json['type'];
     final propertyData = json[propertyType];
 
-    final cityData = propertyData['city'];
-    final stateData = cityData['state'];
-    final countryData = stateData['country'];
+    final cityData = propertyData['city'] as Map<String, dynamic>? ?? {};
+    final stateData = cityData['state'] as Map<String, dynamic>? ?? {};
+    final countryData = stateData['country'] as Map<String, dynamic>? ?? {};
 
     // Traiter l'image correctement
     String imageUrl = '';
@@ -69,16 +69,16 @@ class VillaModel extends VillaEntity {
       propertySubType: propertyData['property_sub_type'].toString(),
       status: propertyData['status'],
       city: CityEntity(
-        id: cityData['id'].toString(),
-        name: cityData['name'].toString(),
+        id: cityData['id']?.toString() ?? '',
+        name: cityData['name']?.toString() ?? '',
       ),
       state: StateEntity(
-        id: stateData['id'].toString(),
-        name: stateData['name'].toString(),
+        id: stateData['id']?.toString() ?? '',
+        name: stateData['name']?.toString() ?? '',
       ),
       country: CountryEntity(
-        id: countryData['id'].toString(),
-        name: countryData['name'].toString(),
+        id: countryData['id']?.toString() ?? '',
+        name: countryData['name']?.toString() ?? '',
       ),
       isInWishlist: json['is_in_wishlist'] ?? true,
       floors: propertyData['floors'] ?? 0,

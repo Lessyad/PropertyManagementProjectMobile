@@ -49,6 +49,75 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  Widget _buildEmptyPropertySection(BuildContext context, String propertyLabel) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: context.scale(AppPadding.p16)),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(
+          horizontal: context.scale(18),
+          vertical: context.scale(20),
+        ),
+        decoration: BoxDecoration(
+          color: ColorManager.whiteColor,
+          borderRadius: BorderRadius.circular(context.scale(16)),
+          boxShadow: [
+            BoxShadow(
+              color: ColorManager.blackColor.withValues(alpha: 0.06),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: context.scale(44),
+              height: context.scale(44),
+              decoration: BoxDecoration(
+                color: ColorManager.primaryColor.withValues(alpha: 0.08),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.home_work_outlined,
+                color: ColorManager.primaryColor,
+                size: context.scale(22),
+              ),
+            ),
+            SizedBox(width: context.scale(12)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    propertyLabel,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: ColorManager.navyColor,
+                      fontSize: context.scale(13),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: context.scale(4)),
+                  Text(
+                    context.tr(LocaleKeys.homeNoAvailable),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: ColorManager.blackColor.withValues(alpha: 0.45),
+                      fontSize: context.scale(10),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeBloc, HomeState>(
@@ -182,11 +251,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         final properties = propertyData?.properties ?? [];
 
                                         if (properties.isEmpty) {
-                                          return Center(
-                                            child: Text(
-                                              context.tr('${LocaleKeys.homeNoAvailable} ${propertyTypeKeys[index]}'),
-                                              style: TextStyle(color: ColorManager.blackColor),
-                                            ),
+                                          return _buildEmptyPropertySection(
+                                            context,
+                                            propertyTypeKeys[index],
                                           );
                                         }
 

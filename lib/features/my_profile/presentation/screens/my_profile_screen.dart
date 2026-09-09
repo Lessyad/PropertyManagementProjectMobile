@@ -12,7 +12,9 @@ import '../components/name_and_phone_widget.dart';
 import '../components/user_screens_widget.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({super.key, this.onBackPressed});
+
+  final VoidCallback? onBackPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class ProfileScreen extends StatelessWidget {
             showLocationIcon: false,
             showBackIcon: true,
             centerText: true,
+            onBackPressed: onBackPressed,
           ),
           Expanded(
             child: Padding(

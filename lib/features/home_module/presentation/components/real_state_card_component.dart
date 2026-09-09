@@ -237,6 +237,16 @@ class RealStateCardComponent extends StatelessWidget {
   }
 
   Widget _buildLocationRow(BuildContext context) {
+    final locationParts = [
+      currentProperty.state.name,
+      currentProperty.city.name,
+    ].where((part) => part.trim().isNotEmpty && part.trim().toLowerCase() != 'null');
+    final location = locationParts.join(' - ');
+
+    if (location.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Row(
       children: [
         SvgImageComponent(
@@ -247,7 +257,7 @@ class RealStateCardComponent extends StatelessWidget {
         SizedBox(width: context.scale(4)),
         Expanded(
           child: Text(
-            '${currentProperty.state.name} - ${currentProperty.city.name}',
+            location,
             overflow: TextOverflow.ellipsis,
             style: getLightStyle(
               color: ColorManager.blackColor,
@@ -395,53 +405,51 @@ class RealStateCardComponent extends StatelessWidget {
 
     return isScreenWidth
         ? Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Container(
-              width: context.scale(8),
-              height: context.scale(8),
-              decoration: BoxDecoration(
-                color: ColorManager.yellowColor,
-                shape: BoxShape.circle,
-              ),
-            ),
-            SizedBox(width: context.scale(4)),
-            Text(
-              currentSubType,
-              style: getBoldStyle(
-                color: ColorManager.yellowColor,
-                fontSize: FontSize.s12,
-              ),
-            ),
-          ],
-        ),
-        RichText(
-          overflow: TextOverflow.ellipsis,
-          text: TextSpan(
             children: [
-              TextSpan(
-                text: LocaleKeys.startingFrom.tr(),
-                style: getRegularStyle(
-                  color: ColorManager.primaryColor,
-                  fontSize: FontSize.s10,
+              Flexible(
+                flex: 4,
+                child: Row(
+                  children: [
+                    Container(
+                      width: context.scale(8),
+                      height: context.scale(8),
+                      decoration: BoxDecoration(
+                        color: ColorManager.yellowColor,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    SizedBox(width: context.scale(4)),
+                    Flexible(
+                      child: Text(
+                        currentSubType,
+                        overflow: TextOverflow.ellipsis,
+                        style: getBoldStyle(
+                          color: ColorManager.yellowColor,
+                          fontSize: FontSize.s12,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              TextSpan(
-                text: currentProperty.price,
-                style: getBoldStyle(
-                  color: ColorManager.primaryColor,
-                  fontSize: 5,
+              SizedBox(width: context.scale(8)),
+              Flexible(
+                flex: 6,
+                child: Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: _buildStartingPriceText(context),
                 ),
               ),
             ],
-          ),
-        ),
-      ],
-    )
-        : RichText(
+          )
+        : _buildStartingPriceText(context);
+  }
+
+  Widget _buildStartingPriceText(BuildContext context) {
+    return RichText(
+      maxLines: 1,
       overflow: TextOverflow.ellipsis,
+      textAlign: TextAlign.end,
       text: TextSpan(
         children: [
           TextSpan(
@@ -455,7 +463,7 @@ class RealStateCardComponent extends StatelessWidget {
             text: currentProperty.price,
             style: getBoldStyle(
               color: ColorManager.primaryColor,
-              fontSize: FontSize.s10,
+              fontSize: FontSize.s11,
             ),
           ),
         ],

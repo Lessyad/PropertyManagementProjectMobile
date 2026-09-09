@@ -21,7 +21,7 @@ extension BookingStatusExtension on BookingStatus {
   String toJson() {
     switch (this) {
       case BookingStatus.reserved:
-        return 'pending';
+        return 'rented';
       case BookingStatus.available:
         return 'available';
       case BookingStatus.sold:

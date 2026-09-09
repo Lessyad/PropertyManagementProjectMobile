@@ -31,23 +31,33 @@ class UserAppointmentCard extends StatelessWidget {
     String area = appointment.propertyArea;
     String city = '';
 
-    String title = "${LocaleKeys.preview.tr()} ${type} $area م² $city";
+    String title = "${LocaleKeys.preview.tr()} ${type} $area m2 $city";
 
     return title;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: context.scale(122),
-      decoration: BoxDecoration(
-        color: ColorManager.whiteColor,
+    return Material(
+      color: ColorManager.whiteColor,
+      borderRadius: BorderRadius.circular(20),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
         borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            RoutersNames.userAppointmentDetailsScreen,
+            arguments: appointment,
+          );
+        },
+        child: Container(
+          width: double.infinity,
+          height: context.scale(122),
+          padding: EdgeInsets.zero,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -270,6 +280,8 @@ class UserAppointmentCard extends StatelessWidget {
                 ),
               ])
           ],
+        ),
+          ),
         ),
       ),
     );

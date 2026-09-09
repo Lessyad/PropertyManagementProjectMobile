@@ -285,8 +285,8 @@ class BookPropertyCubit extends Cubit<BookPropertyState> {
         currency: 'USD', // ou 'EGP' selon votre configuration
         orderId: orderId,
         description: 'Property Booking Payment - Property ID: $propertyId',
-        returnUrl: 'https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/payments/paypal/success',
-        cancelUrl: 'https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/payments/paypal/cancel',
+        returnUrl: 'https://smpntinmaapi-app-20260902110552.victoriouspebble-8dfc7d7e.australiaeast.azurecontainerapps.io/api/payments/paypal/success',
+        cancelUrl: 'https://smpntinmaapi-app-20260902110552.victoriouspebble-8dfc7d7e.australiaeast.azurecontainerapps.io/api/payments/paypal/cancel',
         authToken: authToken,
       );
 
@@ -459,9 +459,9 @@ class BookPropertyCubit extends Cubit<BookPropertyState> {
         orderId: orderId,
         description: 'Property Payment',
         returnUrl:
-            'https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/payments/paypal/success?orderId=$orderId',
+            'https://smpntinmaapi-app-20260902110552.victoriouspebble-8dfc7d7e.australiaeast.azurecontainerapps.io/api/payments/paypal/success?orderId=$orderId',
         cancelUrl:
-            'https://inmaa-api-gjhfcrfcg3hednhb.spaincentral-01.azurewebsites.net/api/payments/paypal/cancel',
+            'https://smpntinmaapi-app-20260902110552.victoriouspebble-8dfc7d7e.australiaeast.azurecontainerapps.io/api/payments/paypal/cancel',
         authToken: authToken,
       );
 

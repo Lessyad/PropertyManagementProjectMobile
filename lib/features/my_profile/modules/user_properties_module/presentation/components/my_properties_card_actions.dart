@@ -97,13 +97,19 @@ class MyPropertiesCardActions extends StatelessWidget {
             ),
           ),
         ],
-        onChanged: (String? value) {
+        onChanged: (String? value) async {
           if (value == 'edit') {
-            Navigator.pushNamed(
+            final updated = await Navigator.pushNamed(
               context,
               RoutersNames.addNewRealEstateScreen,
               arguments: propertyItem.id.toString(),
             );
+            if (updated == true && context.mounted) {
+              context.read<UserPropertiesCubit>().getMyProperties(
+                    status: propertyItem.status,
+                    isRefresh: true,
+                  );
+            }
           } else if (value == 'delete') {
             if (propertyItem.status.toLowerCase() != 'available') {
               CustomSnackBar.show(

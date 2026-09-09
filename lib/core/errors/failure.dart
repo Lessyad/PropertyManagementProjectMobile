@@ -101,6 +101,20 @@ class ServerFailure extends Failure {
       case 403:
         return ServerFailure(msg(LocaleKeys.forbidden.tr()));
 
+      case 402:
+        if (messageError is Map<String, dynamic>) {
+          final detail = messageError['detail']?.toString() ??
+              messageError['details']?.toString() ??
+              messageError['Detail']?.toString() ??
+              messageError['Details']?.toString() ??
+              messageError['message']?.toString() ??
+              '';
+          if (detail.isNotEmpty) {
+            return ServerFailure(ServerFailure._parseBankilyError(detail));
+          }
+        }
+        return ServerFailure(msg(LocaleKeys.bankilyErrorPaymentFailed.tr()));
+
       case 404:
         return ServerFailure(
           msg((error is Map && error['message'] != null)
@@ -120,6 +134,7 @@ class ServerFailure extends Failure {
         if (messageError is Map<String, dynamic>) {
           final detail = messageError['detail']?.toString() ??
               messageError['details']?.toString() ??
+              messageError['Detail']?.toString() ??
               messageError['Details']?.toString() ??
               '';
           if (detail.isNotEmpty) {
@@ -138,6 +153,11 @@ class ServerFailure extends Failure {
 
   static String _parseBankilyError(String detail) {
     final lower = detail.toLowerCase();
+    if (lower.contains('502') ||
+        lower.contains('bad gateway') ||
+        lower.contains('<html')) {
+      return "[Bankily] Service Bankily indisponible maintenant. Reessayez plus tard ou utilisez le portefeuille.";
+    }
     if (lower.contains('numero de mobile') ||
         lower.contains("n'est pas enregistre") ||
         lower.contains('not registered') ||
@@ -156,6 +176,14 @@ class ServerFailure extends Failure {
         lower.contains('insuffisant') ||
         lower.contains('balance')) {
       return LocaleKeys.bankilyErrorInsufficientBalance.tr();
+    }
+    if (lower.contains('erreur de traitement') ||
+        lower.contains('processing error')) {
+      return "[Bankily] Paiement refuse. Solde insuffisant ou montant non accepte par le compte de test.";
+    }
+    if ((lower.contains('metteur') || lower.contains('sender')) &&
+        lower.contains('pas actif')) {
+      return "[Bankily] Ce numero Bankily n'est pas actif. Utilisez un numero actif pour tester le paiement.";
     }
     if (lower.contains('operation') &&
         (lower.contains('exist') ||

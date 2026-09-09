@@ -21,6 +21,8 @@ class RoutersNames {
   static const String commercialManagementScreen =
       "/commercial-management-screen";
   static const String userAppointmentsScreen = "/user-appointments-screen";
+  static const String userAppointmentDetailsScreen =
+      "/user-appointment-details-screen";
   static const String userElectronicContracts = '/user-electronic-contracts';
   static const String userRentalHistory = '/user-rental-history';
   static const String editUserDataScreen = "/edit-user-data-screen";

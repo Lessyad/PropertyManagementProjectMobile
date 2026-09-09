@@ -95,6 +95,7 @@ BookingStatus getBookingStatus(String type) {
   switch (type) {
     case "reserved":
     case "pending":
+    case "rented":
       return BookingStatus.reserved;
     case "available":
       return BookingStatus.available;

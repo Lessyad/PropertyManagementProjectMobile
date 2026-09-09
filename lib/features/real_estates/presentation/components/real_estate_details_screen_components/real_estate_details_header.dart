@@ -29,6 +29,8 @@ class RealEstateDetailsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasLocation = realEstateDetailsLocation.trim().isNotEmpty;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -55,26 +57,28 @@ class RealEstateDetailsHeader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: Row(
-                children: [
-                  SvgImageComponent(
-                    iconPath: AppAssets.locationIcon,
-                    width: 12,
-                    height: 12,
-                  ),
-                  SizedBox(width: context.scale(4)),
-                  Expanded(
-                    child: Text(
-                      realEstateDetailsLocation,
-                      overflow: TextOverflow.ellipsis,
-                      style: getLightStyle(
-                        color: ColorManager.blackColor,
-                        fontSize: FontSize.s11,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              child: hasLocation
+                  ? Row(
+                      children: [
+                        SvgImageComponent(
+                          iconPath: AppAssets.locationIcon,
+                          width: 12,
+                          height: 12,
+                        ),
+                        SizedBox(width: context.scale(4)),
+                        Expanded(
+                          child: Text(
+                            realEstateDetailsLocation,
+                            overflow: TextOverflow.ellipsis,
+                            style: getLightStyle(
+                              color: ColorManager.blackColor,
+                              fontSize: FontSize.s11,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : const SizedBox.shrink(),
             ),
             Expanded(
               child: Align(
