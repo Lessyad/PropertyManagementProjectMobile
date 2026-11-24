@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:enmaa/core/constants/api_constants.dart';
 import 'package:enmaa/core/services/auth_service.dart';
 import 'package:enmaa/core/services/shared_preferences_service.dart';
@@ -65,17 +66,20 @@ class DioService {
           },
         ),
       );
-      dio.interceptors.add(
-        PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
-          responseHeader: true,
-          responseBody: true,
-          error: true,
-          compact: true,
-          maxWidth: 90,
-        ),
-      );
+      // Logs HTTP (en-têtes, corps : mots de passe, OTP, tokens) uniquement en développement
+      if (kDebugMode) {
+        dio.interceptors.add(
+          PrettyDioLogger(
+            requestHeader: true,
+            requestBody: true,
+            responseHeader: true,
+            responseBody: true,
+            error: true,
+            compact: true,
+            maxWidth: 90,
+          ),
+        );
+      }
     }
   }
 

@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:enmaa/configuration/managers/color_manager.dart';
@@ -62,7 +65,20 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print('🔔 [BACKGROUND] Data: ${message.data}');
 }
 
-void main() async {
+void main() {
+  // En version publiée, aucun print() n'est écrit dans les logs de l'appareil :
+  // le code en contient des centaines, dont certains affichent mots de passe, codes OTP et tokens.
+  runZoned(
+    _main,
+    zoneSpecification: ZoneSpecification(
+      print: (self, parent, zone, line) {
+        if (kDebugMode) parent.print(zone, line);
+      },
+    ),
+  );
+}
+
+Future<void> _main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await EasyLocalization.ensureInitialized();

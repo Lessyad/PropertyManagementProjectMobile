@@ -14,6 +14,7 @@ import '../../../../core/components/bankily_merchant_code_box.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/translation/locale_keys.dart';
 import '../../../../core/components/generic_form_fields.dart';
+import '../../../../core/utils/number_parser.dart';
 import '../../../add_new_real_estate/presentation/components/numbered_text_header_component.dart';
 import '../../../home_module/home_imports.dart';
 import '../controller/book_property_cubit.dart';
@@ -41,7 +42,7 @@ class CompleteThePurchaseScreen extends StatelessWidget {
                 SizedBox(height: context.scale(20)),
                 PaymentDetailRow(
                   label: LocaleKeys.amountToBePaid.tr(),
-                  value: '${state.propertySaleDetailsEntity!.bookingDeposit} ${LocaleKeys.egp.tr()}',
+                  value: '${NumberParser.roundUpToWholeAmount(state.propertySaleDetailsEntity!.bookingDeposit)} ${LocaleKeys.egp.tr()}',
                 ),
                 SizedBox(height: context.scale(20)),
                 _buildSectionTitle(LocaleKeys.reviewData.tr()),

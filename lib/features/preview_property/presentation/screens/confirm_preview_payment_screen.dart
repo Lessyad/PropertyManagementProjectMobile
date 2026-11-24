@@ -15,6 +15,7 @@ import '../../../../core/components/svg_image_component.dart';
 import '../../../../core/components/warning_message_component.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/translation/locale_keys.dart';
+import '../../../../core/utils/number_parser.dart';
 import '../../../add_new_real_estate/presentation/components/numbered_text_header_component.dart';
 
 class ConfirmPreviewPaymentScreen extends material.StatefulWidget {
@@ -99,7 +100,7 @@ class _ConfirmPreviewPaymentScreenState extends material.State<ConfirmPreviewPay
                               ),
                             ),
                             material.Text(
-                              '${state.inspectionAmount} ${LocaleKeys.currency.tr()}',
+                              '${NumberParser.roundUpToWholeAmount(state.inspectionAmount)} ${LocaleKeys.currency.tr()}',
                               style: getBoldStyle(
                                 color: ColorManager.blackColor,
                                 fontSize: (screenWidth * 0.045).clamp(14, 20),

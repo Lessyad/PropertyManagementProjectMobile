@@ -13,8 +13,8 @@ import '../../../../configuration/managers/value_manager.dart';
 import '../../../../core/components/warning_message_component.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/translation/locale_keys.dart';
-import '../../../../core/services/currency_service.dart';
 import '../../../../core/components/currency_display_widget.dart';
+import '../../../../core/utils/number_parser.dart';
 import '../../../add_new_real_estate/presentation/components/numbered_text_header_component.dart';
 import '../../../home_module/home_imports.dart';
 
@@ -110,6 +110,7 @@ class SaleDetailsScreen extends StatelessWidget {
   }
 
   Widget _priceRow(BuildContext context, String label, double amount) {
+    final wholeAmount = NumberParser.roundUpToWholeAmount(amount).toDouble();
     return Row(
       children: [
         SvgImageComponent(
@@ -130,9 +131,10 @@ class SaleDetailsScreen extends StatelessWidget {
         ),
         Flexible(
           child: BoldCurrencyDisplayWidget(
-            amount: amount,
+            amount: wholeAmount,
             textColor: ColorManager.blackColor,
             fontSize: FontSize.s16,
+            decimalPlaces: 0,
           ),
         ),
       ],

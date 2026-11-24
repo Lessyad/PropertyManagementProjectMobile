@@ -43,12 +43,14 @@ class BoldCurrencyDisplayWidget extends CurrencyDisplayWidget {
     required double amount,
     required Color textColor,
     required double fontSize,
+    int? decimalPlaces,
   }) : super(
           key: key,
           amount: amount,
           textColor: textColor,
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
+          decimalPlaces: decimalPlaces,
         );
 }
 
@@ -58,12 +60,14 @@ class SemiBoldCurrencyDisplayWidget extends CurrencyDisplayWidget {
     required double amount,
     required Color textColor,
     required double fontSize,
+    int? decimalPlaces,
   }) : super(
           key: key,
           amount: amount,
           textColor: textColor,
           fontSize: fontSize,
           fontWeight: FontWeight.w600,
+          decimalPlaces: decimalPlaces,
         );
 }
 

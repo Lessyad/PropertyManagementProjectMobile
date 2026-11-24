@@ -9,6 +9,20 @@ class VehicleDealMultipartCorrected {
 
   VehicleDealMultipartCorrected({required this.client});
 
+  Map<String, String> _safeFieldsForLog(Map<String, String> fields) {
+    final safeFields = Map<String, String>.from(fields);
+    if (safeFields.containsKey('Passcode')) {
+      safeFields['Passcode'] = '***';
+    }
+    final bankilyPhoneNumber = safeFields['BankilyPhoneNumber'];
+    if (bankilyPhoneNumber != null && bankilyPhoneNumber.isNotEmpty) {
+      safeFields['BankilyPhoneNumber'] = bankilyPhoneNumber.length <= 4
+          ? '***'
+          : '***${bankilyPhoneNumber.substring(bankilyPhoneNumber.length - 4)}';
+    }
+    return safeFields;
+  }
+
   Future<Map<String, dynamic>> createVehicleDeal({
     required VehicleDealRequest request,
     required int userId,
@@ -222,7 +236,7 @@ class VehicleDealMultipartCorrected {
       // Debug: Afficher l'URL et les paramètres
       print('🚀 VehicleDeal Multipart Corrected:');
       print('  URL: ${uri.toString()}');
-      print('  Fields: ${request_multipart.fields}');
+      print('  Fields: ${_safeFieldsForLog(request_multipart.fields)}');
       print('  Files: ${request_multipart.files.length}');
 
       // Ajouter des headers avec le token d'authentification

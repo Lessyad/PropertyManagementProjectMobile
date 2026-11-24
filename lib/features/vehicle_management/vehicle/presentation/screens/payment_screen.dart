@@ -642,9 +642,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Widget _buildPaymentFooter() {
+    final bankilyPhoneNumber = _normalizeBankilyPhoneNumber(
+      _bankilyPhoneController.text,
+    );
     bool isButtonDisabled = _isProcessing ||
         _selectedPaymentMethod.isEmpty ||
-        (_selectedPaymentMethod == 'bankily' && _passcodeController.text.trim().isEmpty);
+        (_selectedPaymentMethod == 'bankily' &&
+            (bankilyPhoneNumber.isEmpty ||
+                _passcodeController.text.trim().isEmpty));
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -754,6 +759,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
     });
   }
 
+  String _normalizeBankilyPhoneNumber(String value) {
+    return value.replaceAll(RegExp(r'\D'), '');
+  }
+
   void _processPayment() async {
     setState(() {
       _isProcessing = true;
@@ -775,11 +784,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
         paymentMethod = 'bankily';
         // passcode = _passcodeController.text;
         passcode = _passcodeController.text.trim();
-        bankilyPhoneNumber = _bankilyPhoneController.text.trim();
+        bankilyPhoneNumber = _normalizeBankilyPhoneNumber(
+          _bankilyPhoneController.text,
+        );
 
         // Validation des champs Bankily
         if (bankilyPhoneNumber.isEmpty) {
           throw Exception(tr(LocaleKeys.bankilyPhoneRequiredError));
+        }
+        if (bankilyPhoneNumber.length < 8) {
+          throw Exception(tr(LocaleKeys.bankilyErrorPhoneNotRegistered));
         }
 
         // Validation du champ Passcode
